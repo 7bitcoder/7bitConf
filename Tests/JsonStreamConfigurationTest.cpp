@@ -22,7 +22,7 @@ class JsonStreamConfigurationTest : public testing::Test
     static void TearDownTestSuite() {}
 };
 
-TEST_F(JsonStreamConfigurationTest, SimpleTest)
+TEST_F(JsonStreamConfigurationTest, ShouldLoadConfigFromStream)
 {
     std::stringstream stream;
 
@@ -37,7 +37,7 @@ TEST_F(JsonStreamConfigurationTest, SimpleTest)
     EXPECT_EQ(provider->getConfiguration(), expected);
 }
 
-TEST_F(JsonStreamConfigurationTest, FailedBadStream)
+TEST_F(JsonStreamConfigurationTest, ShouldFailLoadingConfigFromBadStream)
 {
     std::stringstream stream;
 
@@ -48,7 +48,7 @@ TEST_F(JsonStreamConfigurationTest, FailedBadStream)
     EXPECT_THROW(provider->load(), sb::cf::BadStreamException);
 }
 
-TEST_F(JsonStreamConfigurationTest, FailedDoubleStreamRead)
+TEST_F(JsonStreamConfigurationTest, ShouldFailLoadingDueToDoubleStreamRead)
 {
     std::stringstream stream;
 

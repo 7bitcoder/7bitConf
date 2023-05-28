@@ -21,7 +21,7 @@ class OptionsParserTest : public testing::Test
     static void TearDownTestSuite() {}
 };
 
-TEST_F(OptionsParserTest, SimpleParse)
+TEST_F(OptionsParserTest, ShouldParseSimpleOption)
 {
     sb::cf::OptionsParser parser;
 
@@ -32,7 +32,7 @@ TEST_F(OptionsParserTest, SimpleParse)
     EXPECT_EQ(result, expected);
 }
 
-TEST_F(OptionsParserTest, EmptyParse)
+TEST_F(OptionsParserTest, ShouldParseEmptyOption)
 {
     sb::cf::OptionsParser parser;
 
@@ -43,7 +43,7 @@ TEST_F(OptionsParserTest, EmptyParse)
     EXPECT_EQ(result, expected);
 }
 
-TEST_F(OptionsParserTest, UndefinedParse)
+TEST_F(OptionsParserTest, ShouldParseEmptyValueOption)
 {
     sb::cf::OptionsParser parser;
 
@@ -54,7 +54,7 @@ TEST_F(OptionsParserTest, UndefinedParse)
     EXPECT_EQ(result, expected);
 }
 
-TEST_F(OptionsParserTest, ListParse)
+TEST_F(OptionsParserTest, ShouldParseListValueOption)
 {
     sb::cf::OptionsParser parser;
 
@@ -65,7 +65,7 @@ TEST_F(OptionsParserTest, ListParse)
     EXPECT_EQ(result, expected);
 }
 
-TEST_F(OptionsParserTest, SegmentsParse)
+TEST_F(OptionsParserTest, ShouldParseKeyOption)
 {
     sb::cf::OptionsParser parser;
 
@@ -76,7 +76,7 @@ TEST_F(OptionsParserTest, SegmentsParse)
     EXPECT_EQ(result, expected);
 }
 
-TEST_F(OptionsParserTest, SegmentsAlternativeParse)
+TEST_F(OptionsParserTest, ShouldParseAlternativeKeyOption)
 {
     sb::cf::OptionsParser parser;
 

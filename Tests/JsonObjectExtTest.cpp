@@ -22,7 +22,7 @@ class JsonObjectExt : public testing::Test
     static void TearDownTestSuite() {}
 };
 
-TEST_F(JsonObjectExt, findInner)
+TEST_F(JsonObjectExt, ShouldFindInner)
 {
 
     sb::cf::JsonObject json = {{"str", "hello"},
@@ -42,7 +42,7 @@ TEST_F(JsonObjectExt, findInner)
     EXPECT_FALSE(sb::cf::JsonObjectExt::findInner(json, "nonExisting"));
 }
 
-TEST_F(JsonObjectExt, insertInner)
+TEST_F(JsonObjectExt, ShouldInsertInner)
 {
 
     sb::cf::JsonObject json = {{"str", "hello"},
@@ -75,7 +75,7 @@ TEST_F(JsonObjectExt, insertInner)
     EXPECT_EQ(json, expectedJson);
 }
 
-TEST_F(JsonObjectExt, deepMerge)
+TEST_F(JsonObjectExt, SouldDeepMerge)
 {
 
     sb::cf::JsonObject json = {{"str", "hello"},

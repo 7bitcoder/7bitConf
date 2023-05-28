@@ -22,14 +22,14 @@ class KeyPerFileConfigurationTest : public testing::Test
     static void TearDownTestSuite() {}
 };
 
-TEST_F(KeyPerFileConfigurationTest, NonExistingExceptionTest)
+TEST_F(KeyPerFileConfigurationTest, ShouldFailLoadingNonExistingDirectory)
 {
     auto provider = sb::cf::KeyPerFileConfigurationSource::create("nonexisting")->build();
 
     EXPECT_ANY_THROW(provider->load());
 }
 
-TEST_F(KeyPerFileConfigurationTest, NonExistingTest)
+TEST_F(KeyPerFileConfigurationTest, ShouldLoadNonExistingDirectory)
 {
     auto provider = sb::cf::KeyPerFileConfigurationSource::create("nonexisting", true)->build();
 
@@ -38,7 +38,7 @@ TEST_F(KeyPerFileConfigurationTest, NonExistingTest)
     EXPECT_TRUE(provider->getConfiguration().empty());
 }
 
-TEST_F(KeyPerFileConfigurationTest, SimpleTest)
+TEST_F(KeyPerFileConfigurationTest, ShouldLoadDirectoryConfig)
 {
     auto provider = sb::cf::KeyPerFileConfigurationSource::create("Directory")->build();
 
@@ -57,7 +57,7 @@ TEST_F(KeyPerFileConfigurationTest, SimpleTest)
     EXPECT_EQ(provider->getConfiguration(), expected);
 }
 
-TEST_F(KeyPerFileConfigurationTest, FilterPrefixTest)
+TEST_F(KeyPerFileConfigurationTest, ShloudLoadFilteredConfigFiles)
 {
     auto provider = sb::cf::KeyPerFileConfigurationSource::create("Directory", false, "settingOne")->build();
 
@@ -71,7 +71,7 @@ TEST_F(KeyPerFileConfigurationTest, FilterPrefixTest)
     EXPECT_EQ(provider->getConfiguration(), expected);
 }
 
-TEST_F(KeyPerFileConfigurationTest, FilterConditionTest)
+TEST_F(KeyPerFileConfigurationTest, ShloudLoadFilteredConditionConfigFiles)
 {
     auto provider =
         sb::cf::KeyPerFileConfigurationSource::create("Directory", false, [](const std::filesystem::path &path) {

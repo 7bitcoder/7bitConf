@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 
+#include "SevenBit/Conf/JsonConfiguration.hpp"
 #include "SevenBit/Conf/JsonFileConfiguration.hpp"
 #include "SevenBit/Conf/KeyPerConfiguration.hpp"
 
@@ -21,17 +22,19 @@ class KeyPerConfigurationTest : public testing::Test
     static void TearDownTestSuite() {}
 };
 
-TEST_F(KeyPerConfigurationTest, SimpleTest)
+TEST_F(KeyPerConfigurationTest, ShouldLoadSimpleKeyPerConfig)
 {
     auto provider = sb::cf::KeyPerConfigurationSource::create(
                         {
                             {"yeah", sb::cf::JsonFileConfigurationSource::create("appsettings.json")},
+                            {"dep", sb::cf::JsonConfigurationSource::create({{"dep", "mup"}})},
                         })
                         ->build();
 
     provider->load();
 
-    sb::cf::JsonObject expected = {{"yeah",
+    sb::cf::JsonObject expected = {{"dep", {{"dep", "mup"}}},
+                                   {"yeah",
                                     {{"number", 12345},
                                      {"array", sb::cf::JsonArray{1, 2, 3, 4, 5, 6}},
                                      {"string", "string"},
@@ -40,7 +43,7 @@ TEST_F(KeyPerConfigurationTest, SimpleTest)
     EXPECT_EQ(provider->getConfiguration(), expected);
 }
 
-TEST_F(KeyPerConfigurationTest, OverridedFileTest)
+TEST_F(KeyPerConfigurationTest, ShouldLoadComplexKeyPerConfig)
 {
 
     auto provider = sb::cf::KeyPerConfigurationSource ::create(

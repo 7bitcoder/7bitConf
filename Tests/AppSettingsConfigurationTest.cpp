@@ -20,7 +20,7 @@ class AppSettingsConfiguration : public testing::Test
     static void TearDownTestSuite() {}
 };
 
-TEST_F(AppSettingsConfiguration, SimpleTest)
+TEST_F(AppSettingsConfiguration, ShouldLoadAppSettings)
 {
     auto provider = sb::cf::AppSettingsConfigurationSource::create()->build();
 
@@ -30,10 +30,11 @@ TEST_F(AppSettingsConfiguration, SimpleTest)
                                    {"array", sb::cf::JsonArray{1, 2, 3, 4, 5, 6}},
                                    {"string", "string"},
                                    {"object", {{"num", 134}, {"string", "string"}}}};
+
     EXPECT_EQ(provider->getConfiguration(), expected);
 }
 
-TEST_F(AppSettingsConfiguration, OverridedFileTest)
+TEST_F(AppSettingsConfiguration, ShouldLoadDevAppSettings)
 {
     auto provider = sb::cf::AppSettingsConfigurationSource::create("dev")->build();
 

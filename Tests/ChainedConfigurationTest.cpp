@@ -4,6 +4,7 @@
 #include <string>
 
 #include "SevenBit/Conf/ChainedConfiguration.hpp"
+#include "SevenBit/Conf/JsonConfiguration.hpp"
 #include "SevenBit/Conf/JsonFileConfiguration.hpp"
 
 class ChainedConfigurationTest : public testing::Test
@@ -22,7 +23,7 @@ class ChainedConfigurationTest : public testing::Test
     static void TearDownTestSuite() {}
 };
 
-TEST_F(ChainedConfigurationTest, SimpleTest)
+TEST_F(ChainedConfigurationTest, ShouldLoadSimpleChainedConfig)
 {
     auto provider =
         sb::cf::ChainedConfigurationSource::create({sb::cf::JsonFileConfigurationSource::create("appsettings.json")})
@@ -37,18 +38,17 @@ TEST_F(ChainedConfigurationTest, SimpleTest)
     EXPECT_EQ(provider->getConfiguration(), expected);
 }
 
-TEST_F(ChainedConfigurationTest, OverridedFileTest)
+TEST_F(ChainedConfigurationTest, ShouldLoadComplexChainedConfig)
 {
-    auto provider = sb::cf::ChainedConfigurationSource::create(
-                        {
-                            sb::cf::JsonFileConfigurationSource::create("appsettings.json"),
-                            sb::cf::JsonFileConfigurationSource::create("appsettings.dev.json"),
-                        })
-                        ->build();
+    auto provider =
+        sb::cf::ChainedConfigurationSource::create({sb::cf::JsonFileConfigurationSource::create("appsettings.json"),
+                                                    sb::cf::JsonFileConfigurationSource::create("appsettings.dev.json"),
+                                                    sb::cf::JsonConfigurationSource::create({{"number", 1}})})
+            ->build();
 
     provider->load();
 
-    sb::cf::JsonObject expected = {{"number", 12345},
+    sb::cf::JsonObject expected = {{"number", 1},
                                    {"array", sb::cf::JsonArray{1}},
                                    {"string", "stringdev"},
                                    {"object", {{"num", 134}, {"string", "stringdev"}, {"inner", {{"num", 12345}}}}}};

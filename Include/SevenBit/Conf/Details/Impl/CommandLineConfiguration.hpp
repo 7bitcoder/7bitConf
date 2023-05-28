@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <memory>
 
 #include "SevenBit/Conf/CommandLineConfiguration.hpp"
@@ -7,24 +8,49 @@
 
 namespace sb::cf
 {
-    INLINE CommandLineConfigurationSource::CommandLineConfigurationSource(int argc, char **argv)
-        : _argc(argc), _argv(argv)
+    INLINE CommandLineConfigurationSource::CommandLineConfigurationSource(std::vector<std::string> args,
+                                                                          OptionsParserConfig config)
+        : _args(std::move(args)), _parser(std::move(config))
     {
     }
 
-    INLINE CommandLineConfigurationSource::SPtr CommandLineConfigurationSource::create(int argc, char **argv)
+    INLINE CommandLineConfigurationSource::SPtr CommandLineConfigurationSource::create(int argc, char **argv,
+                                                                                       OptionsParserConfig config)
     {
-        return CommandLineConfigurationSource::SPtr(new CommandLineConfigurationSource{argc, argv});
+        std::vector<std::string> args;
+        if (argc > 1)
+        {
+            args.reserve(argc - 1);
+            for (auto i = 1; i < argc; ++i)
+            {
+                args.push_back(argv[i]);
+            }
+        }
+        return create(std::move(args), std::move(config));
     }
 
-    INLINE int CommandLineConfigurationSource::getArgc() { return _argc; }
+    INLINE CommandLineConfigurationSource::SPtr CommandLineConfigurationSource::create(std::vector<std::string> args,
+                                                                                       OptionsParserConfig config)
+    {
+        return CommandLineConfigurationSource::SPtr(
+            new CommandLineConfigurationSource{std::move(args), std::move(config)});
+    }
 
-    INLINE char **CommandLineConfigurationSource::getArgv() { return _argv; }
+    INLINE const std::vector<std::string> &CommandLineConfigurationSource::getArgs() const { return _args; }
+
+    INLINE const OptionsParser &CommandLineConfigurationSource::getOptionsParser() { return _parser; }
 
     INLINE IConfigurationProvider::Ptr CommandLineConfigurationSource::build()
     {
         return std::make_unique<CommandLineConfigurationProvider>(shared_from_this());
     }
 
-    INLINE void CommandLineConfigurationProvider::load() { clear(); }
+    INLINE void CommandLineConfigurationProvider::load()
+    {
+        clear();
+        for (auto &arg : _source->getArgs())
+        {
+            update(_source->getOptionsParser().parseOption(arg));
+        }
+    }
 } // namespace sb::cf

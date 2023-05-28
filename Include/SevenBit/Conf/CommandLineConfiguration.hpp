@@ -1,11 +1,15 @@
 #pragma once
 
 #include <memory>
+#include <string>
+#include <vector>
 
+#include "SevenBit/Conf/Details/OptionsParser.hpp"
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
 #include "SevenBit/Conf/ConfigurationProviderBase.hpp"
 #include "SevenBit/Conf/IConfigurationSource.hpp"
+#include "SevenBit/Conf/OptionsParserConfig.hpp"
 
 namespace sb::cf
 {
@@ -13,20 +17,22 @@ namespace sb::cf
                                                   public std::enable_shared_from_this<CommandLineConfigurationSource>
     {
       private:
-        int _argc;
-        char **_argv;
+        std::vector<std::string> _args;
+        OptionsParser _parser;
 
-        CommandLineConfigurationSource(int argc, char **argv);
+        CommandLineConfigurationSource(std::vector<std::string> args, OptionsParserConfig config);
 
       public:
         using Ptr = std::unique_ptr<CommandLineConfigurationSource>;
         using SPtr = std::shared_ptr<CommandLineConfigurationSource>;
 
-        static SPtr create(int argc, char **argv);
+        static SPtr create(int argc, char **argv, OptionsParserConfig config = {});
 
-        int getArgc();
+        static SPtr create(std::vector<std::string> args, OptionsParserConfig config = {});
 
-        char **getArgv();
+        const std::vector<std::string> &getArgs() const;
+
+        const OptionsParser &getOptionsParser();
 
         IConfigurationProvider::Ptr build() override;
     };

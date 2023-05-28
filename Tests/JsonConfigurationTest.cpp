@@ -19,7 +19,7 @@ class JsonConfigurationTest : public testing::Test
     static void TearDownTestSuite() {}
 };
 
-TEST_F(JsonConfigurationTest, SimpleTest)
+TEST_F(JsonConfigurationTest, ShouldLoadSimpleJsonConfig)
 {
     auto provider = sb::cf::JsonConfigurationSource::create({{"hello", 12345}})->build();
 

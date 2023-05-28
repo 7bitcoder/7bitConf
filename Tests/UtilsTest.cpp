@@ -19,14 +19,14 @@ class UtilsTest : public testing::Test
     static void TearDownTestSuite() {}
 };
 
-TEST_F(UtilsTest, SplitTestNot)
+TEST_F(UtilsTest, ShouldNotSplitString)
 {
     auto splitted = sb::cf::utils::split("first:sec:for:5:6", "/");
     EXPECT_EQ(splitted.size(), 1);
     EXPECT_EQ(splitted[0], "first:sec:for:5:6");
 }
 
-TEST_F(UtilsTest, SplitTestSimple)
+TEST_F(UtilsTest, ShouldSplitString)
 {
     auto splitted = sb::cf::utils::split("first:sec:for:5:6", ":");
     EXPECT_EQ(splitted.size(), 5);
@@ -37,7 +37,7 @@ TEST_F(UtilsTest, SplitTestSimple)
     EXPECT_EQ(splitted[4], "6");
 }
 
-TEST_F(UtilsTest, SplitTestComplex)
+TEST_F(UtilsTest, ShouldSplitComplexString)
 {
     auto splitted = sb::cf::utils::split("first123++/?sec123++/?for123++/?5123++/?6", "123++/?");
     EXPECT_EQ(splitted.size(), 5);
@@ -48,7 +48,7 @@ TEST_F(UtilsTest, SplitTestComplex)
     EXPECT_EQ(splitted[4], "6");
 }
 
-TEST_F(UtilsTest, SplitTestBegin)
+TEST_F(UtilsTest, ShouldSplitEmptyBeginString)
 {
     auto splitted = sb::cf::utils::split(":first:sec:for:5:6", ":");
     EXPECT_EQ(splitted.size(), 6);
@@ -60,7 +60,7 @@ TEST_F(UtilsTest, SplitTestBegin)
     EXPECT_EQ(splitted[5], "6");
 }
 
-TEST_F(UtilsTest, SplitTestEnd)
+TEST_F(UtilsTest, ShouldSplitEmptyEndString)
 {
     auto splitted = sb::cf::utils::split("first:sec:for:5:6:", ":");
     EXPECT_EQ(splitted.size(), 6);
@@ -72,7 +72,7 @@ TEST_F(UtilsTest, SplitTestEnd)
     EXPECT_EQ(splitted[5], "");
 }
 
-TEST_F(UtilsTest, SplitTestMid)
+TEST_F(UtilsTest, ShouldSplitEmptyMidString)
 {
     auto splitted = sb::cf::utils::split("first:sec:for::5:6", ":");
     EXPECT_EQ(splitted.size(), 6);
@@ -84,7 +84,7 @@ TEST_F(UtilsTest, SplitTestMid)
     EXPECT_EQ(splitted[5], "6");
 }
 
-TEST_F(UtilsTest, SplitTestMax2)
+TEST_F(UtilsTest, ShouldSplitMax2String)
 {
     auto splitted = sb::cf::utils::split("first:sec:for::5:6", ":", 2);
     EXPECT_EQ(splitted.size(), 2);
@@ -92,25 +92,25 @@ TEST_F(UtilsTest, SplitTestMax2)
     EXPECT_EQ(splitted[1], "sec:for::5:6");
 }
 
-TEST_F(UtilsTest, JoinTestSimple)
+TEST_F(UtilsTest, ShouldJoinStrings)
 {
     auto result = sb::cf::utils::join({"1", "2", "3", "4"}, ":");
     EXPECT_EQ(result, "1:2:3:4");
 }
 
-TEST_F(UtilsTest, JoinSingle)
+TEST_F(UtilsTest, ShouldJoinSingleString)
 {
     auto result = sb::cf::utils::join({"1"}, ":");
     EXPECT_EQ(result, "1");
 }
 
-TEST_F(UtilsTest, JoinEmpty)
+TEST_F(UtilsTest, ShouldJoinEmptyString)
 {
     auto result = sb::cf::utils::join({}, ":");
     EXPECT_EQ(result, "");
 }
 
-TEST_F(UtilsTest, StartsWith)
+TEST_F(UtilsTest, ShouldStartsWith)
 {
     EXPECT_TRUE(sb::cf::utils::startsWith("1234567", "123"));
     EXPECT_TRUE(sb::cf::utils::startsWith("1234567", ""));
@@ -124,7 +124,7 @@ TEST_F(UtilsTest, StartsWith)
     EXPECT_FALSE(sb::cf::utils::startsWith("123", "234"));
 }
 
-TEST_F(UtilsTest, EndsWith)
+TEST_F(UtilsTest, ShouldEndsWith)
 {
     EXPECT_TRUE(sb::cf::utils::endsWith("1234567", "567"));
     EXPECT_TRUE(sb::cf::utils::endsWith("1234567", ""));
@@ -138,7 +138,7 @@ TEST_F(UtilsTest, EndsWith)
     EXPECT_FALSE(sb::cf::utils::endsWith("123", "234"));
 }
 
-TEST_F(UtilsTest, ReplaceAll)
+TEST_F(UtilsTest, ShouldReplaceAllStrings)
 {
     std::string str = "bup__hup__mub";
     EXPECT_TRUE(sb::cf::utils::replaceAll(str, "__", ":"));

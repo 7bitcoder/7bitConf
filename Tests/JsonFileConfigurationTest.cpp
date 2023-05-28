@@ -20,7 +20,7 @@ class JsonFileConfigurationTest : public testing::Test
     static void TearDownTestSuite() {}
 };
 
-TEST_F(JsonFileConfigurationTest, SimpleTest)
+TEST_F(JsonFileConfigurationTest, ShouldLoadSimpleJsonConfigFile)
 {
     auto provider = sb::cf::JsonFileConfigurationSource::create("appsettings.json")->build();
 
@@ -30,10 +30,11 @@ TEST_F(JsonFileConfigurationTest, SimpleTest)
                                    {"array", sb::cf::JsonArray{1, 2, 3, 4, 5, 6}},
                                    {"string", "string"},
                                    {"object", {{"num", 134}, {"string", "string"}}}};
+
     EXPECT_EQ(provider->getConfiguration(), expected);
 }
 
-TEST_F(JsonFileConfigurationTest, OptionalNonExistingFileTest)
+TEST_F(JsonFileConfigurationTest, ShouldNotLoadNonExistingJsonConfigFile)
 {
     auto provider = sb::cf::JsonFileConfigurationSource::create("nonExisting.json", true)->build();
 
@@ -42,14 +43,14 @@ TEST_F(JsonFileConfigurationTest, OptionalNonExistingFileTest)
     EXPECT_TRUE(provider->getConfiguration().empty());
 }
 
-TEST_F(JsonFileConfigurationTest, NonExistingFileTest)
+TEST_F(JsonFileConfigurationTest, ShouldFailLoadingNonExistingJsonConfigFile)
 {
     auto provider = sb::cf::JsonFileConfigurationSource ::create("nonExisting.json")->build();
 
     EXPECT_THROW(provider->load(), sb::cf::ConfigFileNotFoundException);
 }
 
-TEST_F(JsonFileConfigurationTest, BadFileTest)
+TEST_F(JsonFileConfigurationTest, ShouldFailLoadingBadJsonConfigFile)
 {
     auto provider = sb::cf::JsonFileConfigurationSource ::create("bad.json")->build();
 
