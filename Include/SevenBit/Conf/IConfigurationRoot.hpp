@@ -6,9 +6,7 @@
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
 #include "SevenBit/Conf/IConfiguration.hpp"
-#include "SevenBit/Conf/IConfigurationProvider.hpp"
 #include "SevenBit/Conf/IConfigurationSource.hpp"
-#include "SevenBit/Conf/Json.hpp"
 
 namespace sb::cf
 {

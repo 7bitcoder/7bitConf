@@ -7,6 +7,7 @@
 #include "SevenBit/Conf/Details/JsonObjectExt.hpp"
 #include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/IConfigurationProvider.hpp"
+#include "SevenBit/Conf/Json.hpp"
 #include "SevenBit/Conf/JsonFileConfiguration.hpp"
 #include "SevenBit/Conf/KeyPerConfiguration.hpp"
 #include "SevenBit/Conf/KeyPerFileConfiguration.hpp"

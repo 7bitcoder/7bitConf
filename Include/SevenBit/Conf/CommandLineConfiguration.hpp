@@ -1,8 +1,10 @@
 #pragma once
 
-#include "SevenBit/Conf/ConfigurationProviderBase.hpp"
+#include <memory>
+
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
+#include "SevenBit/Conf/ConfigurationProviderBase.hpp"
 #include "SevenBit/Conf/IConfigurationSource.hpp"
 
 namespace sb::cf

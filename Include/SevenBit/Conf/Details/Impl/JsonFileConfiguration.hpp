@@ -32,8 +32,7 @@ namespace sb::cf
 
     INLINE JsonObject JsonFileConfigurationProvider::getJsonFromFile()
     {
-        bool exists = std::filesystem::exists(_source->getFilePath());
-        if (!exists)
+        if (!std::filesystem::exists(_source->getFilePath()))
         {
             return _source->getIsOptional() ? JsonObject{} : throw ConfigFileNotFoundException(_source->getFilePath());
         }

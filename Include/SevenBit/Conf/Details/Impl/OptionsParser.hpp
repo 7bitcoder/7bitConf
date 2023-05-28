@@ -1,5 +1,4 @@
 #pragma once
-#include <stdexcept>
 #include <string_view>
 #include <vector>
 
@@ -11,14 +10,14 @@
 namespace sb::cf
 {
 
-    INLINE OptionsParser::OptionsParser(OptionsParserCfg cfg) : _cfg(cfg) {}
+    INLINE OptionsParser::OptionsParser(OptionsParserConfig cfg) : _config(cfg) {}
 
     INLINE JsonObject OptionsParser::parseOption(std::string_view option) const
     {
-        auto keySegments = utils::split(option, _cfg.optSplitter, 2);
+        auto keySegments = utils::split(option, _config.optSplitter, 2);
         if (keySegments.size() == 1)
         {
-            return parseOption(option, _cfg.defaultValue);
+            return parseOption(option, _config.defaultValue);
         }
         if (keySegments.size() == 2)
         {
@@ -35,7 +34,7 @@ namespace sb::cf
     INLINE JsonObject OptionsParser::parseOption(std::string_view key, JsonValue value) const
     {
         auto strKey = sanitizeKey(key);
-        return parseOption(utils::split(strKey, _cfg.keySplitter), std::move(value));
+        return parseOption(utils::split(strKey, _config.keySplitter), std::move(value));
     }
 
     INLINE JsonObject OptionsParser::parseOption(const std::vector<std::string_view> &key, JsonValue value) const
@@ -47,18 +46,18 @@ namespace sb::cf
 
     INLINE std::string OptionsParser::sanitizeKey(std::string_view key) const
     {
-        if (utils::startsWith(key, _cfg.optPrefix))
+        if (utils::startsWith(key, _config.optPrefix))
         {
-            key = key.substr(_cfg.optPrefix.size());
+            key = key.substr(_config.optPrefix.size());
         }
         std::string str{key};
-        utils::replaceAll(str, _cfg.alternativeKeySplitter, _cfg.keySplitter);
+        utils::replaceAll(str, _config.alternativeKeySplitter, _config.keySplitter);
         return str;
     }
 
     INLINE JsonValue OptionsParser::parseValue(std::string_view &value) const
     {
-        if (auto list = utils::split(value, _cfg.valueListSplitter); list.size() > 1)
+        if (auto list = utils::split(value, _config.valueListSplitter); list.size() > 1)
         {
             JsonArray array;
             for (auto value : list)

@@ -3,12 +3,11 @@
 #include <filesystem>
 #include <functional>
 #include <memory>
+#include <string>
 
-#include "SevenBit/Conf/ConfigurationProviderBase.hpp"
-#include "SevenBit/Conf/IConfigurationProvider.hpp"
-#include "SevenBit/Conf/KeyPerConfiguration.hpp"
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
+#include "SevenBit/Conf/ConfigurationProviderBase.hpp"
 #include "SevenBit/Conf/IConfigurationSource.hpp"
 
 namespace sb::cf

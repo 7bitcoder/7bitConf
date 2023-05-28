@@ -1,10 +1,11 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
-#include "SevenBit/Conf/ConfigurationProviderBase.hpp"
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
+#include "SevenBit/Conf/ConfigurationProviderBase.hpp"
 #include "SevenBit/Conf/Details/OptionsParser.hpp"
 #include "SevenBit/Conf/IConfigurationSource.hpp"
 
@@ -18,13 +19,13 @@ namespace sb::cf
         std::string _prefix;
         OptionsParser _parser;
 
-        EnvironmentVarsConfigurationSource(std::string prefix, OptionsParserCfg parserCfg);
+        EnvironmentVarsConfigurationSource(std::string prefix, OptionsParserConfig parserConfig);
 
       public:
         using Ptr = std::unique_ptr<EnvironmentVarsConfigurationSource>;
         using SPtr = std::shared_ptr<EnvironmentVarsConfigurationSource>;
 
-        static SPtr create(std::string prefix = "", OptionsParserCfg parserCfg = {});
+        static SPtr create(std::string prefix = "", OptionsParserConfig parserCfg = {});
 
         const std::string &getPrefix();
 

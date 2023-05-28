@@ -4,8 +4,8 @@
 #include <memory>
 #include <sstream>
 #include <unordered_map>
+#include <vector>
 
-#include "SevenBit/Conf/Json.hpp"
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
 #include "SevenBit/Conf/AppSettingsConfiguration.hpp"

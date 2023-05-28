@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
@@ -9,7 +10,6 @@
 #include "SevenBit/Conf/IConfigurationBuilder.hpp"
 #include "SevenBit/Conf/IConfigurationProvider.hpp"
 #include "SevenBit/Conf/IConfigurationSource.hpp"
-#include "SevenBit/Conf/Json.hpp"
 
 namespace sb::cf
 {

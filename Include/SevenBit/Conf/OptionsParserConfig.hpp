@@ -1,4 +1,5 @@
 #pragma once
+
 #include <string_view>
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
@@ -7,7 +8,7 @@
 
 namespace sb::cf
 {
-    struct OptionsParserCfg
+    struct OptionsParserConfig
     {
         std::string_view optPrefix = "--";
         std::string_view optSplitter = "=";

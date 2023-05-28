@@ -10,28 +10,14 @@ extern char **environ;
 
 namespace sb::cf
 {
-    INLINE std::vector<std::string_view> EnvironmentVarsConfigurationProvider::getEnvVars()
-    {
-        std::vector<std::string_view> result;
-        for (auto env = environ; *env; env++)
-        {
-            std::string_view envStr = *env;
-            if (utils::startsWith(envStr, _source->getPrefix()))
-            {
-                result.push_back(envStr.substr(_source->getPrefix().size()));
-            }
-        }
-        return result;
-    }
-
     INLINE EnvironmentVarsConfigurationSource::EnvironmentVarsConfigurationSource(std::string prefix,
-                                                                                  OptionsParserCfg parserCfg)
-        : _prefix(std::move(prefix)), _parser(parserCfg)
+                                                                                  OptionsParserConfig parserConfig)
+        : _prefix(std::move(prefix)), _parser(parserConfig)
     {
     }
 
     INLINE EnvironmentVarsConfigurationSource::SPtr EnvironmentVarsConfigurationSource::create(
-        std::string prefix, OptionsParserCfg parserCfg)
+        std::string prefix, OptionsParserConfig parserCfg)
     {
         return EnvironmentVarsConfigurationSource::SPtr(
             new EnvironmentVarsConfigurationSource{std::move(prefix), std::move(parserCfg)});
@@ -53,5 +39,19 @@ namespace sb::cf
         {
             update(_source->getOptionsParser().parseOption(env));
         }
+    }
+
+    INLINE std::vector<std::string_view> EnvironmentVarsConfigurationProvider::getEnvVars()
+    {
+        std::vector<std::string_view> result;
+        for (auto env = environ; *env; env++)
+        {
+            std::string_view envStr = *env;
+            if (utils::startsWith(envStr, _source->getPrefix()))
+            {
+                result.push_back(envStr.substr(_source->getPrefix().size()));
+            }
+        }
+        return result;
     }
 } // namespace sb::cf

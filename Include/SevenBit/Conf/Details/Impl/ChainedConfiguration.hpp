@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "SevenBit/Conf/ChainedConfiguration.hpp"
-#include "SevenBit/Conf/Details/JsonObjectExt.hpp"
 #include "SevenBit/Conf/IConfigurationSource.hpp"
 #include "SevenBit/Conf/LibraryConfig.hpp"
 

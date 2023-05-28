@@ -1,5 +1,6 @@
 #pragma once
 
+#include "SevenBit/Conf/Exceptions.hpp"
 #include "SevenBit/Conf/JsonStreamConfiguration.hpp"
 
 namespace sb::cf

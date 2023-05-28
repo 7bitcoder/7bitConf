@@ -28,7 +28,6 @@ namespace sb::cf
 
     INLINE void AppSettingsConfigurationProvider::load()
     {
-        clear();
         auto sources =
             ChainedConfigurationSource::create({JsonFileConfigurationSource::create("appsettings.json", true)});
         if (!_source->getEnvName().empty())

@@ -2,11 +2,9 @@
 #include <ostream>
 #include <sstream>
 
-#include "SevenBit/Conf/ConfigurationProviderBase.hpp"
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
-#include "SevenBit/Conf/Exceptions.hpp"
-#include "SevenBit/Conf/IConfigurationProvider.hpp"
+#include "SevenBit/Conf/ConfigurationProviderBase.hpp"
 #include "SevenBit/Conf/IConfigurationSource.hpp"
 
 namespace sb::cf

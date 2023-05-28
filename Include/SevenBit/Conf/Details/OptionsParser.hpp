@@ -1,23 +1,22 @@
 #pragma once
-#include <stdexcept>
+
 #include <string_view>
-#include <tao/json/type.hpp>
 #include <vector>
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
-#include "SevenBit/Conf/Details/OptionsParserCfg.hpp"
 #include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/Json.hpp"
+#include "SevenBit/Conf/OptionsParserConfig.hpp"
 
 namespace sb::cf
 {
     EXPORT class OptionsParser
     {
-        OptionsParserCfg _cfg;
+        OptionsParserConfig _config;
 
       public:
-        OptionsParser(OptionsParserCfg cfg = {});
+        OptionsParser(OptionsParserConfig config = {});
 
         JsonObject parseOption(std::string_view option) const;
 
