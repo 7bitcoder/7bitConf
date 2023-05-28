@@ -2,36 +2,38 @@
 
 #include <memory>
 
+#include "SevenBit/Conf/ConfigurationProviderBase.hpp"
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
 #include "SevenBit/Conf/IConfigurationSource.hpp"
 
 namespace sb::cf
 {
-    EXPORT class JsonConfigurationSource : public IConfigurationSource
+    EXPORT class JsonConfigurationSource : public IConfigurationSource,
+                                           public std::enable_shared_from_this<JsonConfigurationSource>
     {
       private:
         JsonObject _configuration;
 
-      public:
         JsonConfigurationSource(JsonObject configuration);
+
+      public:
+        using Ptr = std::unique_ptr<JsonConfigurationSource>;
+        using SPtr = std::shared_ptr<JsonConfigurationSource>;
+
+        static SPtr create(JsonObject configuration);
 
         const JsonObject &getJson() const;
 
-        IConfigurationProvider::Ptr build() const override;
+        IConfigurationProvider::Ptr build() override;
     };
 
-    EXPORT class JsonConfigurationProvider : public IConfigurationProvider
+    EXPORT class JsonConfigurationProvider : public ConfigurationProviderBase<JsonConfigurationSource>
     {
-      private:
-        JsonConfigurationSource _source;
-
       public:
-        JsonConfigurationProvider(JsonConfigurationSource source);
+        using ConfigurationProviderBase<JsonConfigurationSource>::ConfigurationProviderBase;
 
         void load() override;
-
-        const JsonObject &get() const override;
     };
 } // namespace sb::cf
 

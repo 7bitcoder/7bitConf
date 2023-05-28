@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <filesystem>
 #include <memory>
 
@@ -14,12 +15,6 @@
 namespace sb::cf
 {
     INLINE KeyPerFileConfigurationSource::KeyPerFileConfigurationSource(std::filesystem::path directoryPath,
-                                                                        bool isOptional)
-        : _directoryPath(std::move(directoryPath)), _isOptional(isOptional)
-    {
-    }
-
-    INLINE KeyPerFileConfigurationSource::KeyPerFileConfigurationSource(std::filesystem::path directoryPath,
                                                                         bool isOptional, std::string ignorePrefix)
         : _directoryPath(std::move(directoryPath)), _isOptional(isOptional), _ignorePrefix(std::move(ignorePrefix))
     {
@@ -31,6 +26,21 @@ namespace sb::cf
         : _directoryPath(std::move(directoryPath)), _isOptional(isOptional),
           _ignoreCondition(std::move(ignoreCondition))
     {
+    }
+
+    INLINE KeyPerFileConfigurationSource::SPtr KeyPerFileConfigurationSource::create(
+        std::filesystem::path directoryPath, bool isOptional, std::string ignorePrefix)
+    {
+        return KeyPerFileConfigurationSource::SPtr{
+            new KeyPerFileConfigurationSource{std::move(directoryPath), isOptional, std::move(ignorePrefix)}};
+    }
+
+    INLINE KeyPerFileConfigurationSource::SPtr KeyPerFileConfigurationSource::create(
+        std::filesystem::path directoryPath, bool isOptional,
+        std::function<bool(const std::filesystem::path &)> ignoreCondition)
+    {
+        return KeyPerFileConfigurationSource::SPtr{
+            new KeyPerFileConfigurationSource{std::move(directoryPath), isOptional, std::move(ignoreCondition)}};
     }
 
     INLINE const std::filesystem::path &KeyPerFileConfigurationSource::getDirectoryPath() const
@@ -48,22 +58,18 @@ namespace sb::cf
 
     INLINE const std::string &KeyPerFileConfigurationSource::getIgnorePrefix() const { return _ignorePrefix; }
 
-    INLINE IConfigurationProvider::Ptr KeyPerFileConfigurationSource::build() const
+    INLINE IConfigurationProvider::Ptr KeyPerFileConfigurationSource::build()
     {
-        return std::make_unique<KeyPerFileConfigurationProvider>(*this);
-    }
-
-    INLINE KeyPerFileConfigurationProvider::KeyPerFileConfigurationProvider(KeyPerFileConfigurationSource source)
-        : _source(std::move(source))
-    {
+        return std::make_unique<KeyPerFileConfigurationProvider>(shared_from_this());
     }
 
     INLINE void KeyPerFileConfigurationProvider::load()
     {
-        _configuration.clear();
-        KeyPerConfigurationSource sources{};
-        auto &directoryPath = _source.getDirectoryPath();
-        if (!std::filesystem::exists(directoryPath) && _source.getIsOptional())
+        clear();
+        auto sources = KeyPerConfigurationSource::create();
+
+        auto &directoryPath = _source->getDirectoryPath();
+        if (!std::filesystem::exists(directoryPath) && _source->getIsOptional())
         {
             return;
         }
@@ -77,24 +83,20 @@ namespace sb::cf
             auto extension = filePath.extension();
             if (extension == ".json")
             {
-                sources.add(filePath.stem(), std::make_unique<JsonFileConfigurationSource>(filePath));
+                sources->add(filePath.stem(), JsonFileConfigurationSource::create(filePath));
             }
         }
-        auto provider = sources.build();
-        provider->load();
-        _configuration = provider->get();
+        setFrom(sources);
     }
-
-    INLINE const JsonObject &KeyPerFileConfigurationProvider::get() const { return _configuration; }
 
     INLINE bool KeyPerFileConfigurationProvider::canIgnore(std::filesystem::path filePath) const
     {
-        auto &ignorePrefix = _source.getIgnorePrefix();
+        auto &ignorePrefix = _source->getIgnorePrefix();
         if (!ignorePrefix.empty() && utils::startsWith(filePath.filename().generic_string(), ignorePrefix))
         {
             return true;
         }
-        auto &ignoreConfition = _source.getIgnoreCondition();
+        auto &ignoreConfition = _source->getIgnoreCondition();
         if (!!ignoreConfition && ignoreConfition(filePath))
         {
             return true;

@@ -95,7 +95,7 @@ TEST_F(JsonObjectExt, deepMerge)
                                               {"str", "hello2Ov"},
                                               {"number", 12323},
                                           }}}}};
-    sb::cf::JsonObjectExt::deepMerge(json, jsonOverride);
+    sb::cf::JsonObjectExt::deepMerge(json, std::move(jsonOverride));
 
     sb::cf::JsonObject expectedJson = {{"str", "helloOv"},
                                        {"number", 123},

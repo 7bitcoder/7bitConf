@@ -4,31 +4,29 @@
 
 namespace sb::cf
 {
-    INLINE JsonStreamConfigurationProvider::JsonStreamConfigurationProvider(JsonStreamConfigurationSource source)
-        : _source(std::move(source))
+    INLINE JsonStreamConfigurationSource::JsonStreamConfigurationSource(std::istream &stream) : _stream(stream) {}
+
+    INLINE JsonStreamConfigurationSource::SPtr JsonStreamConfigurationSource::create(std::istream &stream)
     {
+        return JsonStreamConfigurationSource::SPtr{new JsonStreamConfigurationSource{stream}};
     }
 
-    INLINE void JsonStreamConfigurationProvider::load() { _configuration = getJsonFromFile(); }
+    INLINE std::istream &JsonStreamConfigurationSource::getStream() { return _stream; }
 
-    INLINE const JsonObject &JsonStreamConfigurationProvider::get() const { return _configuration; }
-
-    INLINE JsonObject JsonStreamConfigurationProvider::getJsonFromFile()
+    INLINE IConfigurationProvider::Ptr JsonStreamConfigurationSource::build()
     {
-        auto json = tao::json::basic_from_stream<JsonTraits>(_source.getStream());
+        return std::make_unique<JsonStreamConfigurationProvider>(shared_from_this());
+    }
+
+    INLINE void JsonStreamConfigurationProvider::load() { set(getJsonFromStream()); }
+
+    INLINE JsonObject JsonStreamConfigurationProvider::getJsonFromStream()
+    {
+        auto json = tao::json::basic_from_stream<JsonTraits>(_source->getStream());
         if (!json.is_object())
         {
             throw BadStreamException("file does not contain json object");
         }
         return json.get_object();
     };
-
-    INLINE JsonStreamConfigurationSource::JsonStreamConfigurationSource(std::istream &stream) : _stream(stream) {}
-
-    INLINE std::istream &JsonStreamConfigurationSource::getStream() { return _stream; }
-
-    INLINE IConfigurationProvider::Ptr JsonStreamConfigurationSource::build() const
-    {
-        return std::make_unique<JsonStreamConfigurationProvider>(*this);
-    }
 } // namespace sb::cf

@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include "SevenBit/Conf/ConfigurationProviderBase.hpp"
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
 #include "SevenBit/Conf/Details/OptionsParser.hpp"
@@ -9,35 +10,36 @@
 
 namespace sb::cf
 {
-    EXPORT class EnvironmentVarsConfigurationSource : public IConfigurationSource
+    EXPORT class EnvironmentVarsConfigurationSource
+        : public IConfigurationSource,
+          public std::enable_shared_from_this<EnvironmentVarsConfigurationSource>
     {
       private:
         std::string _prefix;
         OptionsParser _parser;
 
+        EnvironmentVarsConfigurationSource(std::string prefix, OptionsParserCfg parserCfg);
+
       public:
-        EnvironmentVarsConfigurationSource(std::string prefix = "", OptionsParserCfg parserCfg = {});
+        using Ptr = std::unique_ptr<EnvironmentVarsConfigurationSource>;
+        using SPtr = std::shared_ptr<EnvironmentVarsConfigurationSource>;
+
+        static SPtr create(std::string prefix = "", OptionsParserCfg parserCfg = {});
 
         const std::string &getPrefix();
 
         const OptionsParser &getOptionsParser();
 
-        IConfigurationProvider::Ptr build() const override;
+        IConfigurationProvider::Ptr build() override;
     };
 
-    EXPORT class EnvironmentVarsConfigurationProvider : public IConfigurationProvider
+    EXPORT class EnvironmentVarsConfigurationProvider
+        : public ConfigurationProviderBase<EnvironmentVarsConfigurationSource>
     {
-      private:
-        EnvironmentVarsConfigurationSource _source;
-
-        JsonObject _configuration;
-
       public:
-        EnvironmentVarsConfigurationProvider(EnvironmentVarsConfigurationSource source);
+        using ConfigurationProviderBase<EnvironmentVarsConfigurationSource>::ConfigurationProviderBase;
 
         void load() override;
-
-        const JsonObject &get() const override;
 
       private:
         std::vector<std::string_view> getEnvVars();

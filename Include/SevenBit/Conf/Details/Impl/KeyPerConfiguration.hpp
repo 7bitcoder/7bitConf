@@ -16,31 +16,30 @@ namespace sb::cf
     {
     }
 
-    INLINE void KeyPerConfigurationSource::add(const std::string &key, IConfigurationSource::Ptr source)
+    INLINE KeyPerConfigurationSource::SPtr KeyPerConfigurationSource::create(
+        std::vector<std::pair<std::string, IConfigurationSource::SPtr>> keySources)
+    {
+        return KeyPerConfigurationSource::SPtr{new KeyPerConfigurationSource{std::move(keySources)}};
+    }
+
+    INLINE void KeyPerConfigurationSource::add(const std::string &key, IConfigurationSource::SPtr source)
     {
         _keySources.emplace_back(key, std::move(source));
     }
 
-    INLINE IConfigurationProvider::Ptr KeyPerConfigurationSource::build() const
+    INLINE IConfigurationProvider::Ptr KeyPerConfigurationSource::build()
     {
-        return std::make_unique<KeyPerConfigurationProvider>(*this);
-    }
-
-    INLINE KeyPerConfigurationProvider::KeyPerConfigurationProvider(KeyPerConfigurationSource source)
-        : _source(std::move(source))
-    {
+        return std::make_unique<KeyPerConfigurationProvider>(shared_from_this());
     }
 
     INLINE void KeyPerConfigurationProvider::load()
     {
-        _configuration.clear();
-        for (auto &[key, source] : _source)
+        clear();
+        for (auto &[key, source] : *_source)
         {
             auto provider = source->build();
             provider->load();
-            _configuration[key] = provider->get();
+            _configuration[key] = std::move(provider->getConfiguration());
         }
     }
-
-    INLINE const JsonObject &KeyPerConfigurationProvider::get() const { return _configuration; }
 } // namespace sb::cf

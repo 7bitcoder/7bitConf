@@ -25,41 +25,41 @@ namespace sb::cf
 
         virtual IConfigurationRoot::Ptr build() = 0;
 
-        virtual IConfigurationBuilder &add(IConfigurationSource::Ptr) = 0;
+        virtual IConfigurationBuilder &add(IConfigurationSource::SPtr) = 0;
 
         IConfigurationBuilder &addJsonFile(std::filesystem::path filePath, bool isOptional = false)
         {
-            return add(std::make_unique<JsonFileConfigurationSource>(filePath, isOptional));
+            return add(JsonFileConfigurationSource::create(std::move(filePath), isOptional));
         }
 
         IConfigurationBuilder &addJsonStream(std::istringstream &stream)
         {
-            return add(std::make_unique<JsonStreamConfigurationSource>(stream));
+            return add(JsonStreamConfigurationSource::create(stream));
         }
 
         IConfigurationBuilder &addAppSettings(std::string envName = "")
         {
-            return add(std::make_unique<AppSettingsConfigurationSource>(std::move(envName)));
+            return add(AppSettingsConfigurationSource::create(std::move(envName)));
         }
 
         IConfigurationBuilder &addEnvironmentVariables(std::string prefix = "")
         {
-            return add(std::make_unique<EnvironmentVarsConfigurationSource>(std::move(prefix)));
+            return add(EnvironmentVarsConfigurationSource::create(std::move(prefix)));
         }
 
         IConfigurationBuilder &addCommandLine(int argc, char **argv)
         {
-            return add(std::make_unique<CommandLineConfigurationSource>(argc, argv));
+            return add(CommandLineConfigurationSource::create(argc, argv));
         }
 
         IConfigurationBuilder &addJson(JsonObject object)
         {
-            return add(std::make_unique<JsonConfigurationSource>(std::move(object)));
+            return add(JsonConfigurationSource::create(std::move(object)));
         }
 
         IConfigurationBuilder &addKeyPerFile(std::filesystem::path directoryPath)
         {
-            return add(std::make_unique<KeyPerFileConfigurationSource>(std::move(directoryPath)));
+            return add(KeyPerFileConfigurationSource::create(std::move(directoryPath)));
         }
 
         virtual const std::vector<IConfigurationSource::SPtr> &getSources() const = 0;

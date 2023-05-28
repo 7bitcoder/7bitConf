@@ -1,40 +1,40 @@
 #pragma once
 
+#include "SevenBit/Conf/ConfigurationProviderBase.hpp"
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
 #include "SevenBit/Conf/IConfigurationSource.hpp"
 
 namespace sb::cf
 {
-    EXPORT class CommandLineConfigurationSource : public IConfigurationSource
+    EXPORT class CommandLineConfigurationSource : public IConfigurationSource,
+                                                  public std::enable_shared_from_this<CommandLineConfigurationSource>
     {
       private:
         int _argc;
         char **_argv;
 
-      public:
         CommandLineConfigurationSource(int argc, char **argv);
+
+      public:
+        using Ptr = std::unique_ptr<CommandLineConfigurationSource>;
+        using SPtr = std::shared_ptr<CommandLineConfigurationSource>;
+
+        static SPtr create(int argc, char **argv);
 
         int getArgc();
 
         char **getArgv();
 
-        IConfigurationProvider::Ptr build() const override;
+        IConfigurationProvider::Ptr build() override;
     };
 
-    EXPORT class CommandLineConfigurationProvider final : public IConfigurationProvider
+    EXPORT class CommandLineConfigurationProvider : public ConfigurationProviderBase<CommandLineConfigurationSource>
     {
-      private:
-        CommandLineConfigurationSource _source;
-
-        JsonObject _configuration;
-
       public:
-        CommandLineConfigurationProvider(CommandLineConfigurationSource source);
+        using ConfigurationProviderBase<CommandLineConfigurationSource>::ConfigurationProviderBase;
 
         void load() override;
-
-        const JsonObject &get() const override;
     };
 } // namespace sb::cf
 

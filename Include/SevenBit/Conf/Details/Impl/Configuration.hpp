@@ -109,7 +109,8 @@ namespace sb::cf
         {
             auto provider = source->build();
             provider->load();
-            JsonObjectExt::deepMerge(_configuration, provider->get());
+            auto config = provider->getConfiguration();
+            JsonObjectExt::deepMerge(_configuration, std::move(config));
         }
     }
 

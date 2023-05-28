@@ -3,42 +3,42 @@
 #include <filesystem>
 #include <memory>
 
+#include "SevenBit/Conf/ConfigurationProviderBase.hpp"
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
 #include "SevenBit/Conf/IConfigurationSource.hpp"
 
 namespace sb::cf
 {
-    EXPORT class ChainedConfigurationSource : public IConfigurationSource
+    EXPORT class ChainedConfigurationSource : public IConfigurationSource,
+                                              public std::enable_shared_from_this<ChainedConfigurationSource>
     {
       private:
         std::vector<IConfigurationSource::SPtr> _sources;
 
+        ChainedConfigurationSource(std::vector<IConfigurationSource::SPtr> sources);
+
       public:
-        ChainedConfigurationSource(std::vector<IConfigurationSource::SPtr> sources = {});
+        using Ptr = std::unique_ptr<ChainedConfigurationSource>;
+        using SPtr = std::shared_ptr<ChainedConfigurationSource>;
 
-        void add(IConfigurationSource::Ptr source);
+        static SPtr create(std::vector<IConfigurationSource::SPtr> sources = {});
 
-        IConfigurationProvider::Ptr build() const override;
+        void add(IConfigurationSource::SPtr source);
 
-        auto begin() const { return _sources.begin(); }
+        IConfigurationProvider::Ptr build() override;
 
-        auto end() const { return _sources.end(); }
+        auto begin() { return _sources.begin(); }
+
+        auto end() { return _sources.end(); }
     };
 
-    EXPORT class ChainedConfigurationProvider : public IConfigurationProvider
+    EXPORT class ChainedConfigurationProvider : public ConfigurationProviderBase<ChainedConfigurationSource>
     {
-      private:
-        ChainedConfigurationSource _source;
-
-        JsonObject _configuration;
-
       public:
-        ChainedConfigurationProvider(ChainedConfigurationSource source);
+        using ConfigurationProviderBase<ChainedConfigurationSource>::ConfigurationProviderBase;
 
         void load() override;
-
-        const JsonObject &get() const override;
     };
 } // namespace sb::cf
 

@@ -3,41 +3,41 @@
 #include <filesystem>
 #include <memory>
 
+#include "SevenBit/Conf/ConfigurationProviderBase.hpp"
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
 #include "SevenBit/Conf/IConfigurationSource.hpp"
 
 namespace sb::cf
 {
-    EXPORT class JsonFileConfigurationSource : public IConfigurationSource
+    EXPORT class JsonFileConfigurationSource : public IConfigurationSource,
+                                               public std::enable_shared_from_this<JsonFileConfigurationSource>
     {
       private:
         std::filesystem::path _filePath;
         bool _isOptional;
 
+        JsonFileConfigurationSource(std::filesystem::path filePath, bool isOptional);
+
       public:
-        JsonFileConfigurationSource(std::filesystem::path filePath, bool isOptional = false);
+        using Ptr = std::unique_ptr<JsonFileConfigurationSource>;
+        using SPtr = std::shared_ptr<JsonFileConfigurationSource>;
 
-        const std::filesystem::path &getFilePath();
+        static SPtr create(std::filesystem::path filePath, bool isOptional = false);
 
-        bool getIsOptional();
+        const std::filesystem::path &getFilePath() const;
 
-        IConfigurationProvider::Ptr build() const override;
+        bool getIsOptional() const;
+
+        IConfigurationProvider::Ptr build() override;
     };
 
-    EXPORT class JsonFileConfigurationProvider : public IConfigurationProvider
+    EXPORT class JsonFileConfigurationProvider : public ConfigurationProviderBase<JsonFileConfigurationSource>
     {
-      private:
-        JsonFileConfigurationSource _source;
-
-        JsonObject _configuration;
-
       public:
-        JsonFileConfigurationProvider(JsonFileConfigurationSource source);
+        using ConfigurationProviderBase<JsonFileConfigurationSource>::ConfigurationProviderBase;
 
         void load() override;
-
-        const JsonObject &get() const override;
 
       private:
         JsonObject getJsonFromFile();

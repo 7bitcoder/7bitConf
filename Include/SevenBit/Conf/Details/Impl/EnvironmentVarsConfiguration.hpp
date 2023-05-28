@@ -4,38 +4,21 @@
 
 #include "SevenBit/Conf/Details/JsonObjectExt.hpp"
 #include "SevenBit/Conf/EnvironmentVarsConfiguration.hpp"
+#include "SevenBit/Conf/LibraryConfig.hpp"
 
 extern char **environ;
 
 namespace sb::cf
 {
-    INLINE EnvironmentVarsConfigurationProvider::EnvironmentVarsConfigurationProvider(
-        EnvironmentVarsConfigurationSource source)
-        : _source(std::move(source))
-    {
-    }
-
-    INLINE void EnvironmentVarsConfigurationProvider::load()
-    {
-        _configuration.clear();
-        for (auto &env : getEnvVars())
-        {
-            auto config = _source.getOptionsParser().parseOption(env);
-            JsonObjectExt::deepMerge(_configuration, config);
-        }
-    }
-
-    INLINE const JsonObject &EnvironmentVarsConfigurationProvider::get() const { return _configuration; }
-
     INLINE std::vector<std::string_view> EnvironmentVarsConfigurationProvider::getEnvVars()
     {
         std::vector<std::string_view> result;
         for (auto env = environ; *env; env++)
         {
             std::string_view envStr = *env;
-            if (utils::startsWith(envStr, _source.getPrefix()))
+            if (utils::startsWith(envStr, _source->getPrefix()))
             {
-                result.push_back(envStr.substr(_source.getPrefix().size()));
+                result.push_back(envStr.substr(_source->getPrefix().size()));
             }
         }
         return result;
@@ -47,12 +30,28 @@ namespace sb::cf
     {
     }
 
+    INLINE EnvironmentVarsConfigurationSource::SPtr EnvironmentVarsConfigurationSource::create(
+        std::string prefix, OptionsParserCfg parserCfg)
+    {
+        return EnvironmentVarsConfigurationSource::SPtr(
+            new EnvironmentVarsConfigurationSource{std::move(prefix), std::move(parserCfg)});
+    }
+
     INLINE const std::string &EnvironmentVarsConfigurationSource::getPrefix() { return _prefix; }
 
     INLINE const OptionsParser &EnvironmentVarsConfigurationSource::getOptionsParser() { return _parser; }
 
-    INLINE IConfigurationProvider::Ptr EnvironmentVarsConfigurationSource::build() const
+    INLINE IConfigurationProvider::Ptr EnvironmentVarsConfigurationSource::build()
     {
-        return std::make_unique<EnvironmentVarsConfigurationProvider>(*this);
+        return std::make_unique<EnvironmentVarsConfigurationProvider>(shared_from_this());
+    }
+
+    INLINE void EnvironmentVarsConfigurationProvider::load()
+    {
+        clear();
+        for (auto &env : getEnvVars())
+        {
+            update(_source->getOptionsParser().parseOption(env));
+        }
     }
 } // namespace sb::cf

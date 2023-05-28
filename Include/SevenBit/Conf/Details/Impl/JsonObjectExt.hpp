@@ -8,7 +8,7 @@
 
 namespace sb::cf
 {
-    INLINE void JsonObjectExt::deepMerge(JsonObject &json, const JsonObject &override)
+    INLINE void JsonObjectExt::deepMerge(JsonObject &json, JsonObject &&override)
     {
         for (auto &[key, value] : override)
         {
@@ -19,7 +19,7 @@ namespace sb::cf
             }
             else
             {
-                deepMerge(it->second.get_object(), value.get_object());
+                deepMerge(it->second.get_object(), std::move(value.get_object()));
             }
         }
     }

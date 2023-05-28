@@ -24,10 +24,9 @@ class ChainedConfigurationTest : public testing::Test
 
 TEST_F(ChainedConfigurationTest, SimpleTest)
 {
-    auto provider = sb::cf::ChainedConfigurationSource{
-        {
-            std::make_unique<sb::cf::JsonFileConfigurationSource>("appsettings.json"),
-        }}.build();
+    auto provider =
+        sb::cf::ChainedConfigurationSource::create({sb::cf::JsonFileConfigurationSource::create("appsettings.json")})
+            ->build();
 
     provider->load();
 
@@ -35,16 +34,17 @@ TEST_F(ChainedConfigurationTest, SimpleTest)
                                    {"array", sb::cf::JsonArray{1, 2, 3, 4, 5, 6}},
                                    {"string", "string"},
                                    {"object", {{"num", 134}, {"string", "string"}}}};
-    EXPECT_EQ(provider->get(), expected);
+    EXPECT_EQ(provider->getConfiguration(), expected);
 }
 
 TEST_F(ChainedConfigurationTest, OverridedFileTest)
 {
-    auto provider = sb::cf::ChainedConfigurationSource{
-        {
-            std::make_unique<sb::cf::JsonFileConfigurationSource>("appsettings.json"),
-            std::make_unique<sb::cf::JsonFileConfigurationSource>("appsettings.dev.json"),
-        }}.build();
+    auto provider = sb::cf::ChainedConfigurationSource::create(
+                        {
+                            sb::cf::JsonFileConfigurationSource::create("appsettings.json"),
+                            sb::cf::JsonFileConfigurationSource::create("appsettings.dev.json"),
+                        })
+                        ->build();
 
     provider->load();
 
@@ -53,5 +53,5 @@ TEST_F(ChainedConfigurationTest, OverridedFileTest)
                                    {"string", "stringdev"},
                                    {"object", {{"num", 134}, {"string", "stringdev"}, {"inner", {{"num", 12345}}}}}};
 
-    EXPECT_EQ(provider->get(), expected);
+    EXPECT_EQ(provider->getConfiguration(), expected);
 }

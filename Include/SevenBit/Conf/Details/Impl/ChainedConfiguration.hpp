@@ -16,31 +16,28 @@ namespace sb::cf
     {
     }
 
-    INLINE void ChainedConfigurationSource::add(IConfigurationSource::Ptr source)
+    INLINE ChainedConfigurationSource::SPtr ChainedConfigurationSource::create(
+        std::vector<IConfigurationSource::SPtr> sources)
+    {
+        return ChainedConfigurationSource::SPtr(new ChainedConfigurationSource{std::move(sources)});
+    }
+
+    INLINE void ChainedConfigurationSource::add(IConfigurationSource::SPtr source)
     {
         _sources.push_back(std::move(source));
     }
 
-    INLINE IConfigurationProvider::Ptr ChainedConfigurationSource::build() const
+    INLINE IConfigurationProvider::Ptr ChainedConfigurationSource::build()
     {
-        return std::make_unique<ChainedConfigurationProvider>(*this);
-    }
-
-    INLINE ChainedConfigurationProvider::ChainedConfigurationProvider(ChainedConfigurationSource source)
-        : _source(std::move(source))
-    {
+        return std::make_unique<ChainedConfigurationProvider>(shared_from_this());
     }
 
     INLINE void ChainedConfigurationProvider::load()
     {
-        _configuration.clear();
-        for (auto &source : _source)
+        clear();
+        for (auto &source : *_source)
         {
-            auto provider = source->build();
-            provider->load();
-            JsonObjectExt::deepMerge(_configuration, provider->get());
+            updateFrom(source);
         }
     }
-
-    INLINE const JsonObject &ChainedConfigurationProvider::get() const { return _configuration; }
 } // namespace sb::cf

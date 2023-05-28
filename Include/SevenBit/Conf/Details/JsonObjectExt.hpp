@@ -12,7 +12,7 @@ namespace sb::cf
 {
     EXPORT struct JsonObjectExt
     {
-        static void deepMerge(JsonObject &json, const JsonObject &override);
+        static void deepMerge(JsonObject &json, JsonObject &&override);
 
         static JsonValue *find(JsonObject &json, std::string_view key);
         static const JsonValue *find(const JsonObject &json, std::string_view key);

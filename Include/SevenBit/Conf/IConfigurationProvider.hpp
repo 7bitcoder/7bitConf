@@ -14,7 +14,9 @@ namespace sb::cf
 
         virtual void load() = 0;
 
-        virtual const JsonObject &get() const = 0;
+        virtual JsonObject &getConfiguration() = 0;
+
+        virtual const JsonObject &getConfiguration() const = 0;
 
         virtual ~IConfigurationProvider() = default;
     };

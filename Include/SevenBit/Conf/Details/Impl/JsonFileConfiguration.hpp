@@ -8,41 +8,40 @@
 
 namespace sb::cf
 {
-    INLINE JsonFileConfigurationProvider::JsonFileConfigurationProvider(JsonFileConfigurationSource source)
-        : _source(std::move(source))
-    {
-    }
-
-    INLINE void JsonFileConfigurationProvider::load() { _configuration = getJsonFromFile(); }
-
-    INLINE const JsonObject &JsonFileConfigurationProvider::get() const { return _configuration; }
-
-    INLINE JsonObject JsonFileConfigurationProvider::getJsonFromFile()
-    {
-        bool exists = std::filesystem::exists(_source.getFilePath());
-        if (!exists)
-        {
-            return _source.getIsOptional() ? JsonObject{} : throw ConfigFileNotFoundException(_source.getFilePath());
-        }
-        auto json = tao::json::basic_from_file<JsonTraits>(_source.getFilePath());
-        if (!json.is_object())
-        {
-            throw BadConfigFileException(_source.getFilePath(), "file does not contain json object");
-        }
-        return json.get_object();
-    }
-
     INLINE JsonFileConfigurationSource::JsonFileConfigurationSource(std::filesystem::path filePath, bool isOptional)
         : _filePath(std::move(filePath)), _isOptional(isOptional)
     {
     }
 
-    INLINE const std::filesystem::path &JsonFileConfigurationSource::getFilePath() { return _filePath; }
-
-    INLINE bool JsonFileConfigurationSource::getIsOptional() { return _isOptional; }
-
-    INLINE IConfigurationProvider::Ptr JsonFileConfigurationSource::build() const
+    INLINE JsonFileConfigurationSource::SPtr JsonFileConfigurationSource::create(std::filesystem::path filePath,
+                                                                                 bool isOptional)
     {
-        return std::make_unique<JsonFileConfigurationProvider>(*this);
+        return JsonFileConfigurationSource::SPtr{new JsonFileConfigurationSource{std::move(filePath), isOptional}};
+    }
+
+    INLINE const std::filesystem::path &JsonFileConfigurationSource::getFilePath() const { return _filePath; }
+
+    INLINE bool JsonFileConfigurationSource::getIsOptional() const { return _isOptional; }
+
+    INLINE IConfigurationProvider::Ptr JsonFileConfigurationSource::build()
+    {
+        return std::make_unique<JsonFileConfigurationProvider>(shared_from_this());
+    }
+
+    INLINE void JsonFileConfigurationProvider::load() { set(getJsonFromFile()); }
+
+    INLINE JsonObject JsonFileConfigurationProvider::getJsonFromFile()
+    {
+        bool exists = std::filesystem::exists(_source->getFilePath());
+        if (!exists)
+        {
+            return _source->getIsOptional() ? JsonObject{} : throw ConfigFileNotFoundException(_source->getFilePath());
+        }
+        auto json = tao::json::basic_from_file<JsonTraits>(_source->getFilePath());
+        if (!json.is_object())
+        {
+            throw BadConfigFileException(_source->getFilePath(), "file does not contain json object");
+        }
+        return json.get_object();
     }
 } // namespace sb::cf

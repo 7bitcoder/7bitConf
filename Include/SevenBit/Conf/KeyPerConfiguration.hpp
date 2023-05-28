@@ -3,42 +3,42 @@
 #include <filesystem>
 #include <memory>
 
+#include "SevenBit/Conf/ConfigurationProviderBase.hpp"
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
 #include "SevenBit/Conf/IConfigurationSource.hpp"
 
 namespace sb::cf
 {
-    EXPORT class KeyPerConfigurationSource : public IConfigurationSource
+    EXPORT class KeyPerConfigurationSource : public IConfigurationSource,
+                                             public std::enable_shared_from_this<KeyPerConfigurationSource>
     {
       private:
         std::vector<std::pair<std::string, IConfigurationSource::SPtr>> _keySources;
 
+        KeyPerConfigurationSource(std::vector<std::pair<std::string, IConfigurationSource::SPtr>> keySources);
+
       public:
-        KeyPerConfigurationSource(std::vector<std::pair<std::string, IConfigurationSource::SPtr>> keySources = {});
+        using Ptr = std::unique_ptr<KeyPerConfigurationSource>;
+        using SPtr = std::shared_ptr<KeyPerConfigurationSource>;
 
-        void add(const std::string &key, IConfigurationSource::Ptr source);
+        static SPtr create(std::vector<std::pair<std::string, IConfigurationSource::SPtr>> keySources = {});
 
-        IConfigurationProvider::Ptr build() const override;
+        void add(const std::string &key, IConfigurationSource::SPtr source);
 
-        auto begin() const { return _keySources.begin(); }
+        IConfigurationProvider::Ptr build() override;
 
-        auto end() const { return _keySources.end(); }
+        auto begin() { return _keySources.begin(); }
+
+        auto end() { return _keySources.end(); }
     };
 
-    EXPORT class KeyPerConfigurationProvider : public IConfigurationProvider
+    EXPORT class KeyPerConfigurationProvider : public ConfigurationProviderBase<KeyPerConfigurationSource>
     {
-      private:
-        KeyPerConfigurationSource _source;
-
-        JsonObject _configuration;
-
       public:
-        KeyPerConfigurationProvider(KeyPerConfigurationSource source);
+        using ConfigurationProviderBase<KeyPerConfigurationSource>::ConfigurationProviderBase;
 
         void load() override;
-
-        const JsonObject &get() const override;
     };
 } // namespace sb::cf
 

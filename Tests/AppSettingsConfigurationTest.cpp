@@ -22,7 +22,7 @@ class AppSettingsConfiguration : public testing::Test
 
 TEST_F(AppSettingsConfiguration, SimpleTest)
 {
-    auto provider = sb::cf::AppSettingsConfigurationSource{}.build();
+    auto provider = sb::cf::AppSettingsConfigurationSource::create()->build();
 
     provider->load();
 
@@ -30,12 +30,12 @@ TEST_F(AppSettingsConfiguration, SimpleTest)
                                    {"array", sb::cf::JsonArray{1, 2, 3, 4, 5, 6}},
                                    {"string", "string"},
                                    {"object", {{"num", 134}, {"string", "string"}}}};
-    EXPECT_EQ(provider->get(), expected);
+    EXPECT_EQ(provider->getConfiguration(), expected);
 }
 
 TEST_F(AppSettingsConfiguration, OverridedFileTest)
 {
-    auto provider = sb::cf::AppSettingsConfigurationSource{"dev"}.build();
+    auto provider = sb::cf::AppSettingsConfigurationSource::create("dev")->build();
 
     provider->load();
 
@@ -44,5 +44,5 @@ TEST_F(AppSettingsConfiguration, OverridedFileTest)
                                    {"string", "stringdev"},
                                    {"object", {{"num", 134}, {"string", "stringdev"}, {"inner", {{"num", 12345}}}}}};
 
-    EXPECT_EQ(provider->get(), expected);
+    EXPECT_EQ(provider->getConfiguration(), expected);
 }

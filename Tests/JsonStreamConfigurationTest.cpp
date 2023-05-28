@@ -28,13 +28,13 @@ TEST_F(JsonStreamConfigurationTest, SimpleTest)
 
     stream << "{\"hello\": 12345, \"string\": \"asdf\"}";
 
-    auto provider = sb::cf::JsonStreamConfigurationSource{stream}.build();
+    auto provider = sb::cf::JsonStreamConfigurationSource::create(stream)->build();
 
     provider->load();
 
     sb::cf::JsonObject expected = {{"hello", 12345}, {"string", "asdf"}};
 
-    EXPECT_EQ(provider->get(), expected);
+    EXPECT_EQ(provider->getConfiguration(), expected);
 }
 
 TEST_F(JsonStreamConfigurationTest, FailedBadStream)
@@ -43,7 +43,7 @@ TEST_F(JsonStreamConfigurationTest, FailedBadStream)
 
     stream << "\"hello\"";
 
-    auto provider = sb::cf::JsonStreamConfigurationSource{stream}.build();
+    auto provider = sb::cf::JsonStreamConfigurationSource::create(stream)->build();
 
     EXPECT_THROW(provider->load(), sb::cf::BadStreamException);
 }
@@ -54,7 +54,7 @@ TEST_F(JsonStreamConfigurationTest, FailedDoubleStreamRead)
 
     stream << "{\"hello\": 12345, \"string\": \"asdf\"}";
 
-    auto provider = sb::cf::JsonStreamConfigurationSource{stream}.build();
+    auto provider = sb::cf::JsonStreamConfigurationSource::create(stream)->build();
 
     provider->load();
 

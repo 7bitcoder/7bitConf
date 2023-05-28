@@ -4,6 +4,7 @@
 #include <functional>
 #include <memory>
 
+#include "SevenBit/Conf/ConfigurationProviderBase.hpp"
 #include "SevenBit/Conf/IConfigurationProvider.hpp"
 #include "SevenBit/Conf/KeyPerConfiguration.hpp"
 #include "SevenBit/Conf/LibraryConfig.hpp"
@@ -12,7 +13,8 @@
 
 namespace sb::cf
 {
-    EXPORT class KeyPerFileConfigurationSource : public IConfigurationSource
+    EXPORT class KeyPerFileConfigurationSource : public IConfigurationSource,
+                                                 public std::enable_shared_from_this<KeyPerFileConfigurationSource>
     {
       private:
         std::filesystem::path _directoryPath;
@@ -20,13 +22,20 @@ namespace sb::cf
         std::string _ignorePrefix;
         bool _isOptional;
 
-      public:
-        KeyPerFileConfigurationSource(std::filesystem::path directoryPath, bool isOptional = false);
-
-        KeyPerFileConfigurationSource(std::filesystem::path directoryPath, bool isOptional, std::string ignorePrefix);
+        KeyPerFileConfigurationSource(std::filesystem::path directoryPath, bool isOptional = false,
+                                      std::string ignorePrefix = "");
 
         KeyPerFileConfigurationSource(std::filesystem::path directoryPath, bool isOptional,
                                       std::function<bool(const std::filesystem::path &)> ignoreCondition);
+
+      public:
+        using Ptr = std::unique_ptr<KeyPerFileConfigurationSource>;
+        using SPtr = std::shared_ptr<KeyPerFileConfigurationSource>;
+
+        static SPtr create(std::filesystem::path directoryPath, bool isOptional = false, std::string ignorePrefix = "");
+
+        static SPtr create(std::filesystem::path directoryPath, bool isOptional,
+                           std::function<bool(const std::filesystem::path &)> ignoreCondition);
 
         const std::filesystem::path &getDirectoryPath() const;
 
@@ -36,22 +45,15 @@ namespace sb::cf
 
         bool getIsOptional() const;
 
-        IConfigurationProvider::Ptr build() const override;
+        IConfigurationProvider::Ptr build() override;
     };
 
-    EXPORT class KeyPerFileConfigurationProvider : public IConfigurationProvider
+    EXPORT class KeyPerFileConfigurationProvider : public ConfigurationProviderBase<KeyPerFileConfigurationSource>
     {
-      private:
-        KeyPerFileConfigurationSource _source;
-
-        JsonObject _configuration;
-
       public:
-        KeyPerFileConfigurationProvider(KeyPerFileConfigurationSource source);
+        using ConfigurationProviderBase<KeyPerFileConfigurationSource>::ConfigurationProviderBase;
 
         void load() override;
-
-        const JsonObject &get() const override;
 
       private:
         bool canIgnore(std::filesystem::path filePath) const;

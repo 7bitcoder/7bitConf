@@ -9,15 +9,31 @@
 
 namespace sb::cf
 {
-    EXPORT class AppSettingsConfigurationSource final : public ChainedConfigurationSource
+    EXPORT class AppSettingsConfigurationSource : public IConfigurationSource,
+                                                  public std::enable_shared_from_this<AppSettingsConfigurationSource>
     {
       private:
         std::string _envName;
 
+        AppSettingsConfigurationSource(std::string envName);
+
       public:
-        AppSettingsConfigurationSource(std::string envName = "");
+        using Ptr = std::unique_ptr<AppSettingsConfigurationSource>;
+        using SPtr = std::shared_ptr<AppSettingsConfigurationSource>;
+
+        static SPtr create(std::string envName = "");
 
         const std::string &getEnvName();
+
+        IConfigurationProvider::Ptr build() override;
+    };
+
+    EXPORT class AppSettingsConfigurationProvider : public ConfigurationProviderBase<AppSettingsConfigurationSource>
+    {
+      public:
+        using ConfigurationProviderBase<AppSettingsConfigurationSource>::ConfigurationProviderBase;
+
+        void load() override;
     };
 } // namespace sb::cf
 

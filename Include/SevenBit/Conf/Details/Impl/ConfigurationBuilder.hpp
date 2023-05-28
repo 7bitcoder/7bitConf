@@ -11,7 +11,7 @@ namespace sb::cf
     {
     }
 
-    INLINE IConfigurationBuilder &ConfigurationBuilder::add(IConfigurationSource::Ptr source)
+    INLINE IConfigurationBuilder &ConfigurationBuilder::add(IConfigurationSource::SPtr source)
     {
         _sources.push_back(std::move(source));
         return *this;
@@ -21,8 +21,5 @@ namespace sb::cf
 
     INLINE bool ConfigurationBuilder::hasAnySources() const { return !_sources.empty(); }
 
-    INLINE const std::vector<std::shared_ptr<IConfigurationSource>> &ConfigurationBuilder::getSources() const
-    {
-        return _sources;
-    }
+    INLINE const std::vector<IConfigurationSource::SPtr> &ConfigurationBuilder::getSources() const { return _sources; }
 } // namespace sb::cf

@@ -29,7 +29,7 @@ namespace sb::cf
         ConfigurationBuilder &operator=(ConfigurationBuilder &&) = default;
         ConfigurationBuilder &operator=(const ConfigurationBuilder &) = default;
 
-        IConfigurationBuilder &add(IConfigurationSource::Ptr source);
+        IConfigurationBuilder &add(IConfigurationSource::SPtr source);
 
         IConfigurationRoot::Ptr build();
 

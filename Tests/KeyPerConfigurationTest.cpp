@@ -23,10 +23,11 @@ class KeyPerConfigurationTest : public testing::Test
 
 TEST_F(KeyPerConfigurationTest, SimpleTest)
 {
-    auto provider = sb::cf::KeyPerConfigurationSource{
-        {
-            {"yeah", std::make_unique<sb::cf::JsonFileConfigurationSource>("appsettings.json")},
-        }}.build();
+    auto provider = sb::cf::KeyPerConfigurationSource::create(
+                        {
+                            {"yeah", sb::cf::JsonFileConfigurationSource::create("appsettings.json")},
+                        })
+                        ->build();
 
     provider->load();
 
@@ -36,17 +37,18 @@ TEST_F(KeyPerConfigurationTest, SimpleTest)
                                      {"string", "string"},
                                      {"object", {{"num", 134}, {"string", "string"}}}}}};
 
-    EXPECT_EQ(provider->get(), expected);
+    EXPECT_EQ(provider->getConfiguration(), expected);
 }
 
 TEST_F(KeyPerConfigurationTest, OverridedFileTest)
 {
 
-    auto provider = sb::cf::KeyPerConfigurationSource{
-        {
-            {"yeah", std::make_unique<sb::cf::JsonFileConfigurationSource>("appsettings.json")},
-            {"dev", std::make_unique<sb::cf::JsonFileConfigurationSource>("appsettings.dev.json")},
-        }}.build();
+    auto provider = sb::cf::KeyPerConfigurationSource ::create(
+                        {
+                            {"yeah", sb::cf::JsonFileConfigurationSource::create("appsettings.json")},
+                            {"dev", sb::cf::JsonFileConfigurationSource::create("appsettings.dev.json")},
+                        })
+                        ->build();
 
     provider->load();
 
@@ -60,5 +62,5 @@ TEST_F(KeyPerConfigurationTest, OverridedFileTest)
                                      {"string", "stringdev"},
                                      {"object", {{"inner", {{"num", 12345}}}, {"string", "stringdev"}}}}}};
 
-    EXPECT_EQ(provider->get(), expected);
+    EXPECT_EQ(provider->getConfiguration(), expected);
 }
