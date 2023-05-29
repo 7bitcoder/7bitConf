@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <iostream>
+#include <string_view>
 
 #include "SevenBit/Conf/Details/JsonObjectExt.hpp"
 #include "SevenBit/Conf/Json.hpp"
@@ -24,7 +25,6 @@ class JsonObjectExt : public testing::Test
 
 TEST_F(JsonObjectExt, ShouldFindInner)
 {
-
     sb::cf::JsonObject json = {{"str", "hello"},
                                {"number", 123},
                                {"inner",
@@ -44,7 +44,6 @@ TEST_F(JsonObjectExt, ShouldFindInner)
 
 TEST_F(JsonObjectExt, ShouldInsertInner)
 {
-
     sb::cf::JsonObject json = {{"str", "hello"},
                                {"number", 123},
                                {"inner",
@@ -73,6 +72,29 @@ TEST_F(JsonObjectExt, ShouldInsertInner)
                                             }}}}}}};
 
     EXPECT_EQ(json, expectedJson);
+}
+
+TEST_F(JsonObjectExt, ShouldFailInsertInner)
+{
+    sb::cf::JsonObject json = {{"str", "hello"},
+                               {"number", 123},
+                               {"inner",
+                                {{"str", "hello1"},
+                                 {"number", 1231},
+                                 {"inner",
+                                  {
+                                      {"str", "hello2"},
+                                      {"number", 1232},
+                                  }}}}};
+
+    EXPECT_ANY_THROW(sb::cf::JsonObjectExt::insertInner(json, "inner:inner:str:fail", "hello3"));
+}
+
+TEST_F(JsonObjectExt, ShouldFailInsertInnerEmpty)
+{
+    sb::cf::JsonObject json = {{"str", "hello"}};
+
+    EXPECT_ANY_THROW(sb::cf::JsonObjectExt::insertInner(json, std::vector<std::string_view>{}, "hello"));
 }
 
 TEST_F(JsonObjectExt, SouldDeepMerge)

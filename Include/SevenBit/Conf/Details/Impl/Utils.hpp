@@ -1,4 +1,5 @@
 #pragma once
+#include <algorithm>
 #include <cstddef>
 #include <limits>
 #include <string_view>
@@ -8,6 +9,12 @@
 
 namespace sb::cf::utils
 {
+    INLINE bool ignoreCaseEquals(std::string_view a, std::string_view b)
+    {
+        return std::equal(a.begin(), a.end(), b.begin(), b.end(),
+                          [](char a, char b) { return std::tolower(a) == std::tolower(b); });
+    }
+
     INLINE bool startsWith(std::string_view str, std::string_view search)
     {
         if (search.empty())

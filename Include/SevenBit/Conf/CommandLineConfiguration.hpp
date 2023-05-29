@@ -17,10 +17,10 @@ namespace sb::cf
                                                   public std::enable_shared_from_this<CommandLineConfigurationSource>
     {
       private:
-        std::vector<std::string> _args;
+        std::vector<std::string_view> _args;
         OptionsParser _parser;
 
-        CommandLineConfigurationSource(std::vector<std::string> args, OptionsParserConfig config);
+        CommandLineConfigurationSource(std::vector<std::string_view> args, OptionsParserConfig config);
 
       public:
         using Ptr = std::unique_ptr<CommandLineConfigurationSource>;
@@ -28,9 +28,9 @@ namespace sb::cf
 
         static SPtr create(int argc, char **argv, OptionsParserConfig config = {});
 
-        static SPtr create(std::vector<std::string> args, OptionsParserConfig config = {});
+        static SPtr create(std::vector<std::string_view> args, OptionsParserConfig config = {});
 
-        const std::vector<std::string> &getArgs() const;
+        const std::vector<std::string_view> &getArgs() const;
 
         const OptionsParser &getOptionsParser();
 

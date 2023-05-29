@@ -19,11 +19,28 @@ class ConfigurationTest : public testing::Test
     static void TearDownTestSuite() {}
 };
 
-TEST_F(ConfigurationTest, ExampleTest)
+TEST_F(ConfigurationTest, ShouldLoadConfig)
 {
-    auto ptr = sb::cf::ConfigurationBuilder{}.addAppSettings("dev").addJson({{"string", 112356}}).build();
-    auto &conf = *ptr;
+    auto conf = sb::cf::ConfigurationBuilder{}
+                    .addAppSettings("dev")
+                    .addJson({{"string", 1}})
+                    .addCommandLine({"--string=2", "array=3,2,1"})
+                    .addKeyPerFile("Directory")
+                    .build();
 
-    EXPECT_EQ(conf["string"], 112356);
-    EXPECT_EQ(conf["string"], 112356);
+    sb::cf::JsonObject expected = {{"number", 12345},
+                                   {"array", sb::cf::JsonArray{"3", "2", "1"}},
+                                   {"string", "2"},
+                                   {"object", {{"num", 134}, {"string", "stringdev"}, {"inner", {{"num", 12345}}}}},
+                                   {"settingOne",
+                                    {{"number", 12345},
+                                     {"array", sb::cf::JsonArray{1, 2, 3, 4, 5, 6}},
+                                     {"string", "string"},
+                                     {"object", {{"num", 134}, {"string", "string"}}}}},
+                                   {"settingTwo",
+                                    {{"array", sb::cf::JsonArray{1}},
+                                     {"string", "stringdev"},
+                                     {"object", {{"inner", {{"num", 12345}}}, {"string", "stringdev"}}}}}};
+
+    EXPECT_EQ(conf->root(), expected);
 }

@@ -12,7 +12,7 @@ class EnvironmentVarsConfigurationTest : public testing::Test
     EnvironmentVarsConfigurationTest()
     {
         setenv("7BITCONF_TEST_STRING", "test", 1);
-        setenv("7BITCONF_TEST_STRING_LIST", "string;string1;string2", 1);
+        setenv("7BITCONF_TEST_STRING_LIST", "string,string1,string2", 1);
         setenv("7BITCONF_TEST_OBJECT:INNER:OBJECT", "string", 1);
         setenv("7BIT_OTHER_CONF_TEST_STRING", "string2", 1);
     }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <filesystem>
+#include <functional>
 #include <memory>
 #include <sstream>
 #include <unordered_map>
@@ -16,6 +17,7 @@
 #include "SevenBit/Conf/JsonFileConfiguration.hpp"
 #include "SevenBit/Conf/JsonStreamConfiguration.hpp"
 #include "SevenBit/Conf/KeyPerFileConfiguration.hpp"
+#include "SevenBit/Conf/OptionsParserConfig.hpp"
 
 namespace sb::cf
 {
@@ -42,14 +44,19 @@ namespace sb::cf
             return add(AppSettingsConfigurationSource::create(std::move(envName)));
         }
 
-        IConfigurationBuilder &addEnvironmentVariables(std::string prefix = "")
+        IConfigurationBuilder &addEnvironmentVariables(std::string prefix = "", OptionsParserConfig config = {})
         {
-            return add(EnvironmentVarsConfigurationSource::create(std::move(prefix)));
+            return add(EnvironmentVarsConfigurationSource::create(std::move(prefix), std::move(config)));
         }
 
-        IConfigurationBuilder &addCommandLine(int argc, char **argv)
+        IConfigurationBuilder &addCommandLine(int argc, char **argv, OptionsParserConfig config = {})
         {
-            return add(CommandLineConfigurationSource::create(argc, argv));
+            return add(CommandLineConfigurationSource::create(argc, argv, std::move(config)));
+        }
+
+        IConfigurationBuilder &addCommandLine(std::vector<std::string_view> args, OptionsParserConfig config = {})
+        {
+            return add(CommandLineConfigurationSource::create(std::move(args), std::move(config)));
         }
 
         IConfigurationBuilder &addJson(JsonObject object)
@@ -57,9 +64,18 @@ namespace sb::cf
             return add(JsonConfigurationSource::create(std::move(object)));
         }
 
-        IConfigurationBuilder &addKeyPerFile(std::filesystem::path directoryPath)
+        IConfigurationBuilder &addKeyPerFile(std::filesystem::path directoryPath, bool isOptional = false,
+                                             std::string ignorePrefix = "")
         {
-            return add(KeyPerFileConfigurationSource::create(std::move(directoryPath)));
+            return add(
+                KeyPerFileConfigurationSource::create(std::move(directoryPath), isOptional, std::move(ignorePrefix)));
+        }
+
+        IConfigurationBuilder &addKeyPerFile(std::filesystem::path directoryPath, bool isOptional,
+                                             std::function<bool(const std::filesystem::path &)> ignoreCondition)
+        {
+            return add(KeyPerFileConfigurationSource::create(std::move(directoryPath), isOptional,
+                                                             std::move(ignoreCondition)));
         }
 
         virtual const std::vector<IConfigurationSource::SPtr> &getSources() const = 0;
