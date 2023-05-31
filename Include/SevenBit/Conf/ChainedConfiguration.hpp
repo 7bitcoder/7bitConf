@@ -16,7 +16,7 @@ namespace sb::cf
       private:
         std::vector<IConfigurationSource::SPtr> _sources;
 
-        ChainedConfigurationSource(std::vector<IConfigurationSource::SPtr> sources);
+        ChainedConfigurationSource(std::vector<IConfigurationSource::SPtr> sources = {});
 
       public:
         using Ptr = std::unique_ptr<ChainedConfigurationSource>;
@@ -26,17 +26,20 @@ namespace sb::cf
 
         void add(IConfigurationSource::SPtr source);
 
-        IConfigurationProvider::Ptr build() override;
+        IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
 
         auto begin() { return _sources.begin(); }
 
         auto end() { return _sources.end(); }
     };
 
-    EXPORT class ChainedConfigurationProvider : public ConfigurationProviderBase<ChainedConfigurationSource>
+    EXPORT class ChainedConfigurationProvider : public ConfigurationProviderBase
     {
+      private:
+        std::vector<IConfigurationProvider::Ptr> _providers;
+
       public:
-        using ConfigurationProviderBase<ChainedConfigurationSource>::ConfigurationProviderBase;
+        ChainedConfigurationProvider(std::vector<IConfigurationProvider::Ptr> providers);
 
         void load() override;
     };

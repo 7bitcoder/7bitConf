@@ -5,7 +5,6 @@
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
-#include "SevenBit/Conf/Configuration.hpp"
 #include "SevenBit/Conf/IConfiguration.hpp"
 #include "SevenBit/Conf/IConfigurationBuilder.hpp"
 #include "SevenBit/Conf/IConfigurationProvider.hpp"
@@ -16,6 +15,8 @@ namespace sb::cf
     EXPORT class ConfigurationBuilder : public IConfigurationBuilder
     {
       private:
+        std::unordered_map<std::string, IObject::Ptr> _properties;
+
         std::vector<IConfigurationSource::SPtr> _sources;
 
       public:
@@ -29,13 +30,19 @@ namespace sb::cf
         ConfigurationBuilder &operator=(ConfigurationBuilder &&) = default;
         ConfigurationBuilder &operator=(const ConfigurationBuilder &) = default;
 
-        IConfigurationBuilder &add(IConfigurationSource::SPtr source);
+        IConfigurationBuilder &add(IConfigurationSource::SPtr source) override;
 
-        IConfigurationRoot::Ptr build();
+        std::vector<IConfigurationSource::SPtr> &getSources() override;
 
-        bool hasAnySources() const;
+        const std::vector<IConfigurationSource::SPtr> &getSources() const override;
 
-        const std::vector<IConfigurationSource::SPtr> &getSources() const;
+        std::unordered_map<std::string, IObject::Ptr> &getProperties() override;
+
+        const std::unordered_map<std::string, IObject::Ptr> &getProperties() const override;
+
+        IConfiguration::Ptr build() override;
+
+        void clear() override;
     };
 } // namespace sb::cf
 

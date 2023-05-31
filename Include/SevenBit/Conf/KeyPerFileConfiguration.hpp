@@ -44,15 +44,7 @@ namespace sb::cf
 
         bool getIsOptional() const;
 
-        IConfigurationProvider::Ptr build() override;
-    };
-
-    EXPORT class KeyPerFileConfigurationProvider : public ConfigurationProviderBase<KeyPerFileConfigurationSource>
-    {
-      public:
-        using ConfigurationProviderBase<KeyPerFileConfigurationSource>::ConfigurationProviderBase;
-
-        void load() override;
+        IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
 
       private:
         bool canIgnore(std::filesystem::path filePath) const;

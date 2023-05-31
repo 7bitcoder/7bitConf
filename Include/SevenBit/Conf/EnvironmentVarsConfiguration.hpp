@@ -6,7 +6,7 @@
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
 #include "SevenBit/Conf/ConfigurationProviderBase.hpp"
-#include "SevenBit/Conf/Details/OptionsParser.hpp"
+#include "SevenBit/Conf/Details/SettingParser.hpp"
 #include "SevenBit/Conf/IConfigurationSource.hpp"
 
 namespace sb::cf
@@ -17,28 +17,30 @@ namespace sb::cf
     {
       private:
         std::string _prefix;
-        OptionsParser _parser;
+        details::SettingParser _parser;
 
-        EnvironmentVarsConfigurationSource(std::string prefix, OptionsParserConfig parserConfig);
+        EnvironmentVarsConfigurationSource(std::string prefix, SettingParserConfig parserConfig);
 
       public:
         using Ptr = std::unique_ptr<EnvironmentVarsConfigurationSource>;
         using SPtr = std::shared_ptr<EnvironmentVarsConfigurationSource>;
 
-        static SPtr create(std::string prefix = "", OptionsParserConfig parserCfg = {});
+        static SPtr create(std::string prefix = "", SettingParserConfig parserCfg = {});
 
         const std::string &getPrefix();
 
-        const OptionsParser &getOptionsParser();
+        const details::SettingParser &getSettingParser();
 
-        IConfigurationProvider::Ptr build() override;
+        IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
     };
 
-    EXPORT class EnvironmentVarsConfigurationProvider
-        : public ConfigurationProviderBase<EnvironmentVarsConfigurationSource>
+    EXPORT class EnvironmentVarsConfigurationProvider : public ConfigurationProviderBase
     {
+      private:
+        EnvironmentVarsConfigurationSource::SPtr _source;
+
       public:
-        using ConfigurationProviderBase<EnvironmentVarsConfigurationSource>::ConfigurationProviderBase;
+        EnvironmentVarsConfigurationProvider(EnvironmentVarsConfigurationSource::SPtr source);
 
         void load() override;
 

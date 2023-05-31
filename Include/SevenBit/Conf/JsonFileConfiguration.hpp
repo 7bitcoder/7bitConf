@@ -29,13 +29,16 @@ namespace sb::cf
 
         bool getIsOptional() const;
 
-        IConfigurationProvider::Ptr build() override;
+        IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
     };
 
-    EXPORT class JsonFileConfigurationProvider : public ConfigurationProviderBase<JsonFileConfigurationSource>
+    EXPORT class JsonFileConfigurationProvider : public ConfigurationProviderBase
     {
+      private:
+        JsonFileConfigurationSource::SPtr _source;
+
       public:
-        using ConfigurationProviderBase<JsonFileConfigurationSource>::ConfigurationProviderBase;
+        JsonFileConfigurationProvider(JsonFileConfigurationSource::SPtr source);
 
         void load() override;
 

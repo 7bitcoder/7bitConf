@@ -1,4 +1,5 @@
 #include "SevenBit/Conf/JsonConfiguration.hpp"
+#include "Mocks/ConfigurationBuilderMock.hpp"
 #include "SevenBit/Conf/Json.hpp"
 #include <gtest/gtest.h>
 #include <iostream>
@@ -6,6 +7,8 @@
 class JsonConfigurationTest : public testing::Test
 {
   protected:
+    ConfigurationBuilderMock mock;
+
     static void TearUpTestSuite() {}
 
     JsonConfigurationTest() {}
@@ -21,7 +24,7 @@ class JsonConfigurationTest : public testing::Test
 
 TEST_F(JsonConfigurationTest, ShouldLoadSimpleJsonConfig)
 {
-    auto provider = sb::cf::JsonConfigurationSource::create({{"hello", 12345}})->build();
+    auto provider = sb::cf::JsonConfigurationSource::create({{"hello", 12345}})->build(mock);
 
     provider->load();
 

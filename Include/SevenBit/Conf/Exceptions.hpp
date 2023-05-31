@@ -36,6 +36,11 @@ namespace sb::cf
     {
         BadStreamException(const std::string &why);
     };
+
+    struct EXPORT ConfigOptionException : public ConfigException
+    {
+        ConfigOptionException(const std::string &why);
+    };
 } // namespace sb::cf
 
 #ifdef _7BIT_CONF_ADD_IMPL

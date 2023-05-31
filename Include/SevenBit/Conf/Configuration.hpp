@@ -3,25 +3,28 @@
 #include <memory>
 #include <string>
 #include <string_view>
+#include <unordered_map>
 #include <vector>
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
-#include "SevenBit/Conf/IConfigurationRoot.hpp"
+#include "SevenBit/Conf/IConfiguration.hpp"
+#include "SevenBit/Conf/IConfigurationBuilder.hpp"
+#include "SevenBit/Conf/IConfigurationProvider.hpp"
 
 namespace sb::cf
 {
-    EXPORT class Configuration final : public IConfigurationRoot
+    EXPORT class Configuration : public IConfiguration
     {
       private:
-        std::vector<IConfigurationSource::SPtr> _sources;
+        std::vector<IConfigurationProvider::Ptr> _providers;
 
         JsonObject _configuration;
 
       public:
         using Ptr = std::unique_ptr<Configuration>;
 
-        Configuration(std::vector<IConfigurationSource::SPtr> sources);
+        Configuration(std::vector<IConfigurationProvider::Ptr> providers = {});
 
         Configuration(Configuration &&) = default;
         Configuration(const Configuration &) = delete;
@@ -29,33 +32,33 @@ namespace sb::cf
         Configuration &operator=(Configuration &&) = delete;
         Configuration &operator=(const Configuration &) = delete;
 
-        const JsonObject &root() const;
-
         JsonObject &root();
 
-        const JsonValue &at(const std::string &key) const;
+        const JsonObject &root() const override;
 
         JsonValue &at(const std::string &key);
 
-        const JsonValue *find(std::string_view key) const;
+        const JsonValue &at(const std::string &key) const override;
 
         JsonValue *find(std::string_view key);
 
-        const JsonValue *findInner(std::string_view key) const;
+        const JsonValue *find(std::string_view key) const override;
 
         JsonValue *findInner(std::string_view key);
 
-        const JsonValue *findInner(const std::vector<std::string_view> &key) const;
+        const JsonValue *findInner(std::string_view key) const override;
 
         JsonValue *findInner(const std::vector<std::string_view> &key);
 
+        const JsonValue *findInner(const std::vector<std::string_view> &key) const override;
+
         JsonValue &atInner(std::string_view key);
 
-        const JsonValue &atInner(std::string_view key) const;
+        const JsonValue &atInner(std::string_view key) const override;
 
         JsonValue &atInner(const std::vector<std::string_view> &key);
 
-        const JsonValue &atInner(const std::vector<std::string_view> &key) const;
+        const JsonValue &atInner(const std::vector<std::string_view> &key) const override;
 
         JsonValue &operator[](std::string_view key);
 
@@ -67,7 +70,7 @@ namespace sb::cf
 
         void reload();
 
-        const std::vector<IConfigurationSource::SPtr> &getSources() const;
+        const std::vector<IConfigurationProvider::Ptr> &getProviders() const;
 
       private:
         JsonValue &throwNullPointnerException(const std::vector<std::string_view> &key) const;

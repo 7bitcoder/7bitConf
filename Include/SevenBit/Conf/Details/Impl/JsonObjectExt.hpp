@@ -6,26 +6,27 @@
 #include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"
 
-namespace sb::cf
+namespace sb::cf::details
 {
     INLINE void JsonObjectExt::deepMerge(JsonObject &json, JsonObject &&override)
     {
         for (auto &[key, value] : override)
         {
-            auto it = json.find(key);
-            if (it == json.end() || !it->second.is_object() || !value.is_object())
+            auto valuePtr = find(json, key);
+            if (!valuePtr || !valuePtr->is_object() || !value.is_object())
             {
                 json[key] = std::move(value);
             }
             else
             {
-                deepMerge(it->second.get_object(), std::move(value.get_object()));
+                deepMerge(valuePtr->get_object(), std::move(value.get_object()));
             }
         }
     }
 
     INLINE JsonValue *JsonObjectExt::find(JsonObject &json, std::string_view key)
     {
+        checkKey(key);
         if (auto it = json.find(key); it != json.end())
         {
             return &it->second;
@@ -35,6 +36,7 @@ namespace sb::cf
 
     INLINE const JsonValue *JsonObjectExt::find(const JsonObject &json, std::string_view key)
     {
+        checkKey(key);
         if (auto it = json.find(key); it != json.end())
         {
             return &it->second;
@@ -108,6 +110,7 @@ namespace sb::cf
             }
             currentObject = &(jsonValue->get_object());
         }
+        checkKey(key.back());
         auto &newValue = (*currentObject)[std::string{key.back()}] = value;
         return &newValue;
     }
@@ -119,4 +122,12 @@ namespace sb::cf
             throw ConfigException("Bad configuration key parameter, there should be at least one segment");
         }
     }
-} // namespace sb::cf
+
+    INLINE void JsonObjectExt::checkKey(std::string_view key)
+    {
+        if (key.empty())
+        {
+            throw ConfigException("Key parameter cannot be empty");
+        }
+    }
+} // namespace sb::cf::details

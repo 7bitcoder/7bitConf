@@ -9,32 +9,27 @@
 
 namespace sb::cf
 {
-    INLINE AppSettingsConfigurationSource::AppSettingsConfigurationSource(std::string envName)
-        : _envName(std::move(envName))
+    INLINE AppSettingsConfigurationSource::AppSettingsConfigurationSource(std::string environmentName)
+        : _envName(std::move(environmentName))
     {
     }
 
-    INLINE AppSettingsConfigurationSource::SPtr AppSettingsConfigurationSource::create(std::string envName)
+    INLINE AppSettingsConfigurationSource::SPtr AppSettingsConfigurationSource::create(std::string environmentName)
     {
-        return AppSettingsConfigurationSource::SPtr(new AppSettingsConfigurationSource{std::move(envName)});
+        return AppSettingsConfigurationSource::SPtr(new AppSettingsConfigurationSource{std::move(environmentName)});
     }
 
-    INLINE const std::string &AppSettingsConfigurationSource::getEnvName() { return _envName; }
+    INLINE const std::string &AppSettingsConfigurationSource::getEnvName() const { return _envName; }
 
-    INLINE IConfigurationProvider::Ptr AppSettingsConfigurationSource::build()
+    INLINE IConfigurationProvider::Ptr AppSettingsConfigurationSource::build(IConfigurationBuilder &builder)
     {
-        return std::make_unique<AppSettingsConfigurationProvider>(shared_from_this());
-    }
-
-    INLINE void AppSettingsConfigurationProvider::load()
-    {
-        auto sources =
+        ChainedConfigurationSource::SPtr _chain =
             ChainedConfigurationSource::create({JsonFileConfigurationSource::create("appsettings.json", true)});
-        if (!_source->getEnvName().empty())
+        if (!getEnvName().empty())
         {
-            sources->add(JsonFileConfigurationSource::create("appsettings." + _source->getEnvName() + ".json", true));
+            _chain->add(JsonFileConfigurationSource::create("appsettings." + getEnvName() + ".json", true));
         }
-        setFrom(sources);
+        return _chain->build(builder);
     }
 
 } // namespace sb::cf

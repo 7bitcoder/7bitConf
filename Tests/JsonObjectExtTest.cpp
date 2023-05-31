@@ -3,27 +3,28 @@
 #include <string_view>
 
 #include "SevenBit/Conf/Details/JsonObjectExt.hpp"
+#include "SevenBit/Conf/Exceptions.hpp"
 #include "SevenBit/Conf/Json.hpp"
 
 using namespace sb::cf::json;
 
-class JsonObjectExt : public testing::Test
+class JsonObjectExtTest : public testing::Test
 {
   protected:
     static void TearUpTestSuite() {}
 
-    JsonObjectExt() {}
+    JsonObjectExtTest() {}
 
     void SetUp() override {}
 
     void TearDown() override {}
 
-    ~JsonObjectExt() {}
+    ~JsonObjectExtTest() {}
 
     static void TearDownTestSuite() {}
 };
 
-TEST_F(JsonObjectExt, ShouldFindInner)
+TEST_F(JsonObjectExtTest, ShouldFindInner)
 {
     sb::cf::JsonObject json = {{"str", "hello"},
                                {"number", 123},
@@ -36,13 +37,14 @@ TEST_F(JsonObjectExt, ShouldFindInner)
                                       {"number", 1232},
                                   }}}}};
 
-    EXPECT_EQ(*sb::cf::JsonObjectExt::findInner(json, "inner:inner:str"), "hello2");
-    EXPECT_FALSE(sb::cf::JsonObjectExt::findInner(json, "inner:inner:nonExisting"));
-    EXPECT_FALSE(sb::cf::JsonObjectExt::findInner(json, "inner:inner:str:nonExisting"));
-    EXPECT_FALSE(sb::cf::JsonObjectExt::findInner(json, "nonExisting"));
+    EXPECT_EQ(*sb::cf::details::JsonObjectExt::findInner(json, "inner:inner:str"), "hello2");
+    EXPECT_FALSE(sb::cf::details::JsonObjectExt::findInner(json, "inner:inner:nonExisting"));
+    EXPECT_FALSE(sb::cf::details::JsonObjectExt::findInner(json, "inner:inner:str:nonExisting"));
+    EXPECT_FALSE(sb::cf::details::JsonObjectExt::findInner(json, "nonExisting"));
+    EXPECT_THROW(sb::cf::details::JsonObjectExt::findInner(json, "inner::inner:str"), sb::cf::ConfigException);
 }
 
-TEST_F(JsonObjectExt, ShouldInsertInner)
+TEST_F(JsonObjectExtTest, ShouldInsertInner)
 {
     sb::cf::JsonObject json = {{"str", "hello"},
                                {"number", 123},
@@ -55,8 +57,8 @@ TEST_F(JsonObjectExt, ShouldInsertInner)
                                       {"number", 1232},
                                   }}}}};
 
-    EXPECT_TRUE(sb::cf::JsonObjectExt::insertInner(json, "inner:inner:str", "hello3"));
-    EXPECT_TRUE(sb::cf::JsonObjectExt::insertInner(json, "inner:inner:inner:str", "hello5"));
+    EXPECT_TRUE(sb::cf::details::JsonObjectExt::insertInner(json, "inner:inner:str", "hello3"));
+    EXPECT_TRUE(sb::cf::details::JsonObjectExt::insertInner(json, "inner:inner:inner:str", "hello5"));
 
     sb::cf::JsonObject expectedJson = {{"str", "hello"},
                                        {"number", 123},
@@ -74,7 +76,7 @@ TEST_F(JsonObjectExt, ShouldInsertInner)
     EXPECT_EQ(json, expectedJson);
 }
 
-TEST_F(JsonObjectExt, ShouldFailInsertInner)
+TEST_F(JsonObjectExtTest, ShouldFailInsertInner)
 {
     sb::cf::JsonObject json = {{"str", "hello"},
                                {"number", 123},
@@ -87,17 +89,17 @@ TEST_F(JsonObjectExt, ShouldFailInsertInner)
                                       {"number", 1232},
                                   }}}}};
 
-    EXPECT_ANY_THROW(sb::cf::JsonObjectExt::insertInner(json, "inner:inner:str:fail", "hello3"));
+    EXPECT_ANY_THROW(sb::cf::details::JsonObjectExt::insertInner(json, "inner:inner:str:fail", "hello3"));
 }
 
-TEST_F(JsonObjectExt, ShouldFailInsertInnerEmpty)
+TEST_F(JsonObjectExtTest, ShouldFailInsertInnerEmpty)
 {
     sb::cf::JsonObject json = {{"str", "hello"}};
 
-    EXPECT_ANY_THROW(sb::cf::JsonObjectExt::insertInner(json, std::vector<std::string_view>{}, "hello"));
+    EXPECT_ANY_THROW(sb::cf::details::JsonObjectExt::insertInner(json, std::vector<std::string_view>{}, "hello"));
 }
 
-TEST_F(JsonObjectExt, SouldDeepMerge)
+TEST_F(JsonObjectExtTest, SouldDeepMerge)
 {
 
     sb::cf::JsonObject json = {{"str", "hello"},
@@ -117,7 +119,7 @@ TEST_F(JsonObjectExt, SouldDeepMerge)
                                               {"str", "hello2Ov"},
                                               {"number", 12323},
                                           }}}}};
-    sb::cf::JsonObjectExt::deepMerge(json, std::move(jsonOverride));
+    sb::cf::details::JsonObjectExt::deepMerge(json, std::move(jsonOverride));
 
     sb::cf::JsonObject expectedJson = {{"str", "helloOv"},
                                        {"number", 123},

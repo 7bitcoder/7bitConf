@@ -8,7 +8,7 @@
 
 #include "SevenBit/Conf/Json.hpp"
 
-namespace sb::cf
+namespace sb::cf::details
 {
     EXPORT struct JsonObjectExt
     {
@@ -29,9 +29,10 @@ namespace sb::cf
 
       private:
         static void checkSegmentSize(const std::vector<std::string_view> &key);
+        static void checkKey(std::string_view key);
     };
 
-} // namespace sb::cf
+} // namespace sb::cf::details
 
 #ifdef _7BIT_CONF_ADD_IMPL
 #include "SevenBit/Conf/Details/Impl/JsonObjectExt.hpp"

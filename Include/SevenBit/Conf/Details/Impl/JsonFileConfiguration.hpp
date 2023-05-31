@@ -23,9 +23,14 @@ namespace sb::cf
 
     INLINE bool JsonFileConfigurationSource::getIsOptional() const { return _isOptional; }
 
-    INLINE IConfigurationProvider::Ptr JsonFileConfigurationSource::build()
+    INLINE IConfigurationProvider::Ptr JsonFileConfigurationSource::build(IConfigurationBuilder &builder)
     {
         return std::make_unique<JsonFileConfigurationProvider>(shared_from_this());
+    }
+
+    INLINE JsonFileConfigurationProvider::JsonFileConfigurationProvider(JsonFileConfigurationSource::SPtr source)
+        : _source(std::move(source))
+    {
     }
 
     INLINE void JsonFileConfigurationProvider::load() { set(getJsonFromFile()); }

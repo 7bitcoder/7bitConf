@@ -4,14 +4,15 @@
 #include <filesystem>
 #include <memory>
 
+#include "SevenBit/Conf/ChainedConfiguration.hpp"
 #include "SevenBit/Conf/Details/JsonObjectExt.hpp"
 #include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/IConfigurationProvider.hpp"
 #include "SevenBit/Conf/Json.hpp"
 #include "SevenBit/Conf/JsonFileConfiguration.hpp"
-#include "SevenBit/Conf/KeyPerConfiguration.hpp"
 #include "SevenBit/Conf/KeyPerFileConfiguration.hpp"
 #include "SevenBit/Conf/LibraryConfig.hpp"
+#include "SevenBit/Conf/MapConfiguration.hpp"
 
 namespace sb::cf
 {
@@ -59,20 +60,14 @@ namespace sb::cf
 
     INLINE const std::string &KeyPerFileConfigurationSource::getIgnorePrefix() const { return _ignorePrefix; }
 
-    INLINE IConfigurationProvider::Ptr KeyPerFileConfigurationSource::build()
+    INLINE IConfigurationProvider::Ptr KeyPerFileConfigurationSource::build(IConfigurationBuilder &builder)
     {
-        return std::make_unique<KeyPerFileConfigurationProvider>(shared_from_this());
-    }
+        auto sources = ChainedConfigurationSource::create();
 
-    INLINE void KeyPerFileConfigurationProvider::load()
-    {
-        clear();
-        auto sources = KeyPerConfigurationSource::create();
-
-        auto &directoryPath = _source->getDirectoryPath();
-        if (!std::filesystem::exists(directoryPath) && _source->getIsOptional())
+        auto &directoryPath = getDirectoryPath();
+        if (!std::filesystem::exists(directoryPath) && getIsOptional())
         {
-            return;
+            return sources->build(builder);
         }
         for (auto const &entry : std::filesystem::directory_iterator{directoryPath})
         {
@@ -84,20 +79,24 @@ namespace sb::cf
             auto extension = filePath.extension();
             if (extension == ".json")
             {
-                sources->add(filePath.stem(), JsonFileConfigurationSource::create(filePath));
+                auto fileSource = JsonFileConfigurationSource::create(filePath);
+                auto mapSource = MapConfigurationSource::create(std::move(fileSource), [filePath](JsonObject config) {
+                    return JsonObject{{filePath.stem(), std::move(config)}};
+                });
+                sources->add(mapSource);
             }
         }
-        setFrom(sources);
+        return sources->build(builder);
     }
 
-    INLINE bool KeyPerFileConfigurationProvider::canIgnore(std::filesystem::path filePath) const
+    INLINE bool KeyPerFileConfigurationSource::canIgnore(std::filesystem::path filePath) const
     {
-        auto &ignorePrefix = _source->getIgnorePrefix();
+        auto &ignorePrefix = getIgnorePrefix();
         if (!ignorePrefix.empty() && utils::startsWith(filePath.filename().generic_string(), ignorePrefix))
         {
             return true;
         }
-        auto &ignoreConfition = _source->getIgnoreCondition();
+        auto &ignoreConfition = getIgnoreCondition();
         if (!!ignoreConfition && ignoreConfition(filePath))
         {
             return true;

@@ -8,13 +8,13 @@
 namespace sb::cf
 {
     INLINE CommandLineConfigurationSource::CommandLineConfigurationSource(std::vector<std::string_view> args,
-                                                                          OptionsParserConfig config)
+                                                                          SettingParserConfig config)
         : _args(std::move(args)), _parser(std::move(config))
     {
     }
 
     INLINE CommandLineConfigurationSource::SPtr CommandLineConfigurationSource::create(int argc, char **argv,
-                                                                                       OptionsParserConfig config)
+                                                                                       SettingParserConfig config)
     {
         std::vector<std::string_view> args;
         if (argc > 1)
@@ -29,7 +29,7 @@ namespace sb::cf
     }
 
     INLINE CommandLineConfigurationSource::SPtr CommandLineConfigurationSource::create(
-        std::vector<std::string_view> args, OptionsParserConfig config)
+        std::vector<std::string_view> args, SettingParserConfig config)
     {
         return CommandLineConfigurationSource::SPtr(
             new CommandLineConfigurationSource{std::move(args), std::move(config)});
@@ -37,11 +37,17 @@ namespace sb::cf
 
     INLINE const std::vector<std::string_view> &CommandLineConfigurationSource::getArgs() const { return _args; }
 
-    INLINE const OptionsParser &CommandLineConfigurationSource::getOptionsParser() { return _parser; }
+    INLINE const details::SettingParser &CommandLineConfigurationSource::getOptionsParser() const { return _parser; }
 
-    INLINE IConfigurationProvider::Ptr CommandLineConfigurationSource::build()
+    INLINE IConfigurationProvider::Ptr CommandLineConfigurationSource::build(IConfigurationBuilder &builder)
     {
         return std::make_unique<CommandLineConfigurationProvider>(shared_from_this());
+    }
+
+    INLINE CommandLineConfigurationProvider::CommandLineConfigurationProvider(
+        CommandLineConfigurationSource::SPtr source)
+        : _source(std::move(source))
+    {
     }
 
     INLINE void CommandLineConfigurationProvider::load()
@@ -49,7 +55,7 @@ namespace sb::cf
         clear();
         for (auto &arg : _source->getArgs())
         {
-            update(_source->getOptionsParser().parseOption(arg));
+            update(_source->getOptionsParser().parseSetting(arg));
         }
     }
 } // namespace sb::cf

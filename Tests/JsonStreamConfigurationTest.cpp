@@ -2,6 +2,7 @@
 #include <iostream>
 #include <sstream>
 
+#include "Mocks/ConfigurationBuilderMock.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"
 #include "SevenBit/Conf/Json.hpp"
 #include "SevenBit/Conf/JsonStreamConfiguration.hpp"
@@ -9,6 +10,8 @@
 class JsonStreamConfigurationTest : public testing::Test
 {
   protected:
+    ConfigurationBuilderMock mock;
+
     static void TearUpTestSuite() {}
 
     JsonStreamConfigurationTest() {}
@@ -28,7 +31,7 @@ TEST_F(JsonStreamConfigurationTest, ShouldLoadConfigFromStream)
 
     stream << "{\"hello\": 12345, \"string\": \"asdf\"}";
 
-    auto provider = sb::cf::JsonStreamConfigurationSource::create(stream)->build();
+    auto provider = sb::cf::JsonStreamConfigurationSource::create(stream)->build(mock);
 
     provider->load();
 
@@ -43,7 +46,7 @@ TEST_F(JsonStreamConfigurationTest, ShouldFailLoadingConfigFromBadStream)
 
     stream << "\"hello\"";
 
-    auto provider = sb::cf::JsonStreamConfigurationSource::create(stream)->build();
+    auto provider = sb::cf::JsonStreamConfigurationSource::create(stream)->build(mock);
 
     EXPECT_THROW(provider->load(), sb::cf::BadStreamException);
 }
@@ -54,7 +57,7 @@ TEST_F(JsonStreamConfigurationTest, ShouldFailLoadingDueToDoubleStreamRead)
 
     stream << "{\"hello\": 12345, \"string\": \"asdf\"}";
 
-    auto provider = sb::cf::JsonStreamConfigurationSource::create(stream)->build();
+    auto provider = sb::cf::JsonStreamConfigurationSource::create(stream)->build(mock);
 
     provider->load();
 

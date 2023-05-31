@@ -20,4 +20,6 @@ namespace sb::cf
     }
 
     INLINE BadStreamException::BadStreamException(const std::string &why) : ConfigException{why} {}
+
+    INLINE ConfigOptionException::ConfigOptionException(const std::string &why) : ConfigException{why} {}
 } // namespace sb::cf

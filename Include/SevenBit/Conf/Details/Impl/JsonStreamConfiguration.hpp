@@ -14,9 +14,14 @@ namespace sb::cf
 
     INLINE std::istream &JsonStreamConfigurationSource::getStream() { return _stream; }
 
-    INLINE IConfigurationProvider::Ptr JsonStreamConfigurationSource::build()
+    INLINE IConfigurationProvider::Ptr JsonStreamConfigurationSource::build(IConfigurationBuilder &builder)
     {
         return std::make_unique<JsonStreamConfigurationProvider>(shared_from_this());
+    }
+
+    INLINE JsonStreamConfigurationProvider::JsonStreamConfigurationProvider(JsonStreamConfigurationSource::SPtr source)
+        : _source(std::move(source))
+    {
     }
 
     INLINE void JsonStreamConfigurationProvider::load() { set(getJsonFromStream()); }

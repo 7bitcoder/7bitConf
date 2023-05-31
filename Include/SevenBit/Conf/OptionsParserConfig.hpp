@@ -8,10 +8,10 @@
 
 namespace sb::cf
 {
-    struct OptionsParserConfig
+    struct SettingParserConfig
     {
-        std::string_view optPrefix = "--";
-        std::string_view optSplitter = "=";
+        std::string_view settingPrefix = "--";
+        std::string_view settingSplitter = "=";
         std::string_view keySplitter = ":";
         std::string_view typeMarker = "!";
         std::string_view alternativeKeySplitter = "__";

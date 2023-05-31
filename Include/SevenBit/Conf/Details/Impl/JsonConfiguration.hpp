@@ -19,9 +19,14 @@ namespace sb::cf
 
     INLINE const JsonObject &JsonConfigurationSource::getJson() const { return _configuration; }
 
-    INLINE IConfigurationProvider::Ptr JsonConfigurationSource::build()
+    INLINE IConfigurationProvider::Ptr JsonConfigurationSource::build(IConfigurationBuilder &builder)
     {
         return std::make_unique<JsonConfigurationProvider>(shared_from_this());
+    }
+
+    INLINE JsonConfigurationProvider::JsonConfigurationProvider(JsonConfigurationSource::SPtr source)
+        : _source(std::move(source))
+    {
     }
 
     INLINE void JsonConfigurationProvider::load() { set(_source->getJson()); }

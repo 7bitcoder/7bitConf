@@ -1,4 +1,5 @@
 #include "SevenBit/Conf/EnvironmentVarsConfiguration.hpp"
+#include "Mocks/ConfigurationBuilderMock.hpp"
 #include "SevenBit/Conf/Json.hpp"
 #include <cstdlib>
 #include <gtest/gtest.h>
@@ -7,6 +8,8 @@
 class EnvironmentVarsConfigurationTest : public testing::Test
 {
   protected:
+    ConfigurationBuilderMock mock;
+
     static void TearUpTestSuite() {}
 
     EnvironmentVarsConfigurationTest()
@@ -28,7 +31,7 @@ class EnvironmentVarsConfigurationTest : public testing::Test
 
 TEST_F(EnvironmentVarsConfigurationTest, ShouldLoadConfFromEnvVars)
 {
-    auto provider = sb::cf::EnvironmentVarsConfigurationSource::create("7BITCONF_")->build();
+    auto provider = sb::cf::EnvironmentVarsConfigurationSource::create("7BITCONF_")->build(mock);
 
     provider->load();
 
@@ -41,7 +44,7 @@ TEST_F(EnvironmentVarsConfigurationTest, ShouldLoadConfFromEnvVars)
 
 TEST_F(EnvironmentVarsConfigurationTest, ShouldLoadConfFromEnvVarsWithPrefix)
 {
-    auto provider = sb::cf::EnvironmentVarsConfigurationSource::create("7BIT")->build();
+    auto provider = sb::cf::EnvironmentVarsConfigurationSource::create("7BIT")->build(mock);
 
     provider->load();
 
@@ -55,7 +58,7 @@ TEST_F(EnvironmentVarsConfigurationTest, ShouldLoadConfFromEnvVarsWithPrefix)
 
 TEST_F(EnvironmentVarsConfigurationTest, ShouldNotLoadConfFromEnvVars)
 {
-    auto provider = sb::cf::EnvironmentVarsConfigurationSource::create("7BITCONFIGURATION_")->build();
+    auto provider = sb::cf::EnvironmentVarsConfigurationSource::create("7BITCONFIGURATION_")->build(mock);
 
     provider->load();
 

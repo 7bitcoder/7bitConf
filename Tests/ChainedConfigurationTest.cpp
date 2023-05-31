@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 
+#include "Mocks/ConfigurationBuilderMock.hpp"
 #include "SevenBit/Conf/ChainedConfiguration.hpp"
 #include "SevenBit/Conf/JsonConfiguration.hpp"
 #include "SevenBit/Conf/JsonFileConfiguration.hpp"
@@ -10,6 +11,8 @@
 class ChainedConfigurationTest : public testing::Test
 {
   protected:
+    ConfigurationBuilderMock mock;
+
     static void TearUpTestSuite() {}
 
     ChainedConfigurationTest() {}
@@ -27,7 +30,7 @@ TEST_F(ChainedConfigurationTest, ShouldLoadSimpleChainedConfig)
 {
     auto provider =
         sb::cf::ChainedConfigurationSource::create({sb::cf::JsonFileConfigurationSource::create("appsettings.json")})
-            ->build();
+            ->build(mock);
 
     provider->load();
 
@@ -44,7 +47,7 @@ TEST_F(ChainedConfigurationTest, ShouldLoadComplexChainedConfig)
         sb::cf::ChainedConfigurationSource::create({sb::cf::JsonFileConfigurationSource::create("appsettings.json"),
                                                     sb::cf::JsonFileConfigurationSource::create("appsettings.dev.json"),
                                                     sb::cf::JsonConfigurationSource::create({{"number", 1}})})
-            ->build();
+            ->build(mock);
 
     provider->load();
 

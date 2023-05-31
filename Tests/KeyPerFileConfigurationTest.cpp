@@ -2,13 +2,15 @@
 #include <iostream>
 #include <string>
 
+#include "Mocks/ConfigurationBuilderMock.hpp"
 #include "SevenBit/Conf/JsonFileConfiguration.hpp"
-#include "SevenBit/Conf/KeyPerConfiguration.hpp"
 #include "SevenBit/Conf/KeyPerFileConfiguration.hpp"
 
 class KeyPerFileConfigurationTest : public testing::Test
 {
   protected:
+    ConfigurationBuilderMock mock;
+
     static void TearUpTestSuite() {}
 
     KeyPerFileConfigurationTest() {}
@@ -24,14 +26,14 @@ class KeyPerFileConfigurationTest : public testing::Test
 
 TEST_F(KeyPerFileConfigurationTest, ShouldFailLoadingNonExistingDirectory)
 {
-    auto provider = sb::cf::KeyPerFileConfigurationSource::create("nonexisting")->build();
+    auto source = sb::cf::KeyPerFileConfigurationSource::create("nonexisting");
 
-    EXPECT_ANY_THROW(provider->load());
+    EXPECT_ANY_THROW(source->build(mock));
 }
 
 TEST_F(KeyPerFileConfigurationTest, ShouldLoadNonExistingDirectory)
 {
-    auto provider = sb::cf::KeyPerFileConfigurationSource::create("nonexisting", true)->build();
+    auto provider = sb::cf::KeyPerFileConfigurationSource::create("nonexisting", true)->build(mock);
 
     provider->load();
 
@@ -40,7 +42,7 @@ TEST_F(KeyPerFileConfigurationTest, ShouldLoadNonExistingDirectory)
 
 TEST_F(KeyPerFileConfigurationTest, ShouldLoadDirectoryConfig)
 {
-    auto provider = sb::cf::KeyPerFileConfigurationSource::create("Directory")->build();
+    auto provider = sb::cf::KeyPerFileConfigurationSource::create("Directory")->build(mock);
 
     provider->load();
 
@@ -59,7 +61,7 @@ TEST_F(KeyPerFileConfigurationTest, ShouldLoadDirectoryConfig)
 
 TEST_F(KeyPerFileConfigurationTest, ShloudLoadFilteredConfigFiles)
 {
-    auto provider = sb::cf::KeyPerFileConfigurationSource::create("Directory", false, "settingOne")->build();
+    auto provider = sb::cf::KeyPerFileConfigurationSource::create("Directory", false, "settingOne")->build(mock);
 
     provider->load();
 
@@ -76,7 +78,7 @@ TEST_F(KeyPerFileConfigurationTest, ShloudLoadFilteredConditionConfigFiles)
     auto provider =
         sb::cf::KeyPerFileConfigurationSource::create("Directory", false, [](const std::filesystem::path &path) {
             return path.filename() == "settingOne.json";
-        })->build();
+        })->build(mock);
 
     provider->load();
 

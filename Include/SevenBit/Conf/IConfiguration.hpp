@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -11,19 +12,21 @@ namespace sb::cf
 {
     struct IConfiguration
     {
-        virtual const JsonObject &root() const = 0;
+        using Ptr = std::unique_ptr<IConfiguration>;
 
-        virtual const JsonValue &at(const std::string &key) const = 0;
+        virtual const JsonObject &root() const = 0;
 
         virtual const JsonValue *find(std::string_view key) const = 0;
 
         virtual const JsonValue *findInner(std::string_view key) const = 0;
 
-        virtual const JsonValue &atInner(std::string_view key) const = 0;
+        virtual const JsonValue *findInner(const std::vector<std::string_view> &key) const = 0;
 
         const JsonValue &operator[](std::string_view key) const { return atInner(key); };
 
-        virtual const JsonValue *findInner(const std::vector<std::string_view> &key) const = 0;
+        virtual const JsonValue &at(const std::string &key) const = 0;
+
+        virtual const JsonValue &atInner(std::string_view key) const = 0;
 
         virtual const JsonValue &atInner(const std::vector<std::string_view> &key) const = 0;
 

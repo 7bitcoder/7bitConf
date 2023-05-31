@@ -11,13 +11,13 @@ extern char **environ;
 namespace sb::cf
 {
     INLINE EnvironmentVarsConfigurationSource::EnvironmentVarsConfigurationSource(std::string prefix,
-                                                                                  OptionsParserConfig parserConfig)
+                                                                                  SettingParserConfig parserConfig)
         : _prefix(std::move(prefix)), _parser(parserConfig)
     {
     }
 
     INLINE EnvironmentVarsConfigurationSource::SPtr EnvironmentVarsConfigurationSource::create(
-        std::string prefix, OptionsParserConfig parserCfg)
+        std::string prefix, SettingParserConfig parserCfg)
     {
         return EnvironmentVarsConfigurationSource::SPtr(
             new EnvironmentVarsConfigurationSource{std::move(prefix), std::move(parserCfg)});
@@ -25,11 +25,17 @@ namespace sb::cf
 
     INLINE const std::string &EnvironmentVarsConfigurationSource::getPrefix() { return _prefix; }
 
-    INLINE const OptionsParser &EnvironmentVarsConfigurationSource::getOptionsParser() { return _parser; }
+    INLINE const details::SettingParser &EnvironmentVarsConfigurationSource::getSettingParser() { return _parser; }
 
-    INLINE IConfigurationProvider::Ptr EnvironmentVarsConfigurationSource::build()
+    INLINE IConfigurationProvider::Ptr EnvironmentVarsConfigurationSource::build(IConfigurationBuilder &builder)
     {
         return std::make_unique<EnvironmentVarsConfigurationProvider>(shared_from_this());
+    }
+
+    INLINE EnvironmentVarsConfigurationProvider::EnvironmentVarsConfigurationProvider(
+        EnvironmentVarsConfigurationSource::SPtr source)
+        : _source(std::move(source))
+    {
     }
 
     INLINE void EnvironmentVarsConfigurationProvider::load()
@@ -37,7 +43,7 @@ namespace sb::cf
         clear();
         for (auto &env : getEnvVars())
         {
-            update(_source->getOptionsParser().parseOption(env));
+            update(_source->getSettingParser().parseSetting(env));
         }
     }
 

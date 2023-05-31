@@ -1,12 +1,15 @@
 #include <gtest/gtest.h>
 #include <iostream>
 
+#include "Mocks/ConfigurationBuilderMock.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"
 #include "SevenBit/Conf/JsonFileConfiguration.hpp"
 
 class JsonFileConfigurationTest : public testing::Test
 {
   protected:
+    ConfigurationBuilderMock mock;
+
     static void TearUpTestSuite() {}
 
     JsonFileConfigurationTest() {}
@@ -22,7 +25,7 @@ class JsonFileConfigurationTest : public testing::Test
 
 TEST_F(JsonFileConfigurationTest, ShouldLoadSimpleJsonConfigFile)
 {
-    auto provider = sb::cf::JsonFileConfigurationSource::create("appsettings.json")->build();
+    auto provider = sb::cf::JsonFileConfigurationSource::create("appsettings.json")->build(mock);
 
     provider->load();
 
@@ -36,7 +39,7 @@ TEST_F(JsonFileConfigurationTest, ShouldLoadSimpleJsonConfigFile)
 
 TEST_F(JsonFileConfigurationTest, ShouldNotLoadNonExistingJsonConfigFile)
 {
-    auto provider = sb::cf::JsonFileConfigurationSource::create("nonExisting.json", true)->build();
+    auto provider = sb::cf::JsonFileConfigurationSource::create("nonExisting.json", true)->build(mock);
 
     provider->load();
 
@@ -45,14 +48,14 @@ TEST_F(JsonFileConfigurationTest, ShouldNotLoadNonExistingJsonConfigFile)
 
 TEST_F(JsonFileConfigurationTest, ShouldFailLoadingNonExistingJsonConfigFile)
 {
-    auto provider = sb::cf::JsonFileConfigurationSource ::create("nonExisting.json")->build();
+    auto provider = sb::cf::JsonFileConfigurationSource ::create("nonExisting.json")->build(mock);
 
     EXPECT_THROW(provider->load(), sb::cf::ConfigFileNotFoundException);
 }
 
 TEST_F(JsonFileConfigurationTest, ShouldFailLoadingBadJsonConfigFile)
 {
-    auto provider = sb::cf::JsonFileConfigurationSource ::create("bad.json")->build();
+    auto provider = sb::cf::JsonFileConfigurationSource ::create("bad.json")->build(mock);
 
     EXPECT_THROW(provider->load(), sb::cf::BadConfigFileException);
 }

@@ -2,11 +2,14 @@
 #include <iostream>
 #include <string>
 
+#include "Mocks/ConfigurationBuilderMock.hpp"
 #include "SevenBit/Conf/AppSettingsConfiguration.hpp"
 
 class AppSettingsConfiguration : public testing::Test
 {
   protected:
+    ConfigurationBuilderMock mock;
+
     static void TearUpTestSuite() {}
 
     AppSettingsConfiguration() {}
@@ -22,7 +25,7 @@ class AppSettingsConfiguration : public testing::Test
 
 TEST_F(AppSettingsConfiguration, ShouldLoadAppSettings)
 {
-    auto provider = sb::cf::AppSettingsConfigurationSource::create()->build();
+    auto provider = sb::cf::AppSettingsConfigurationSource::create()->build(mock);
 
     provider->load();
 
@@ -36,7 +39,7 @@ TEST_F(AppSettingsConfiguration, ShouldLoadAppSettings)
 
 TEST_F(AppSettingsConfiguration, ShouldLoadDevAppSettings)
 {
-    auto provider = sb::cf::AppSettingsConfigurationSource::create("dev")->build();
+    auto provider = sb::cf::AppSettingsConfigurationSource::create("dev")->build(mock);
 
     provider->load();
 

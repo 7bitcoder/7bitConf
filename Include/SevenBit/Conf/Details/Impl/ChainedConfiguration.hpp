@@ -26,17 +26,30 @@ namespace sb::cf
         _sources.push_back(std::move(source));
     }
 
-    INLINE IConfigurationProvider::Ptr ChainedConfigurationSource::build()
+    INLINE IConfigurationProvider::Ptr ChainedConfigurationSource::build(IConfigurationBuilder &builder)
     {
-        return std::make_unique<ChainedConfigurationProvider>(shared_from_this());
+        std::vector<IConfigurationProvider::Ptr> providers;
+        providers.reserve(_sources.size());
+        for (auto &source : _sources)
+        {
+            providers.emplace_back(source->build(builder));
+        }
+        return std::make_unique<ChainedConfigurationProvider>(std::move(providers));
+    }
+
+    INLINE ChainedConfigurationProvider::ChainedConfigurationProvider(
+        std::vector<IConfigurationProvider::Ptr> providers)
+        : _providers(std::move(providers))
+    {
     }
 
     INLINE void ChainedConfigurationProvider::load()
     {
         clear();
-        for (auto &source : *_source)
+        for (auto &provider : _providers)
         {
-            updateFrom(source);
+            provider->load();
+            update(std::move(provider->getConfiguration()));
         }
     }
 } // namespace sb::cf

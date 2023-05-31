@@ -25,13 +25,16 @@ namespace sb::cf
 
         std::istream &getStream();
 
-        IConfigurationProvider::Ptr build() override;
+        IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
     };
 
-    EXPORT class JsonStreamConfigurationProvider : public ConfigurationProviderBase<JsonStreamConfigurationSource>
+    EXPORT class JsonStreamConfigurationProvider : public ConfigurationProviderBase
     {
+      private:
+        JsonStreamConfigurationSource::SPtr _source;
+
       public:
-        using ConfigurationProviderBase<JsonStreamConfigurationSource>::ConfigurationProviderBase;
+        JsonStreamConfigurationProvider(JsonStreamConfigurationSource::SPtr source);
 
         void load() override;
 

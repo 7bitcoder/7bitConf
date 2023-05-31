@@ -1,4 +1,5 @@
 #include "SevenBit/Conf/CommandLineConfiguration.hpp"
+#include "Mocks/ConfigurationBuilderMock.hpp"
 #include "SevenBit/Conf/Json.hpp"
 #include <gtest/gtest.h>
 #include <iostream>
@@ -6,6 +7,8 @@
 class CommandLineConfigurationTest : public testing::Test
 {
   protected:
+    ConfigurationBuilderMock mock;
+
     static void TearUpTestSuite() {}
 
     CommandLineConfigurationTest() {}
@@ -27,7 +30,7 @@ TEST_F(CommandLineConfigurationTest, ShouldLoadConfFromArgs)
         "--list=string,string1,string2",
         "--object:inner:object=string",
     };
-    auto provider = sb::cf::CommandLineConfigurationSource::create(4, const_cast<char **>(argv))->build();
+    auto provider = sb::cf::CommandLineConfigurationSource::create(4, const_cast<char **>(argv))->build(mock);
 
     provider->load();
 
@@ -43,7 +46,7 @@ TEST_F(CommandLineConfigurationTest, ShouldLoadEmptyConfFromArgs)
     const char *argv[] = {
         "progtam/path",
     };
-    auto provider = sb::cf::CommandLineConfigurationSource::create(1, const_cast<char **>(argv))->build();
+    auto provider = sb::cf::CommandLineConfigurationSource::create(1, const_cast<char **>(argv))->build(mock);
 
     provider->load();
 

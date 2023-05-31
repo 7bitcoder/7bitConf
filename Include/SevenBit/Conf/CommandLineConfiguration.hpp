@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "SevenBit/Conf/Details/OptionsParser.hpp"
+#include "SevenBit/Conf/Details/SettingParser.hpp"
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
 #include "SevenBit/Conf/ConfigurationProviderBase.hpp"
@@ -18,29 +18,32 @@ namespace sb::cf
     {
       private:
         std::vector<std::string_view> _args;
-        OptionsParser _parser;
+        details::SettingParser _parser;
 
-        CommandLineConfigurationSource(std::vector<std::string_view> args, OptionsParserConfig config);
+        CommandLineConfigurationSource(std::vector<std::string_view> args, SettingParserConfig config);
 
       public:
         using Ptr = std::unique_ptr<CommandLineConfigurationSource>;
         using SPtr = std::shared_ptr<CommandLineConfigurationSource>;
 
-        static SPtr create(int argc, char **argv, OptionsParserConfig config = {});
+        static SPtr create(int argc, char **argv, SettingParserConfig config = {});
 
-        static SPtr create(std::vector<std::string_view> args, OptionsParserConfig config = {});
+        static SPtr create(std::vector<std::string_view> args, SettingParserConfig config = {});
 
         const std::vector<std::string_view> &getArgs() const;
 
-        const OptionsParser &getOptionsParser();
+        const details::SettingParser &getOptionsParser() const;
 
-        IConfigurationProvider::Ptr build() override;
+        IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
     };
 
-    EXPORT class CommandLineConfigurationProvider : public ConfigurationProviderBase<CommandLineConfigurationSource>
+    EXPORT class CommandLineConfigurationProvider : public ConfigurationProviderBase
     {
+      private:
+        CommandLineConfigurationSource::SPtr _source;
+
       public:
-        using ConfigurationProviderBase<CommandLineConfigurationSource>::ConfigurationProviderBase;
+        CommandLineConfigurationProvider(CommandLineConfigurationSource::SPtr source);
 
         void load() override;
     };

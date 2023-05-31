@@ -3,8 +3,11 @@
 #include <memory>
 #include <string>
 #include <string_view>
+#include <unordered_map>
 #include <vector>
 
+#include "SevenBit/Conf/IConfigurationBuilder.hpp"
+#include "SevenBit/Conf/IConfigurationProvider.hpp"
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
 #include "SevenBit/Conf/Configuration.hpp"
@@ -15,7 +18,8 @@
 namespace sb::cf
 {
 
-    INLINE Configuration::Configuration(std::vector<IConfigurationSource::SPtr> sources) : _sources(std::move(sources))
+    INLINE Configuration::Configuration(std::vector<IConfigurationProvider::Ptr> providers)
+        : _providers(std::move(providers))
     {
         reload();
     }
@@ -30,29 +34,32 @@ namespace sb::cf
 
     INLINE const JsonValue *Configuration::find(std::string_view key) const
     {
-        return JsonObjectExt::find(_configuration, key);
+        return details::JsonObjectExt::find(_configuration, key);
     }
 
-    INLINE JsonValue *Configuration::find(std::string_view key) { return JsonObjectExt::find(_configuration, key); }
+    INLINE JsonValue *Configuration::find(std::string_view key)
+    {
+        return details::JsonObjectExt::find(_configuration, key);
+    }
 
     INLINE const JsonValue *Configuration::findInner(std::string_view key) const
     {
-        return JsonObjectExt::findInner(_configuration, key);
+        return details::JsonObjectExt::findInner(_configuration, key);
     }
 
     INLINE JsonValue *Configuration::findInner(std::string_view key)
     {
-        return JsonObjectExt::findInner(_configuration, key);
+        return details::JsonObjectExt::findInner(_configuration, key);
     }
 
     INLINE const JsonValue *Configuration::findInner(const std::vector<std::string_view> &key) const
     {
-        return JsonObjectExt::findInner(_configuration, key);
+        return details::JsonObjectExt::findInner(_configuration, key);
     }
 
     INLINE JsonValue *Configuration::findInner(const std::vector<std::string_view> &key)
     {
-        return JsonObjectExt::findInner(_configuration, key);
+        return details::JsonObjectExt::findInner(_configuration, key);
     }
 
     INLINE JsonValue &Configuration::atInner(std::string_view key)
@@ -105,16 +112,15 @@ namespace sb::cf
     INLINE void Configuration::reload()
     {
         _configuration.clear();
-        for (auto &source : _sources)
+        for (auto &provider : _providers)
         {
-            auto provider = source->build();
             provider->load();
             auto config = provider->getConfiguration();
-            JsonObjectExt::deepMerge(_configuration, std::move(config));
+            details::JsonObjectExt::deepMerge(_configuration, std::move(config));
         }
     }
 
-    INLINE const std::vector<IConfigurationSource::SPtr> &Configuration::getSources() const { return _sources; }
+    INLINE const std::vector<IConfigurationProvider::Ptr> &Configuration::getProviders() const { return _providers; }
 
     INLINE JsonValue &Configuration::throwNullPointnerException(const std::vector<std::string_view> &key) const
     {

@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 
+#include "SevenBit/Conf/ChainedConfiguration.hpp"
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
 #include "SevenBit/Conf/ConfigurationProviderBase.hpp"
@@ -10,31 +11,22 @@
 
 namespace sb::cf
 {
-    EXPORT class AppSettingsConfigurationSource : public IConfigurationSource,
-                                                  public std::enable_shared_from_this<AppSettingsConfigurationSource>
+    EXPORT class AppSettingsConfigurationSource : public IConfigurationSource
     {
       private:
         std::string _envName;
 
-        AppSettingsConfigurationSource(std::string envName);
+        AppSettingsConfigurationSource(std::string environmentName);
 
       public:
         using Ptr = std::unique_ptr<AppSettingsConfigurationSource>;
         using SPtr = std::shared_ptr<AppSettingsConfigurationSource>;
 
-        static SPtr create(std::string envName = "");
+        static SPtr create(std::string environmentName = "");
 
-        const std::string &getEnvName();
+        const std::string &getEnvName() const;
 
-        IConfigurationProvider::Ptr build() override;
-    };
-
-    EXPORT class AppSettingsConfigurationProvider : public ConfigurationProviderBase<AppSettingsConfigurationSource>
-    {
-      public:
-        using ConfigurationProviderBase<AppSettingsConfigurationSource>::ConfigurationProviderBase;
-
-        void load() override;
+        IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
     };
 } // namespace sb::cf
 

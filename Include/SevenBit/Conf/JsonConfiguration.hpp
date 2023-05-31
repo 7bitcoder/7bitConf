@@ -25,13 +25,16 @@ namespace sb::cf
 
         const JsonObject &getJson() const;
 
-        IConfigurationProvider::Ptr build() override;
+        IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
     };
 
-    EXPORT class JsonConfigurationProvider : public ConfigurationProviderBase<JsonConfigurationSource>
+    EXPORT class JsonConfigurationProvider : public ConfigurationProviderBase
     {
+      private:
+        JsonConfigurationSource::SPtr _source;
+
       public:
-        using ConfigurationProviderBase<JsonConfigurationSource>::ConfigurationProviderBase;
+        JsonConfigurationProvider(JsonConfigurationSource::SPtr source);
 
         void load() override;
     };
