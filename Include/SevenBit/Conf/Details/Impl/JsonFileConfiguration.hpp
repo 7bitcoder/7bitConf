@@ -39,7 +39,11 @@ namespace sb::cf
     {
         if (!std::filesystem::exists(_source->getFilePath()))
         {
-            return _source->getIsOptional() ? JsonObject{} : throw ConfigFileNotFoundException(_source->getFilePath());
+            if(_source->getIsOptional()) 
+            {
+                return JsonObject{};
+            }
+            throw ConfigFileNotFoundException(_source->getFilePath());
         }
         auto json = tao::json::basic_from_file<JsonTraits>(_source->getFilePath());
         if (!json.is_object())

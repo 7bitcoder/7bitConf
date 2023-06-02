@@ -5,6 +5,12 @@
 #include <gtest/gtest.h>
 #include <iostream>
 
+#ifdef _WIN32 
+    #define _7BIT_CONF_PUT_ENV _putenv
+#else
+    #define _7BIT_CONF_PUT_ENV putenv
+#endif
+
 class EnvironmentVarsConfigurationTest : public testing::Test
 {
   protected:
@@ -14,10 +20,10 @@ class EnvironmentVarsConfigurationTest : public testing::Test
 
     EnvironmentVarsConfigurationTest()
     {
-        setenv("7BITCONF_TEST_STRING", "test", 1);
-        setenv("7BITCONF_TEST_STRING_LIST", "string,string1,string2", 1);
-        setenv("7BITCONF_TEST_OBJECT:INNER:OBJECT", "string", 1);
-        setenv("7BIT_OTHER_CONF_TEST_STRING", "string2", 1);
+        _7BIT_CONF_PUT_ENV("7BITCONF_TEST_STRING=test");
+        _7BIT_CONF_PUT_ENV("7BITCONF_TEST_STRING_LIST=string,string1,string2");
+        _7BIT_CONF_PUT_ENV("7BITCONF_TEST_OBJECT:INNER:OBJECT=string");
+        _7BIT_CONF_PUT_ENV("7BIT_OTHER_CONF_TEST_STRING=string2");
     }
 
     void SetUp() override {}

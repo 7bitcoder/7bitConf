@@ -80,8 +80,8 @@ namespace sb::cf
             if (extension == ".json")
             {
                 auto fileSource = JsonFileConfigurationSource::create(filePath);
-                auto mapSource = MapConfigurationSource::create(std::move(fileSource), [filePath](JsonObject config) {
-                    return JsonObject{{filePath.stem(), std::move(config)}};
+                auto mapSource = MapConfigurationSource::create(std::move(fileSource), [filePath](JsonObject config) -> JsonObject {
+                    return JsonObject{{filePath.stem().generic_string(), std::move(config)}};
                 });
                 sources->add(mapSource);
             }

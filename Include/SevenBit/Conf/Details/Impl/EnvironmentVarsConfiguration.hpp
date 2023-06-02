@@ -1,12 +1,19 @@
 #pragma once
 
 #include <memory>
+#include <cstdlib>
 
 #include "SevenBit/Conf/Details/JsonObjectExt.hpp"
 #include "SevenBit/Conf/EnvironmentVarsConfiguration.hpp"
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
-extern char **environ;
+#ifdef _WIN32 
+    extern char ** _environ;
+    #define _7BIT_CONF_ENV_PTR _environ
+#else
+    extern char ** environ;
+    #define _7BIT_CONF_ENV_PTR environ
+#endif
 
 namespace sb::cf
 {
@@ -50,7 +57,7 @@ namespace sb::cf
     INLINE std::vector<std::string_view> EnvironmentVarsConfigurationProvider::getEnvVars()
     {
         std::vector<std::string_view> result;
-        for (auto env = environ; *env; env++)
+        for (auto env = _7BIT_CONF_ENV_PTR; *env; env++)
         {
             std::string_view envStr = *env;
             if (utils::startsWith(envStr, _source->getPrefix()))
