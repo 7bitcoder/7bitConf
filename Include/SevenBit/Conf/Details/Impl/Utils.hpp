@@ -25,8 +25,11 @@ namespace sb::cf::utils
                           [](char cha, char chb) { return std::tolower(cha) == std::tolower(chb); });
     }
 
-    INLINE bool startsWith(std::string_view str, std::string_view search)
+    INLINE bool startsWith(std::string_view str, std::string_view search, bool ignoreCase)
     {
+        auto cmp = ignoreCase ? [](char a, char b) { return std::tolower(a) == std::tolower(b); }
+                              : [](char a, char b) { return a == b; };
+
         if (search.empty())
         {
             return true;
@@ -35,7 +38,7 @@ namespace sb::cf::utils
         auto searchIt = search.begin();
         for (; strIt != str.end() && searchIt != search.end(); ++strIt, ++searchIt)
         {
-            if (*strIt != *searchIt)
+            if (!cmp(*strIt, *searchIt))
             {
                 return false;
             }
@@ -43,8 +46,11 @@ namespace sb::cf::utils
         return searchIt == search.end();
     }
 
-    INLINE bool endsWith(std::string_view str, std::string_view search)
+    INLINE bool endsWith(std::string_view str, std::string_view search, bool ignoreCase)
     {
+        auto cmp = ignoreCase ? [](char a, char b) { return std::tolower(a) == std::tolower(b); }
+                              : [](char a, char b) { return a == b; };
+
         if (search.empty())
         {
             return true;
@@ -53,7 +59,7 @@ namespace sb::cf::utils
         auto searchIt = search.rbegin();
         for (; strIt != str.rend() && searchIt != search.rend(); ++strIt, ++searchIt)
         {
-            if (*strIt != *searchIt)
+            if (!cmp(*strIt, *searchIt))
             {
                 return false;
             }

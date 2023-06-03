@@ -16,9 +16,6 @@ namespace sb::cf::details
     EXPORT class SettingParser
     {
       private:
-        SettingParserConfig _config;
-
-      public:
         enum SettingType
         {
             Int,
@@ -28,6 +25,9 @@ namespace sb::cf::details
             Json
         };
 
+        SettingParserConfig _config;
+
+      public:
         SettingParser(SettingParserConfig config = {});
 
         JsonObject parseSetting(std::string_view setting) const;
@@ -40,6 +40,8 @@ namespace sb::cf::details
         JsonValue parseValue(SettingType type, std::optional<std::string_view> value) const;
 
         SettingType extractType(std::string_view &value) const;
+
+        bool tryExtractType(std::string_view &value, std::string_view typeStr) const;
 
         JsonObject parseSetting(const std::vector<std::string_view> &key, JsonValue value) const;
 

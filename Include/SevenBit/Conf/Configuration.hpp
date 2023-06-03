@@ -5,6 +5,7 @@
 #include <string_view>
 #include <vector>
 
+#include "SevenBit/Conf/Json.hpp"
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
 #include "SevenBit/Conf/IConfiguration.hpp"
@@ -17,7 +18,7 @@ namespace sb::cf
       private:
         std::vector<IConfigurationProvider::Ptr> _providers;
 
-        JsonObject _configuration;
+        JsonValue _configuration = JsonObject{};
 
       public:
         using Ptr = std::unique_ptr<Configuration>;
@@ -34,9 +35,15 @@ namespace sb::cf
 
         const std::vector<IConfigurationProvider::Ptr> &getProviders() const;
 
-        JsonObject &root();
+        std::string toString(std::size_t indent = 1, std::string newLineMark = "\n") const override;
 
-        const JsonObject &root() const override;
+        JsonValue &root();
+
+        const JsonValue &root() const override;
+
+        JsonObject &rootAsObject();
+
+        const JsonObject &rootAsObject() const override;
 
         JsonValue &at(const std::string &key);
 
@@ -70,13 +77,13 @@ namespace sb::cf
 
         const JsonValue &operator[](const std::vector<std::string_view> &key) const;
 
-        auto begin() { return root().begin(); }
+        auto begin() { return rootAsObject().begin(); }
 
-        auto end() { return root().end(); }
+        auto end() { return rootAsObject().end(); }
 
-        auto rBegin() { return root().rbegin(); }
+        auto rBegin() { return rootAsObject().rbegin(); }
 
-        auto rEnd() { return root().rend(); }
+        auto rEnd() { return rootAsObject().rend(); }
 
       private:
         JsonValue &throwNullPointnerException(const std::vector<std::string_view> &key) const;

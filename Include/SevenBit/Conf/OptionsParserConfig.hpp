@@ -15,5 +15,6 @@ namespace sb::cf
         std::string_view keySplitter = ":";
         std::string_view typeMarker = "!";
         std::string_view alternativeKeySplitter = "__";
+        std::string_view alternativeTypeMarker = "___";
     };
 } // namespace sb::cf

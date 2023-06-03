@@ -12,9 +12,9 @@ namespace sb::cf::utils
 {
     EXPORT bool ignoreCaseEquals(std::string_view stra, std::string_view strb);
 
-    EXPORT bool startsWith(std::string_view str, std::string_view search);
+    EXPORT bool startsWith(std::string_view str, std::string_view search, bool ignoreCase = false);
 
-    EXPORT bool endsWith(std::string_view str, std::string_view search);
+    EXPORT bool endsWith(std::string_view str, std::string_view search, bool ignoreCase = false);
 
     EXPORT std::size_t replaceAll(std::string &inout, std::string_view what, std::string_view with);
 

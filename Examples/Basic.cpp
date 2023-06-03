@@ -12,6 +12,7 @@ int main(int argc, char **argv)
                                             .build();
 
     std::string value = configuration->at("MySetting").get_string();
+    std::cout << "MySetting value: " << value << std::endl;
 
-    std::cout << "MySetting value: " << value;
+    std::cout << "Configuration json:" << std::endl << std::setw(2) << *configuration;
 }

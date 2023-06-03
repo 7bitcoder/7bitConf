@@ -1,5 +1,6 @@
 #pragma once
 #include <charconv>
+#include <cstddef>
 
 #include "SevenBit/Conf/Details/JsonObjectExt.hpp"
 #include "SevenBit/Conf/Details/SettingParser.hpp"
@@ -30,9 +31,9 @@ namespace sb::cf::details
     {
         try
         {
+            auto type = extractType(key);
             auto keyStr = sanitizeKey(key);
             auto keys = parseKey(keyStr);
-            auto type = extractType(keys.back());
             return parseSetting(std::move(keys), parseValue(type, value));
         }
         catch (std::exception &e)
@@ -71,37 +72,49 @@ namespace sb::cf::details
 
     INLINE SettingParser::SettingType SettingParser::extractType(std::string_view &key) const
     {
-        auto index = key.find_last_of(_config.typeMarker);
-        if (index == key.npos)
-        {
-            return String;
-        }
-        auto type = key.substr(index + 1);
-        auto originalKey = key;
-        key = key.substr(0, index);
-        if (utils::ignoreCaseEquals(type, "bool"))
+        if (tryExtractType(key, "bool"))
         {
             return Bool;
         }
-        if (utils::ignoreCaseEquals(type, "int"))
+        if (tryExtractType(key, "int"))
         {
             return Int;
         }
-        if (utils::ignoreCaseEquals(type, "double"))
+        if (tryExtractType(key, "double"))
         {
             return Double;
         }
-        if (utils::ignoreCaseEquals(type, "json"))
+        if (tryExtractType(key, "json"))
         {
             return Json;
         }
-        if (utils::ignoreCaseEquals(type, "string"))
+        if (tryExtractType(key, "string"))
         {
             return String;
         }
-        // restore key and assume its string
-        key = originalKey;
         return String;
+    }
+
+    INLINE bool SettingParser::tryExtractType(std::string_view &value, std::string_view typeStr) const
+    {
+        if (utils::endsWith(value, typeStr, true))
+        {
+            auto mutated = value;
+            mutated.remove_suffix(typeStr.size());
+            if (utils::endsWith(mutated, _config.typeMarker))
+            {
+                mutated.remove_suffix(_config.typeMarker.size());
+                value = mutated;
+                return true;
+            }
+            if (utils::endsWith(mutated, _config.alternativeTypeMarker))
+            {
+                mutated.remove_suffix(_config.alternativeTypeMarker.size());
+                value = mutated;
+                return true;
+            }
+        }
+        return false;
     }
 
     INLINE JsonValue SettingParser::parseValue(SettingParser::SettingType type,

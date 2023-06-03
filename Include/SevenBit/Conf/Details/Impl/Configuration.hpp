@@ -4,6 +4,8 @@
 #include "SevenBit/Conf/Details/JsonObjectExt.hpp"
 #include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"
+#include "SevenBit/Conf/Json.hpp"
+#include <tao/json/to_string.hpp>
 
 namespace sb::cf
 {
@@ -14,42 +16,48 @@ namespace sb::cf
         reload();
     }
 
-    INLINE const JsonObject &Configuration::root() const { return _configuration; }
+    INLINE std::string Configuration::toString(std::size_t indent, std::string newLineMark) const
+    {
+        return json::to_string(_configuration, indent, std::move(newLineMark));
+    }
 
-    INLINE JsonObject &Configuration::root() { return _configuration; }
+    INLINE const JsonValue &Configuration::root() const { return _configuration; }
 
-    INLINE const JsonValue &Configuration::at(const std::string &key) const { return _configuration.at(key); }
+    INLINE JsonValue &Configuration::root() { return _configuration; }
 
-    INLINE JsonValue &Configuration::at(const std::string &key) { return _configuration.at(key); }
+    INLINE const JsonObject &Configuration::rootAsObject() const { return _configuration.get_object(); }
+
+    INLINE JsonObject &Configuration::rootAsObject() { return _configuration.get_object(); }
+
+    INLINE const JsonValue &Configuration::at(const std::string &key) const { return rootAsObject().at(key); }
+
+    INLINE JsonValue &Configuration::at(const std::string &key) { return rootAsObject().at(key); }
 
     INLINE const JsonValue *Configuration::find(std::string_view key) const
     {
-        return details::JsonObjectExt::find(_configuration, key);
+        return details::JsonObjectExt::find(root(), key);
     }
 
-    INLINE JsonValue *Configuration::find(std::string_view key)
-    {
-        return details::JsonObjectExt::find(_configuration, key);
-    }
+    INLINE JsonValue *Configuration::find(std::string_view key) { return details::JsonObjectExt::find(root(), key); }
 
     INLINE const JsonValue *Configuration::findInner(std::string_view key) const
     {
-        return details::JsonObjectExt::findInner(_configuration, key);
+        return details::JsonObjectExt::findInner(rootAsObject(), key);
     }
 
     INLINE JsonValue *Configuration::findInner(std::string_view key)
     {
-        return details::JsonObjectExt::findInner(_configuration, key);
+        return details::JsonObjectExt::findInner(rootAsObject(), key);
     }
 
     INLINE const JsonValue *Configuration::findInner(const std::vector<std::string_view> &key) const
     {
-        return details::JsonObjectExt::findInner(_configuration, key);
+        return details::JsonObjectExt::findInner(rootAsObject(), key);
     }
 
     INLINE JsonValue *Configuration::findInner(const std::vector<std::string_view> &key)
     {
-        return details::JsonObjectExt::findInner(_configuration, key);
+        return details::JsonObjectExt::findInner(rootAsObject(), key);
     }
 
     INLINE JsonValue &Configuration::atInner(std::string_view key)
@@ -88,11 +96,17 @@ namespace sb::cf
         return throwNullPointnerException(key);
     }
 
-    INLINE JsonValue &Configuration::operator[](std::string_view key) { return atInner(key); };
+    INLINE JsonValue &Configuration::operator[](std::string_view key)
+    {
+        return details::JsonObjectExt::getOrCreateInner(rootAsObject(), key);
+    };
 
     INLINE const JsonValue &Configuration::operator[](std::string_view key) const { return atInner(key); };
 
-    INLINE JsonValue &Configuration::operator[](const std::vector<std::string_view> &key) { return atInner(key); };
+    INLINE JsonValue &Configuration::operator[](const std::vector<std::string_view> &key)
+    {
+        return details::JsonObjectExt::getOrCreateInner(rootAsObject(), key);
+    };
 
     INLINE const JsonValue &Configuration::operator[](const std::vector<std::string_view> &key) const
     {
@@ -101,11 +115,12 @@ namespace sb::cf
 
     INLINE void Configuration::reload()
     {
-        _configuration.clear();
+        auto &configRoot = rootAsObject();
+        configRoot.clear();
         for (auto &provider : _providers)
         {
             provider->load();
-            details::JsonObjectExt::deepMerge(_configuration, std::move(provider->getConfiguration()));
+            details::JsonObjectExt::deepMerge(configRoot, std::move(provider->getConfiguration()));
         }
     }
 

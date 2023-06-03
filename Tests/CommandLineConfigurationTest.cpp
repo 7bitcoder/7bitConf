@@ -25,8 +25,9 @@ class CommandLineConfigurationTest : public testing::Test
 TEST_F(CommandLineConfigurationTest, ShouldLoadConfFromArgs)
 {
     const char *const argv[] = {
-        "progtam/path",     "--string=test",    "--list:0=string",
-        "--list:1=string1", "--list:2=string2", "--object:inner:object=string",
+        "program/path",          "--string___string=test", "--list:0=string",
+        "--list:1=string1",      "list__2!string=string2", "--object__inner:object=string",
+        "--int_list:0___int=33", "--int_list:1___int=22",  "int_list__2!int=11",
     };
     int size = sizeof(argv) / sizeof(char *);
     auto provider = sb::cf::CommandLineConfigurationSource::create(size, argv)->build(mock);
@@ -35,6 +36,7 @@ TEST_F(CommandLineConfigurationTest, ShouldLoadConfFromArgs)
 
     sb::cf::JsonObject expected = {{"string", "test"},
                                    {"list", sb::cf::JsonArray{"string", "string1", "string2"}},
+                                   {"int_list", sb::cf::JsonArray{33, 22, 11}},
                                    {"object", {{"inner", {{"object", "string"}}}}}};
 
     EXPECT_EQ(provider->getConfiguration(), expected);
