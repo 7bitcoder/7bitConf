@@ -3,23 +3,29 @@ include(GenerateExportHeader)
 
 find_package(taocpp-json REQUIRED)
 
-if(_7BIT_CONF_BUILD_LIBRARY_TYPE STREQUAL "Shared")
+if(_7BIT_CONF_SHARED_LIB)
   add_library(7bitConf SHARED
     Source.cpp ${_7BIT_CONF_ALL_HEADERS}
   )
-elseif(_7BIT_CONF_BUILD_LIBRARY_TYPE STREQUAL "Static")
+elseif(_7BIT_CONF_STATIC_LIB)
   add_library(7bitConf STATIC
     Source.cpp ${_7BIT_CONF_ALL_HEADERS}
   )
-elseif(_7BIT_CONF_BUILD_LIBRARY_TYPE STREQUAL "HeaderOnly")
+elseif(_7BIT_CONF_HEADER_ONLY_LIB)
   add_library(7bitConf INTERFACE)
 endif()
 
 add_library(7bitConf::7bitConf ALIAS 7bitConf)
 
-target_link_libraries(7bitConf
-  taocpp::json
-)
+if(_7BIT_CONF_HEADER_ONLY_LIB)
+  target_link_libraries(7bitConf INTERFACE
+    taocpp::json
+  )
+else()
+  target_link_libraries(7bitConf
+    taocpp::json
+  )
+endif()
 
 target_include_directories(
   7bitConf INTERFACE

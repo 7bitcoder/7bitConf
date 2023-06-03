@@ -5,7 +5,6 @@
 
 #include "SevenBit/Conf/Details/JsonObjectExt.hpp"
 #include "SevenBit/Conf/EnvironmentVarsConfiguration.hpp"
-#include "SevenBit/Conf/LibraryConfig.hpp"
 
 #ifdef _WIN32 
     extern char ** _environ;

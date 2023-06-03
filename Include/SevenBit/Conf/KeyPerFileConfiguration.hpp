@@ -12,8 +12,7 @@
 
 namespace sb::cf
 {
-    EXPORT class KeyPerFileConfigurationSource : public IConfigurationSource,
-                                                 public std::enable_shared_from_this<KeyPerFileConfigurationSource>
+    EXPORT class KeyPerFileConfigurationSource : public IConfigurationSource
     {
       private:
         std::filesystem::path _directoryPath;
@@ -21,20 +20,20 @@ namespace sb::cf
         std::string _ignorePrefix;
         bool _isOptional;
 
+      public:
+        using Ptr = std::unique_ptr<KeyPerFileConfigurationSource>;
+        using SPtr = std::shared_ptr<KeyPerFileConfigurationSource>;
+
         KeyPerFileConfigurationSource(std::filesystem::path directoryPath, bool isOptional = false,
                                       std::string ignorePrefix = "");
 
         KeyPerFileConfigurationSource(std::filesystem::path directoryPath, bool isOptional,
                                       std::function<bool(const std::filesystem::path &)> ignoreCondition);
 
-      public:
-        using Ptr = std::unique_ptr<KeyPerFileConfigurationSource>;
-        using SPtr = std::shared_ptr<KeyPerFileConfigurationSource>;
+        static Ptr create(std::filesystem::path directoryPath, bool isOptional = false, std::string ignorePrefix = "");
 
-        static SPtr create(std::filesystem::path directoryPath, bool isOptional = false, std::string ignorePrefix = "");
-
-        static SPtr create(std::filesystem::path directoryPath, bool isOptional,
-                           std::function<bool(const std::filesystem::path &)> ignoreCondition);
+        static Ptr create(std::filesystem::path directoryPath, bool isOptional,
+                          std::function<bool(const std::filesystem::path &)> ignoreCondition);
 
         const std::filesystem::path &getDirectoryPath() const;
 

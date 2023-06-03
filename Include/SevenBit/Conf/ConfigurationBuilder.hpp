@@ -1,14 +1,13 @@
 #pragma once
 
 #include <memory>
+#include <unordered_map>
 #include <vector>
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
 #include "SevenBit/Conf/IConfiguration.hpp"
 #include "SevenBit/Conf/IConfigurationBuilder.hpp"
-#include "SevenBit/Conf/IConfigurationProvider.hpp"
-#include "SevenBit/Conf/IConfigurationSource.hpp"
 
 namespace sb::cf
 {

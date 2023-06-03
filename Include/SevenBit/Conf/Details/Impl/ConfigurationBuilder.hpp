@@ -1,7 +1,5 @@
 #pragma once
 
-#include <memory>
-
 #include "SevenBit/Conf/Configuration.hpp"
 #include "SevenBit/Conf/ConfigurationBuilder.hpp"
 #include "SevenBit/Conf/IConfigurationProvider.hpp"
@@ -43,5 +41,4 @@ namespace sb::cf
     {
         return _properties;
     }
-
 } // namespace sb::cf

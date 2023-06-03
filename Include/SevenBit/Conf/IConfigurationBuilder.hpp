@@ -42,7 +42,14 @@ namespace sb::cf
 
         virtual void clear() = 0;
 
-        IConfigurationBuilder &addJsonFile(std::filesystem::path filePath, bool isOptional = false)
+        template <class TFactory> IConfigurationBuilder &addFrom(TFactory factory) { return add(factory(*this)); }
+
+        IConfigurationBuilder &addJsonFile(std::filesystem::path filePath)
+        {
+            return addJsonFile(std::move(filePath), false);
+        }
+
+        IConfigurationBuilder &addJsonFile(std::filesystem::path filePath, bool isOptional)
         {
             return add(JsonFileConfigurationSource::create(std::move(filePath), isOptional));
         }
@@ -52,17 +59,26 @@ namespace sb::cf
             return add(JsonStreamConfigurationSource::create(stream));
         }
 
-        IConfigurationBuilder &addAppSettings(std::string envName = "")
+        IConfigurationBuilder &addAppSettings() { return addAppSettings(""); }
+
+        IConfigurationBuilder &addAppSettings(std::string environmentName)
         {
-            return add(AppSettingsConfigurationSource::create(std::move(envName)));
+            return add(AppSettingsConfigurationSource::create(std::move(environmentName)));
         }
 
-        IConfigurationBuilder &addEnvironmentVariables(std::string prefix = "", SettingParserConfig config = {})
+        IConfigurationBuilder &addEnvironmentVariables() { return addEnvironmentVariables("", {}); }
+
+        IConfigurationBuilder &addEnvironmentVariables(std::string prefix)
+        {
+            return addEnvironmentVariables(std::move(prefix), {});
+        }
+
+        IConfigurationBuilder &addEnvironmentVariables(std::string prefix, SettingParserConfig config)
         {
             return add(EnvironmentVarsConfigurationSource::create(std::move(prefix), std::move(config)));
         }
 
-        IConfigurationBuilder &addCommandLine(int argc, char **argv, SettingParserConfig config = {})
+        IConfigurationBuilder &addCommandLine(int argc, char *const *const argv, SettingParserConfig config = {})
         {
             return add(CommandLineConfigurationSource::create(argc, argv, std::move(config)));
         }
@@ -77,8 +93,18 @@ namespace sb::cf
             return add(JsonConfigurationSource::create(std::move(object)));
         }
 
-        IConfigurationBuilder &addKeyPerFile(std::filesystem::path directoryPath, bool isOptional = false,
-                                             std::string ignorePrefix = "")
+        IConfigurationBuilder &addKeyPerFile(std::filesystem::path directoryPath)
+        {
+            return addKeyPerFile(std::move(directoryPath), false, "");
+        }
+
+        IConfigurationBuilder &addKeyPerFile(std::filesystem::path directoryPath, bool isOptional)
+        {
+            return addKeyPerFile(std::move(directoryPath), isOptional, "");
+        }
+
+        IConfigurationBuilder &addKeyPerFile(std::filesystem::path directoryPath, bool isOptional,
+                                             std::string ignorePrefix)
         {
             return add(
                 KeyPerFileConfigurationSource::create(std::move(directoryPath), isOptional, std::move(ignorePrefix)));
@@ -99,6 +125,11 @@ namespace sb::cf
         IConfigurationBuilder &addSettings(std::vector<std::pair<std::string_view, JsonValue>> settings)
         {
             return add(SettingsConfigurationSource::create(std::move(settings)));
+        }
+
+        IConfigurationBuilder &addDefault(int argc, char *const *const argv)
+        {
+            return addAppSettings().addEnvironmentVariables().addCommandLine(argc, argv);
         }
 
         virtual ~IConfigurationBuilder() = default;

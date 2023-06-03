@@ -23,22 +23,20 @@ class ConfigurationTest : public testing::Test
 
 TEST_F(ConfigurationTest, ShouldLoadConfig)
 {
-    auto builder = sb::cf::ConfigurationBuilder{};
-
-    builder.getProperties()["hello"] = sb::cf::ObjectHolder<std::string_view>::from("hello");
-
-    auto conf = builder.addAppSettings("dev")
+    auto conf = sb::cf::ConfigurationBuilder{}
+                    .addAppSettings("dev")
                     .addJson({{"string", 1}})
-                    .addCommandLine({"--string=2", "array=3,2,1"})
+                    .addCommandLine({"--string=2", "Array:0!int=33"})
                     .addSetting("set:set", 44444)
                     .addKeyPerFile("Directory")
                     .build();
 
-    sb::cf::JsonObject expected = {{"number", 12345},
-                                   {"array", sb::cf::JsonArray{"3", "2", "1"}},
+    sb::cf::JsonObject expected = {{"Array", sb::cf::JsonArray{33, 2, 3, 4, 5}},
+                                   {"MySetting", "appsettings.dev.json Value"},
+                                   {"ExtraSetting", "extra appsettings.dev.json Value"},
+                                   {"Logging", {{"LogLevel", {{"Default", "Warning"}}}}},
                                    {"set", {{"set", 44444}}},
                                    {"string", "2"},
-                                   {"object", {{"num", 134}, {"string", "stringdev"}, {"inner", {{"num", 12345}}}}},
                                    {"settingOne",
                                     {{"number", 12345},
                                      {"array", sb::cf::JsonArray{1, 2, 3, 4, 5, 6}},

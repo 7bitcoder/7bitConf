@@ -1,9 +1,5 @@
 #pragma once
 
-#include <filesystem>
-#include <memory>
-#include <vector>
-
 #include "SevenBit/Conf/ChainedConfiguration.hpp"
 #include "SevenBit/Conf/IConfigurationSource.hpp"
 #include "SevenBit/Conf/LibraryConfig.hpp"
@@ -15,10 +11,10 @@ namespace sb::cf
     {
     }
 
-    INLINE ChainedConfigurationSource::SPtr ChainedConfigurationSource::create(
+    INLINE ChainedConfigurationSource::Ptr ChainedConfigurationSource::create(
         std::vector<IConfigurationSource::SPtr> sources)
     {
-        return ChainedConfigurationSource::SPtr(new ChainedConfigurationSource{std::move(sources)});
+        return ChainedConfigurationSource::Ptr(new ChainedConfigurationSource{std::move(sources)});
     }
 
     INLINE void ChainedConfigurationSource::add(IConfigurationSource::SPtr source)

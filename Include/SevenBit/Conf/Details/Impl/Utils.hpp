@@ -1,18 +1,28 @@
 #pragma once
 #include <algorithm>
-#include <cstddef>
-#include <limits>
-#include <string_view>
-#include <vector>
+#include <cctype>
 
 #include "SevenBit/Conf/Details/Utils.hpp"
 
 namespace sb::cf::utils
 {
-    INLINE bool ignoreCaseEquals(std::string_view a, std::string_view b)
+
+    INLINE bool isNumberString(std::string_view str)
     {
-        return std::equal(a.begin(), a.end(), b.begin(), b.end(),
-                          [](char a, char b) { return std::tolower(a) == std::tolower(b); });
+        for (auto ch : str)
+        {
+            if (!std::isdigit(ch))
+            {
+                return false;
+            }
+        }
+        return !str.empty();
+    }
+
+    INLINE bool ignoreCaseEquals(std::string_view stra, std::string_view strb)
+    {
+        return std::equal(stra.begin(), stra.end(), strb.begin(), strb.end(),
+                          [](char cha, char chb) { return std::tolower(cha) == std::tolower(chb); });
     }
 
     INLINE bool startsWith(std::string_view str, std::string_view search)

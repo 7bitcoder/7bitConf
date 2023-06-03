@@ -24,13 +24,12 @@ class CommandLineConfigurationTest : public testing::Test
 
 TEST_F(CommandLineConfigurationTest, ShouldLoadConfFromArgs)
 {
-    const char *argv[] = {
-        "progtam/path",
-        "--string=test",
-        "--list=string,string1,string2",
-        "--object:inner:object=string",
+    const char *const argv[] = {
+        "progtam/path",     "--string=test",    "--list:0=string",
+        "--list:1=string1", "--list:2=string2", "--object:inner:object=string",
     };
-    auto provider = sb::cf::CommandLineConfigurationSource::create(4, const_cast<char **>(argv))->build(mock);
+    int size = sizeof(argv) / sizeof(char *);
+    auto provider = sb::cf::CommandLineConfigurationSource::create(size, argv)->build(mock);
 
     provider->load();
 
@@ -46,7 +45,8 @@ TEST_F(CommandLineConfigurationTest, ShouldLoadEmptyConfFromArgs)
     const char *argv[] = {
         "progtam/path",
     };
-    auto provider = sb::cf::CommandLineConfigurationSource::create(1, const_cast<char **>(argv))->build(mock);
+    int size = sizeof(argv) / sizeof(char *);
+    auto provider = sb::cf::CommandLineConfigurationSource::create(size, argv)->build(mock);
 
     provider->load();
 

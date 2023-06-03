@@ -1,13 +1,5 @@
 #pragma once
 
-#include <filesystem>
-#include <functional>
-#include <memory>
-#include <vector>
-
-#include "SevenBit/Conf/IConfigurationSource.hpp"
-#include "SevenBit/Conf/Json.hpp"
-#include "SevenBit/Conf/LibraryConfig.hpp"
 #include "SevenBit/Conf/MapConfiguration.hpp"
 
 namespace sb::cf

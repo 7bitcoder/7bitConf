@@ -1,3 +1,4 @@
+#include <cstddef>
 #include <gtest/gtest.h>
 #include <iostream>
 
@@ -143,4 +144,52 @@ TEST_F(UtilsTest, ShouldReplaceAllStrings)
     std::string str = "bup__hup__mub";
     EXPECT_TRUE(sb::cf::utils::replaceAll(str, "__", ":"));
     EXPECT_EQ(str, "bup:hup:mub");
+}
+
+TEST_F(UtilsTest, ShouldIgnoreCaseCompareStrings)
+{
+    EXPECT_TRUE(sb::cf::utils::ignoreCaseEquals("", ""));
+    EXPECT_TRUE(sb::cf::utils::ignoreCaseEquals("I", "i"));
+    EXPECT_TRUE(sb::cf::utils::ignoreCaseEquals("i", "I"));
+    EXPECT_TRUE(sb::cf::utils::ignoreCaseEquals("123@#", "123@#"));
+    EXPECT_TRUE(sb::cf::utils::ignoreCaseEquals("abcdef", "ABCDEF"));
+    EXPECT_TRUE(sb::cf::utils::ignoreCaseEquals("abcDEF", "abcdef"));
+    EXPECT_FALSE(sb::cf::utils::ignoreCaseEquals("abcDEF", "abcded"));
+    EXPECT_FALSE(sb::cf::utils::ignoreCaseEquals("", "abcded"));
+    EXPECT_FALSE(sb::cf::utils::ignoreCaseEquals("BA", "ab"));
+    EXPECT_FALSE(sb::cf::utils::ignoreCaseEquals("ab", "ab\n"));
+    EXPECT_FALSE(sb::cf::utils::ignoreCaseEquals("1222", "12"));
+}
+
+TEST_F(UtilsTest, ShouldCheckNumberStrings)
+{
+    EXPECT_TRUE(sb::cf::utils::isNumberString("123"));
+    EXPECT_TRUE(sb::cf::utils::isNumberString("1"));
+    EXPECT_TRUE(sb::cf::utils::isNumberString("0912837545234123"));
+    EXPECT_FALSE(sb::cf::utils::isNumberString("asd"));
+    EXPECT_FALSE(sb::cf::utils::isNumberString(""));
+    EXPECT_FALSE(sb::cf::utils::isNumberString("alk1"));
+    EXPECT_FALSE(sb::cf::utils::isNumberString("1223-"));
+    EXPECT_FALSE(sb::cf::utils::isNumberString("1223#"));
+    EXPECT_FALSE(sb::cf::utils::isNumberString("1223+="));
+    EXPECT_FALSE(sb::cf::utils::isNumberString("1223.123"));
+    EXPECT_FALSE(sb::cf::utils::isNumberString("1223.123"));
+}
+
+TEST_F(UtilsTest, ShouldCheckToNumber)
+{
+    EXPECT_EQ(sb::cf::utils::toNumber<int>("123"), std::make_pair(true, 123));
+    EXPECT_EQ(sb::cf::utils::toNumber<int>("-123"), std::make_pair(true, -123));
+    EXPECT_EQ(sb::cf::utils::toNumber<int>("00123"), std::make_pair(true, 123));
+    EXPECT_EQ(sb::cf::utils::toNumber<int>("123 23", false), std::make_pair(true, 123));
+    EXPECT_EQ(sb::cf::utils::toNumber<int>("123.23", false), std::make_pair(true, 123));
+    EXPECT_EQ(sb::cf::utils::toNumber<int>("123adawadwa", false), std::make_pair(true, 123));
+    EXPECT_FALSE(sb::cf::utils::toNumber<size_t>("-123").first);
+    EXPECT_FALSE(sb::cf::utils::toNumber<size_t>("").first);
+    EXPECT_FALSE(sb::cf::utils::toNumber<size_t>("1223-").first);
+    EXPECT_FALSE(sb::cf::utils::toNumber<size_t>("1223#").first);
+    EXPECT_FALSE(sb::cf::utils::toNumber<size_t>("1223+=").first);
+    EXPECT_FALSE(sb::cf::utils::toNumber<size_t>("1223.123").first);
+    EXPECT_FALSE(sb::cf::utils::toNumber<size_t>("1223 123").first);
+    EXPECT_FALSE(sb::cf::utils::toNumber<size_t>("asdf").first);
 }

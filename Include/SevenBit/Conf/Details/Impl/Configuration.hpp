@@ -1,15 +1,5 @@
 #pragma once
 
-#include <memory>
-#include <string>
-#include <string_view>
-#include <unordered_map>
-#include <vector>
-
-#include "SevenBit/Conf/IConfigurationBuilder.hpp"
-#include "SevenBit/Conf/IConfigurationProvider.hpp"
-#include "SevenBit/Conf/LibraryConfig.hpp"
-
 #include "SevenBit/Conf/Configuration.hpp"
 #include "SevenBit/Conf/Details/JsonObjectExt.hpp"
 #include "SevenBit/Conf/Details/Utils.hpp"
@@ -115,8 +105,7 @@ namespace sb::cf
         for (auto &provider : _providers)
         {
             provider->load();
-            auto config = provider->getConfiguration();
-            details::JsonObjectExt::deepMerge(_configuration, std::move(config));
+            details::JsonObjectExt::deepMerge(_configuration, std::move(provider->getConfiguration()));
         }
     }
 

@@ -10,19 +10,18 @@
 
 namespace sb::cf
 {
-    EXPORT class ChainedConfigurationSource : public IConfigurationSource,
-                                              public std::enable_shared_from_this<ChainedConfigurationSource>
+    EXPORT class ChainedConfigurationSource : public IConfigurationSource
     {
       private:
         std::vector<IConfigurationSource::SPtr> _sources;
-
-        ChainedConfigurationSource(std::vector<IConfigurationSource::SPtr> sources = {});
 
       public:
         using Ptr = std::unique_ptr<ChainedConfigurationSource>;
         using SPtr = std::shared_ptr<ChainedConfigurationSource>;
 
-        static SPtr create(std::vector<IConfigurationSource::SPtr> sources = {});
+        ChainedConfigurationSource(std::vector<IConfigurationSource::SPtr> sources = {});
+
+        static Ptr create(std::vector<IConfigurationSource::SPtr> sources = {});
 
         void add(IConfigurationSource::SPtr source);
 

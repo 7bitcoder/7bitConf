@@ -24,9 +24,23 @@ namespace sb::cf
 
         static ObjectHolder<T>::Ptr from(T &&object) { return ObjectHolder<T>::Ptr{new ObjectHolder<T>{object}}; }
 
-        T &getObject() { return _object; }
+        static ObjectHolder<T> &castFrom(IObject &object) { return static_cast<ObjectHolder<T> &>(object); }
 
-        const T &getObject() const { return _object; }
+        static const ObjectHolder<T> &castFrom(const IObject &object)
+        {
+            return static_cast<const ObjectHolder<T> &>(object);
+        }
+
+        static ObjectHolder<T> &safeCastFrom(IObject &object) { return dynamic_cast<ObjectHolder<T> &>(object); }
+
+        static const ObjectHolder<T> &safeCastFrom(const IObject &object)
+        {
+            return dynamic_cast<const ObjectHolder<T> &>(object);
+        }
+
+        T &get() { return _object; }
+
+        const T &get() const { return _object; }
     };
 
 } // namespace sb::cf

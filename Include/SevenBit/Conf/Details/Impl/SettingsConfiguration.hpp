@@ -1,8 +1,7 @@
 #pragma once
 
-#include <memory>
-
-#include "SevenBit/Conf/LibraryConfig.hpp"
+#include "SevenBit/Conf/Details/JsonObjectExt.hpp"
+#include "SevenBit/Conf/Json.hpp"
 #include "SevenBit/Conf/SettingsConfiguration.hpp"
 
 namespace sb::cf
@@ -40,7 +39,9 @@ namespace sb::cf
         clear();
         for (auto &[key, value] : *_source)
         {
-            update(_source->getSettingParser().parseSetting(key, value));
+            JsonObject result{};
+            details::JsonObjectExt::getOrCreateInner(result, key) = std::move(value);
+            update(std::move(result));
         }
     }
 } // namespace sb::cf

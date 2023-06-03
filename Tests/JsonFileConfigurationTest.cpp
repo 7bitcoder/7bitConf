@@ -29,10 +29,9 @@ TEST_F(JsonFileConfigurationTest, ShouldLoadSimpleJsonConfigFile)
 
     provider->load();
 
-    sb::cf::JsonObject expected = {{"number", 12345},
-                                   {"array", sb::cf::JsonArray{1, 2, 3, 4, 5, 6}},
-                                   {"string", "string"},
-                                   {"object", {{"num", 134}, {"string", "string"}}}};
+    sb::cf::JsonObject expected = {{"Array", sb::cf::JsonArray{1, 2, 3, 4, 5}},
+                                   {"MySetting", "appsettings.json Value"},
+                                   {"Logging", {{"LogLevel", {{"Default", "Information"}}}}}};
 
     EXPECT_EQ(provider->getConfiguration(), expected);
 }

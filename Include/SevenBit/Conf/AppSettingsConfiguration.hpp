@@ -6,7 +6,6 @@
 #include "SevenBit/Conf/ChainedConfiguration.hpp"
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
-#include "SevenBit/Conf/ConfigurationProviderBase.hpp"
 #include "SevenBit/Conf/IConfigurationSource.hpp"
 
 namespace sb::cf
@@ -16,15 +15,15 @@ namespace sb::cf
       private:
         std::string _envName;
 
-        AppSettingsConfigurationSource(std::string environmentName);
-
       public:
         using Ptr = std::unique_ptr<AppSettingsConfigurationSource>;
         using SPtr = std::shared_ptr<AppSettingsConfigurationSource>;
 
-        static SPtr create(std::string environmentName = "");
+        AppSettingsConfigurationSource(std::string environmentName);
 
-        const std::string &getEnvName() const;
+        static Ptr create(std::string environmentName = "");
+
+        const std::string &getEnvironmentName() const;
 
         IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
     };

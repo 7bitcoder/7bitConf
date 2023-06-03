@@ -1,32 +1,60 @@
 #pragma once
 
-#include "SevenBit/Conf/LibraryConfig.hpp"
-
 #include "SevenBit/Conf/Details/JsonObjectExt.hpp"
 #include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"
+#include "SevenBit/Conf/Json.hpp"
+#include "SevenBit/Conf/LibraryConfig.hpp"
+#include <algorithm>
+#include <charconv>
+#include <cstddef>
+#include <string>
+#include <tao/json/type.hpp>
 
 namespace sb::cf::details
 {
-    INLINE void JsonObjectExt::deepMerge(JsonObject &json, JsonObject &&override)
+    INLINE void JsonObjectExt::deepMerge(JsonValue &json, JsonValue override)
+    {
+        if (override.is_uninitialized()) // nullptr is mark for skip
+        {
+            return;
+        }
+        if (json.is_object() && override.is_object())
+        {
+            deepMerge(json.get_object(), std::move(override.get_object()));
+        }
+        else if (json.is_array() && override.is_array())
+        {
+            deepMerge(json.get_array(), std::move(override.get_array()));
+        }
+        else
+        {
+            json = std::move(override);
+        }
+    }
+
+    INLINE void JsonObjectExt::deepMerge(JsonArray &json, JsonArray override)
+    {
+        for (size_t i = 0; i < override.size(); ++i)
+        {
+            if (i >= json.size())
+            {
+                json.push_back(JsonValue{});
+            }
+            deepMerge(json[i], std::move(override[i]));
+        }
+    }
+
+    INLINE void JsonObjectExt::deepMerge(JsonObject &json, JsonObject override)
     {
         for (auto &[key, value] : override)
         {
-            auto valuePtr = find(json, key);
-            if (!valuePtr || !valuePtr->is_object() || !value.is_object())
-            {
-                json[key] = std::move(value);
-            }
-            else
-            {
-                deepMerge(valuePtr->get_object(), std::move(value.get_object()));
-            }
+            deepMerge(json[std::move(key)], std::move(value));
         }
     }
 
     INLINE JsonValue *JsonObjectExt::find(JsonObject &json, std::string_view key)
     {
-        checkKey(key);
         if (auto it = json.find(key); it != json.end())
         {
             return &it->second;
@@ -36,10 +64,71 @@ namespace sb::cf::details
 
     INLINE const JsonValue *JsonObjectExt::find(const JsonObject &json, std::string_view key)
     {
-        checkKey(key);
         if (auto it = json.find(key); it != json.end())
         {
             return &it->second;
+        }
+        return nullptr;
+    }
+
+    INLINE JsonValue *JsonObjectExt::find(JsonArray &json, size_t index)
+    {
+        if (index < json.size())
+        {
+            return &json[index];
+        }
+        return nullptr;
+    }
+
+    INLINE const JsonValue *JsonObjectExt::find(const JsonArray &json, size_t index)
+    {
+        if (index < json.size())
+        {
+            return &json[index];
+        }
+        return nullptr;
+    }
+
+    INLINE JsonValue *JsonObjectExt::find(JsonArray &json, std::string_view key)
+    {
+        if (auto [success, index] = utils::toNumber<size_t>(key); success)
+        {
+            return find(json, index);
+        }
+        return nullptr;
+    }
+
+    INLINE const JsonValue *JsonObjectExt::find(const JsonArray &json, std::string_view key)
+    {
+        if (auto [success, index] = utils::toNumber<size_t>(key); success)
+        {
+            return find(json, index);
+        }
+        return nullptr;
+    }
+
+    INLINE JsonValue *JsonObjectExt::find(JsonValue &json, std::string_view key)
+    {
+        if (json.is_object())
+        {
+            return find(json.get_object(), key);
+        }
+        if (json.is_array())
+        {
+            return find(json.get_array(), key);
+        }
+        return nullptr;
+    }
+
+    INLINE const JsonValue *JsonObjectExt::find(const JsonValue &json, std::string_view key)
+    {
+        if (json.is_object())
+        {
+            return find(json.get_object(), key);
+        }
+        if (json.is_array())
+        {
+            return find(json.get_array(), key);
         }
         return nullptr;
     }
@@ -56,63 +145,87 @@ namespace sb::cf::details
 
     INLINE JsonValue *JsonObjectExt::findInner(JsonObject &json, const std::vector<std::string_view> &key)
     {
-        JsonObject *currentObject = &json;
         checkSegmentSize(key);
-        for (int i = 0; i < key.size() - 1; ++i)
+        JsonValue *current = find(json, key[0]);
+        for (size_t i = 1; i < key.size() && current; ++i)
         {
-            auto jsonValue = find(*currentObject, key[i]);
-            if (!jsonValue || !jsonValue->is_object())
-            {
-                return nullptr;
-            }
-            currentObject = &(jsonValue->get_object());
+            current = find(*current, key[i]);
         }
-        return find(*currentObject, key.back());
+        return current;
     }
 
     INLINE const JsonValue *JsonObjectExt::findInner(const JsonObject &json, const std::vector<std::string_view> &key)
     {
-        const JsonObject *currentObject = &json;
         checkSegmentSize(key);
-        for (int i = 0; i < key.size() - 1; ++i)
+        const JsonValue *current = find(json, key[0]);
+        for (size_t i = 1; i < key.size() && current; ++i)
         {
-            auto jsonValue = find(*currentObject, key[i]);
-            if (!jsonValue || !jsonValue->is_object())
-            {
-                return nullptr;
-            }
-            currentObject = &(jsonValue->get_object());
+            current = find(*current, key[i]);
         }
-        return find(*currentObject, key.back());
+        return current;
     }
 
-    INLINE JsonValue *JsonObjectExt::insertInner(JsonObject &json, std::string_view key, JsonValue value)
+    INLINE JsonValue &JsonObjectExt::getOrCreateInner(JsonObject &json, std::string_view key)
     {
-        return insertInner(json, utils::split(key, ":"), std::move(value));
+        return getOrCreateInner(json, utils::split(key, ":"));
     }
 
-    INLINE JsonValue *JsonObjectExt::insertInner(JsonObject &json, const std::vector<std::string_view> &key,
-                                                 JsonValue value)
+    INLINE JsonValue &JsonObjectExt::getOrCreateInner(JsonObject &json, const std::vector<std::string_view> &keys)
     {
-        JsonObject *currentObject = &json;
-        checkSegmentSize(key);
-        for (int i = 0; i < key.size() - 1; ++i)
+        checkSegmentSize(keys);
+        JsonValue *current = &getOrCreateFromObject(json, keys[0]);
+        for (size_t i = 1; i < keys.size() && current; ++i)
         {
-            auto jsonValue = find(*currentObject, key[i]);
-            if (!jsonValue)
+            auto key = keys[i];
+            if (!current->is_object() && !current->is_array() && !current->is_uninitialized())
             {
-                auto &newValue = (*currentObject)[std::string{key[i]}] = json::empty_object;
-                jsonValue = &newValue;
+                throw ConfigException("Bad configuration key: '" + std::string{key} + "' is not an object or array");
             }
-            if (!jsonValue->is_object())
+            auto isNumber = utils::isNumberString(key);
+            if (current->is_uninitialized()) // mark for new one
             {
-                throw ConfigException("Bad configuration key: '" + std::string{key[i]} + "' is not an object");
+                *current = isNumber ? JsonValue(JsonArray{}) : JsonValue(JsonObject{});
             }
-            currentObject = &(jsonValue->get_object());
+            if (current->is_array())
+            {
+                if (!isNumber)
+                {
+                    throw ConfigException("Bad configuration key: '" + std::string{key} +
+                                          "' is not number index for array");
+                }
+                auto [_, index] = utils::toNumber<size_t>(key);
+                current = &getOrCreateFromArray(current->get_array(), index);
+            }
+            else
+            {
+                current = &getOrCreateFromObject(current->get_object(), key);
+            }
         }
-        checkKey(key.back());
-        auto &newValue = (*currentObject)[std::string{key.back()}] = value;
-        return &newValue;
+        if (!current) // should not happen
+        {
+            throw NullPointnerException("object is null");
+        }
+        return *current;
+    }
+
+    INLINE JsonValue &JsonObjectExt::getOrCreateFromObject(JsonObject &object, std::string_view key)
+    {
+        auto jsonValue = find(object, key);
+        if (!jsonValue)
+        {
+            jsonValue = &object[std::string{key}];
+        }
+        return *jsonValue;
+    }
+
+    INLINE JsonValue &JsonObjectExt::getOrCreateFromArray(JsonArray &array, size_t index)
+    {
+        auto jsonValue = find(array, index);
+        if (!jsonValue)
+        {
+            array.resize(index + 1, JsonValue{});
+        }
+        return array[index];
     }
 
     INLINE void JsonObjectExt::checkSegmentSize(const std::vector<std::string_view> &key)

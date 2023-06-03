@@ -4,12 +4,11 @@
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
-#include "SevenBit/Conf/Details/JsonObjectExt.hpp"
-#include "SevenBit/Conf/IConfigurationSource.hpp"
+#include "SevenBit/Conf/IConfigurationProvider.hpp"
 
 namespace sb::cf
 {
-    class ConfigurationProviderBase : public IConfigurationProvider
+    EXPORT class ConfigurationProviderBase : public IConfigurationProvider
     {
       protected:
         JsonObject _configuration;

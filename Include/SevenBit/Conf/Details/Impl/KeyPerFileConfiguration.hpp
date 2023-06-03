@@ -1,17 +1,10 @@
 #pragma once
 
-#include <algorithm>
-#include <filesystem>
-#include <memory>
-
 #include "SevenBit/Conf/ChainedConfiguration.hpp"
 #include "SevenBit/Conf/Details/JsonObjectExt.hpp"
 #include "SevenBit/Conf/Details/Utils.hpp"
-#include "SevenBit/Conf/IConfigurationProvider.hpp"
-#include "SevenBit/Conf/Json.hpp"
 #include "SevenBit/Conf/JsonFileConfiguration.hpp"
 #include "SevenBit/Conf/KeyPerFileConfiguration.hpp"
-#include "SevenBit/Conf/LibraryConfig.hpp"
 #include "SevenBit/Conf/MapConfiguration.hpp"
 
 namespace sb::cf
@@ -30,18 +23,19 @@ namespace sb::cf
     {
     }
 
-    INLINE KeyPerFileConfigurationSource::SPtr KeyPerFileConfigurationSource::create(
-        std::filesystem::path directoryPath, bool isOptional, std::string ignorePrefix)
+    INLINE KeyPerFileConfigurationSource::Ptr KeyPerFileConfigurationSource::create(std::filesystem::path directoryPath,
+                                                                                    bool isOptional,
+                                                                                    std::string ignorePrefix)
     {
-        return KeyPerFileConfigurationSource::SPtr{
+        return KeyPerFileConfigurationSource::Ptr{
             new KeyPerFileConfigurationSource{std::move(directoryPath), isOptional, std::move(ignorePrefix)}};
     }
 
-    INLINE KeyPerFileConfigurationSource::SPtr KeyPerFileConfigurationSource::create(
+    INLINE KeyPerFileConfigurationSource::Ptr KeyPerFileConfigurationSource::create(
         std::filesystem::path directoryPath, bool isOptional,
         std::function<bool(const std::filesystem::path &)> ignoreCondition)
     {
-        return KeyPerFileConfigurationSource::SPtr{
+        return KeyPerFileConfigurationSource::Ptr{
             new KeyPerFileConfigurationSource{std::move(directoryPath), isOptional, std::move(ignoreCondition)}};
     }
 
@@ -62,12 +56,12 @@ namespace sb::cf
 
     INLINE IConfigurationProvider::Ptr KeyPerFileConfigurationSource::build(IConfigurationBuilder &builder)
     {
-        auto sources = ChainedConfigurationSource::create();
+        ChainedConfigurationSource sources;
 
         auto &directoryPath = getDirectoryPath();
         if (!std::filesystem::exists(directoryPath) && getIsOptional())
         {
-            return sources->build(builder);
+            return sources.build(builder);
         }
         for (auto const &entry : std::filesystem::directory_iterator{directoryPath})
         {
@@ -83,10 +77,10 @@ namespace sb::cf
                 auto mapSource = MapConfigurationSource::create(std::move(fileSource), [filePath](JsonObject config) -> JsonObject {
                     return JsonObject{{filePath.stem().generic_string(), std::move(config)}};
                 });
-                sources->add(mapSource);
+                sources.add(mapSource);
             }
         }
-        return sources->build(builder);
+        return sources.build(builder);
     }
 
     INLINE bool KeyPerFileConfigurationSource::canIgnore(std::filesystem::path filePath) const

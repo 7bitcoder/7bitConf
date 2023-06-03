@@ -29,10 +29,9 @@ TEST_F(AppSettingsConfiguration, ShouldLoadAppSettings)
 
     provider->load();
 
-    sb::cf::JsonObject expected = {{"number", 12345},
-                                   {"array", sb::cf::JsonArray{1, 2, 3, 4, 5, 6}},
-                                   {"string", "string"},
-                                   {"object", {{"num", 134}, {"string", "string"}}}};
+    sb::cf::JsonObject expected = {{"Array", sb::cf::JsonArray{1, 2, 3, 4, 5}},
+                                   {"MySetting", "appsettings.json Value"},
+                                   {"Logging", {{"LogLevel", {{"Default", "Information"}}}}}};
 
     EXPECT_EQ(provider->getConfiguration(), expected);
 }
@@ -43,10 +42,10 @@ TEST_F(AppSettingsConfiguration, ShouldLoadDevAppSettings)
 
     provider->load();
 
-    sb::cf::JsonObject expected = {{"number", 12345},
-                                   {"array", sb::cf::JsonArray{1}},
-                                   {"string", "stringdev"},
-                                   {"object", {{"num", 134}, {"string", "stringdev"}, {"inner", {{"num", 12345}}}}}};
+    sb::cf::JsonObject expected = {{"Array", sb::cf::JsonArray{11, 2, 3, 4, 5}},
+                                   {"MySetting", "appsettings.dev.json Value"},
+                                   {"ExtraSetting", "extra appsettings.dev.json Value"},
+                                   {"Logging", {{"LogLevel", {{"Default", "Warning"}}}}}};
 
     EXPECT_EQ(provider->getConfiguration(), expected);
 }

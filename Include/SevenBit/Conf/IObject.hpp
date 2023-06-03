@@ -10,7 +10,7 @@ namespace sb::cf
     {
         using Ptr = std::unique_ptr<IObject>;
 
-        ~IObject() = default;
+        virtual ~IObject() = default;
     };
 
 } // namespace sb::cf

@@ -92,11 +92,10 @@ TEST_F(SettingParserTest, ShouldFailParseEmptyOption)
 {
     sb::cf::details::SettingParser parser;
 
-    EXPECT_THROW(parser.parseSetting("--=hello"), sb::cf::ConfigOptionException);
-    EXPECT_THROW(parser.parseSetting("=hello"), sb::cf::ConfigOptionException);
-    EXPECT_THROW(parser.parseSetting("::=hello"), sb::cf::ConfigOptionException);
-    EXPECT_THROW(parser.parseSetting("="), sb::cf::ConfigOptionException);
-    EXPECT_THROW(parser.parseSetting(""), sb::cf::ConfigOptionException);
+    EXPECT_THROW(parser.parseSetting("--=hello"), sb::cf::SettingParserException);
+    EXPECT_THROW(parser.parseSetting("=hello"), sb::cf::SettingParserException);
+    EXPECT_THROW(parser.parseSetting("="), sb::cf::SettingParserException);
+    EXPECT_THROW(parser.parseSetting(""), sb::cf::SettingParserException);
 }
 
 TEST_F(SettingParserTest, ShouldParseEmptyValueOption)
@@ -169,9 +168,9 @@ TEST_F(SettingParserTest, ShouldParseListValueOption)
 {
     sb::cf::details::SettingParser parser;
 
-    auto result = parser.parseSetting("option=1,2,3,4,5");
+    auto result = parser.parseSetting("option:2=1");
 
-    const sb::cf::JsonValue expected = {{"option", sb::cf::JsonArray{"1", "2", "3", "4", "5"}}};
+    const sb::cf::JsonValue expected = {{"option", sb::cf::JsonArray{sb::cf::JsonValue{}, sb::cf::JsonValue{}, "1"}}};
 
     EXPECT_EQ(result, expected);
 }
@@ -180,9 +179,9 @@ TEST_F(SettingParserTest, ShouldParseListValueIntOption)
 {
     sb::cf::details::SettingParser parser;
 
-    auto result = parser.parseSetting("option!int=1,2,3,4,5");
+    auto result = parser.parseSetting("option:2!int=1");
 
-    const sb::cf::JsonValue expected = {{"option", sb::cf::JsonArray{1, 2, 3, 4, 5}}};
+    const sb::cf::JsonValue expected = {{"option", sb::cf::JsonArray{sb::cf::JsonValue{}, sb::cf::JsonValue{}, 1}}};
 
     EXPECT_EQ(result, expected);
 }
@@ -191,9 +190,9 @@ TEST_F(SettingParserTest, ShouldParseListValueBoolOption)
 {
     sb::cf::details::SettingParser parser;
 
-    auto result = parser.parseSetting("option!Bool=true,false");
+    auto result = parser.parseSetting("option:2!Bool=true");
 
-    const sb::cf::JsonValue expected = {{"option", sb::cf::JsonArray{true, false}}};
+    const sb::cf::JsonValue expected = {{"option", sb::cf::JsonArray{sb::cf::JsonValue{}, sb::cf::JsonValue{}, true}}};
 
     EXPECT_EQ(result, expected);
 }
@@ -202,9 +201,9 @@ TEST_F(SettingParserTest, ShouldParseListValueDoubleOption)
 {
     sb::cf::details::SettingParser parser;
 
-    auto result = parser.parseSetting("option!Double=1.1,1.4");
+    auto result = parser.parseSetting("option:2!Double=1.1");
 
-    const sb::cf::JsonValue expected = {{"option", sb::cf::JsonArray{1.1, 1.4}}};
+    const sb::cf::JsonValue expected = {{"option", sb::cf::JsonArray{sb::cf::JsonValue{}, sb::cf::JsonValue{}, 1.1}}};
 
     EXPECT_EQ(result, expected);
 }
@@ -213,9 +212,9 @@ TEST_F(SettingParserTest, ShouldParseListValueStringOption)
 {
     sb::cf::details::SettingParser parser;
 
-    auto result = parser.parseSetting("option!String=1.1,1.4");
+    auto result = parser.parseSetting("option:2!String=1.1");
 
-    const sb::cf::JsonValue expected = {{"option", sb::cf::JsonArray{"1.1", "1.4"}}};
+    const sb::cf::JsonValue expected = {{"option", sb::cf::JsonArray{sb::cf::JsonValue{}, sb::cf::JsonValue{}, "1.1"}}};
 
     EXPECT_EQ(result, expected);
 }

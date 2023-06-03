@@ -1,6 +1,6 @@
 #pragma once
-#include <ostream>
-#include <sstream>
+
+#include <istream>
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 

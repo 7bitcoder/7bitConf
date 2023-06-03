@@ -37,9 +37,9 @@ namespace sb::cf
         BadStreamException(const std::string &why);
     };
 
-    struct EXPORT ConfigOptionException : public ConfigException
+    struct EXPORT SettingParserException : public ConfigException
     {
-        ConfigOptionException(const std::string &why);
+        SettingParserException(const std::string &why);
     };
 } // namespace sb::cf
 

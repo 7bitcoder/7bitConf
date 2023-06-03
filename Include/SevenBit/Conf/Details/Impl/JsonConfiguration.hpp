@@ -3,7 +3,6 @@
 #include <memory>
 
 #include "SevenBit/Conf/JsonConfiguration.hpp"
-#include "SevenBit/Conf/LibraryConfig.hpp"
 
 namespace sb::cf
 {

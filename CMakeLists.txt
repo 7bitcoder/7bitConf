@@ -28,6 +28,7 @@ if(_7BIT_CONF_BUILD_TESTS)
 endif()
 
 if(_7BIT_CONF_BUILD_EXAMPLES)
+        add_subdirectory(Examples)
 endif()
 
 if(_7BIT_CONF_BUILD_SINGLE_HEADER)

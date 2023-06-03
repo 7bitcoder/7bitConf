@@ -1,7 +1,5 @@
 #pragma once
 
-#include <memory>
-
 #include "SevenBit/Conf/AppSettingsConfiguration.hpp"
 #include "SevenBit/Conf/ChainedConfiguration.hpp"
 #include "SevenBit/Conf/Details/JsonObjectExt.hpp"
@@ -14,22 +12,21 @@ namespace sb::cf
     {
     }
 
-    INLINE AppSettingsConfigurationSource::SPtr AppSettingsConfigurationSource::create(std::string environmentName)
+    INLINE AppSettingsConfigurationSource::Ptr AppSettingsConfigurationSource::create(std::string environmentName)
     {
-        return AppSettingsConfigurationSource::SPtr(new AppSettingsConfigurationSource{std::move(environmentName)});
+        return AppSettingsConfigurationSource::Ptr(new AppSettingsConfigurationSource{std::move(environmentName)});
     }
 
-    INLINE const std::string &AppSettingsConfigurationSource::getEnvName() const { return _envName; }
+    INLINE const std::string &AppSettingsConfigurationSource::getEnvironmentName() const { return _envName; }
 
     INLINE IConfigurationProvider::Ptr AppSettingsConfigurationSource::build(IConfigurationBuilder &builder)
     {
-        ChainedConfigurationSource::SPtr _chain =
-            ChainedConfigurationSource::create({JsonFileConfigurationSource::create("appsettings.json", true)});
-        if (!getEnvName().empty())
+        ChainedConfigurationSource chain({JsonFileConfigurationSource::create("appsettings.json", true)});
+        if (!getEnvironmentName().empty())
         {
-            _chain->add(JsonFileConfigurationSource::create("appsettings." + getEnvName() + ".json", true));
+            chain.add(JsonFileConfigurationSource::create("appsettings." + getEnvironmentName() + ".json", true));
         }
-        return _chain->build(builder);
+        return chain.build(builder);
     }
 
 } // namespace sb::cf

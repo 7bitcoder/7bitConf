@@ -3,13 +3,11 @@
 #include <memory>
 #include <string>
 #include <string_view>
-#include <unordered_map>
 #include <vector>
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
 #include "SevenBit/Conf/IConfiguration.hpp"
-#include "SevenBit/Conf/IConfigurationBuilder.hpp"
 #include "SevenBit/Conf/IConfigurationProvider.hpp"
 
 namespace sb::cf
@@ -31,6 +29,10 @@ namespace sb::cf
 
         Configuration &operator=(Configuration &&) = delete;
         Configuration &operator=(const Configuration &) = delete;
+
+        void reload();
+
+        const std::vector<IConfigurationProvider::Ptr> &getProviders() const;
 
         JsonObject &root();
 
@@ -68,9 +70,13 @@ namespace sb::cf
 
         const JsonValue &operator[](const std::vector<std::string_view> &key) const;
 
-        void reload();
+        auto begin() { return root().begin(); }
 
-        const std::vector<IConfigurationProvider::Ptr> &getProviders() const;
+        auto end() { return root().end(); }
+
+        auto rBegin() { return root().rbegin(); }
+
+        auto rEnd() { return root().rend(); }
 
       private:
         JsonValue &throwNullPointnerException(const std::vector<std::string_view> &key) const;
@@ -78,3 +84,7 @@ namespace sb::cf
         JsonValue &throwNullPointnerException(std::string_view key) const;
     };
 } // namespace sb::cf
+
+#ifdef _7BIT_CONF_ADD_IMPL
+#include "SevenBit/Conf/Details/Impl/Configuration.hpp"
+#endif

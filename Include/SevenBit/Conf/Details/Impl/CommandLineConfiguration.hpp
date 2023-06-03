@@ -1,7 +1,5 @@
 #pragma once
 
-#include <memory>
-
 #include "SevenBit/Conf/CommandLineConfiguration.hpp"
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
@@ -13,7 +11,8 @@ namespace sb::cf
     {
     }
 
-    INLINE CommandLineConfigurationSource::SPtr CommandLineConfigurationSource::create(int argc, char **argv,
+    INLINE CommandLineConfigurationSource::SPtr CommandLineConfigurationSource::create(int argc,
+                                                                                       const char *const *argv,
                                                                                        SettingParserConfig config)
     {
         std::vector<std::string_view> args;
