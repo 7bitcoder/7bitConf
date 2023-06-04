@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <iostream>
 
-#include "SevenBit/Conf/Details/Utils.hpp"
+#include "SevenBit/Config/Details/Utils.hpp"
 
 class UtilsTest : public testing::Test
 {
@@ -176,7 +176,7 @@ TEST_F(UtilsTest, ShouldCheckNumberStrings)
     EXPECT_FALSE(sb::cf::utils::isNumberString("1223.123"));
 }
 
-TEST_F(UtilsTest, ShouldCheckToNumber)
+TEST_F(UtilsTest, ShouldConvertToNumber)
 {
     EXPECT_EQ(sb::cf::utils::toNumber<int>("123"), std::make_pair(true, 123));
     EXPECT_EQ(sb::cf::utils::toNumber<int>("-123"), std::make_pair(true, -123));

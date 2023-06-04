@@ -1,5 +1,5 @@
 #pragma once
 
-#define _7BIT_CONF_HEADER_ONLY_LIB
+#define _7BIT_CONFIG_HEADER_ONLY_LIB
 
-#include "SevenBit/Conf.hpp"
+#include "SevenBit/Config.hpp"

@@ -1,4 +1,4 @@
-#include <SevenBit/Conf.hpp>
+#include <SevenBit/Config.hpp>
 #include <iostream>
 
 using namespace sb::cf;

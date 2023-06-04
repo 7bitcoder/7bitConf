@@ -3,9 +3,9 @@
 #include <string_view>
 #include <tao/json/type.hpp>
 
-#include "SevenBit/Conf/Details/JsonObjectExt.hpp"
-#include "SevenBit/Conf/Exceptions.hpp"
-#include "SevenBit/Conf/Json.hpp"
+#include "SevenBit/Config/Details/JsonObjectExt.hpp"
+#include "SevenBit/Config/Exceptions.hpp"
+#include "SevenBit/Config/Json.hpp"
 
 using namespace sb::cf::json;
 

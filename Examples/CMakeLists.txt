@@ -9,7 +9,7 @@ foreach(SOURCE ${SOURCES})
     )
 
     target_link_libraries(${FILE_NAME}
-        7bitConf
+        7bitConfig
     )
 endforeach()
 

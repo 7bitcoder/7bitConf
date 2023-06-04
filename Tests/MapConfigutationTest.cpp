@@ -1,7 +1,7 @@
 #include "Mocks/ConfigurationBuilderMock.hpp"
-#include "SevenBit/Conf/Json.hpp"
-#include "SevenBit/Conf/JsonConfiguration.hpp"
-#include "SevenBit/Conf/MapConfiguration.hpp"
+#include "SevenBit/Config/Json.hpp"
+#include "SevenBit/Config/JsonConfiguration.hpp"
+#include "SevenBit/Config/MapConfiguration.hpp"
 #include <gtest/gtest.h>
 #include <iostream>
 

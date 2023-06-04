@@ -2,8 +2,8 @@
 #include <iostream>
 #include <string_view>
 
-#include "SevenBit/Conf/ConfigurationBuilder.hpp"
-#include "SevenBit/Conf/ObjectHolder.hpp"
+#include "SevenBit/Config/ConfigurationBuilder.hpp"
+#include "SevenBit/Config/ObjectHolder.hpp"
 
 class ConfigurationTest : public testing::Test
 {

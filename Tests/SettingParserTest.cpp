@@ -2,9 +2,9 @@
 #include <iostream>
 #include <tao/json/type.hpp>
 
-#include "SevenBit/Conf/Details/SettingParser.hpp"
-#include "SevenBit/Conf/Exceptions.hpp"
-#include "SevenBit/Conf/Json.hpp"
+#include "SevenBit/Config/Details/SettingParser.hpp"
+#include "SevenBit/Config/Exceptions.hpp"
+#include "SevenBit/Config/Json.hpp"
 
 class SettingParserTest : public testing::Test
 {

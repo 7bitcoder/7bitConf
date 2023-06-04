@@ -2,8 +2,8 @@
 #include <iostream>
 
 #include "Mocks/ConfigurationBuilderMock.hpp"
-#include "SevenBit/Conf/Exceptions.hpp"
-#include "SevenBit/Conf/JsonFileConfiguration.hpp"
+#include "SevenBit/Config/Exceptions.hpp"
+#include "SevenBit/Config/JsonFileConfiguration.hpp"
 
 class JsonFileConfigurationTest : public testing::Test
 {

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "SevenBit/Conf/LibraryConfig.hpp"
+#include "SevenBit/Config/LibraryConfig.hpp"
 
-#ifndef _7BIT_CONF_ADD_IMPL
-#define _7BIT_CONF_ADD_IMPL
+#ifndef _7BIT_CONFIG_ADD_IMPL
+#define _7BIT_CONFIG_ADD_IMPL
 #endif
 
 #ifdef INLINE

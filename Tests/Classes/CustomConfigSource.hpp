@@ -1,10 +1,10 @@
 #pragma once
 
-#include "SevenBit/Conf/IConfigurationBuilder.hpp"
-#include "SevenBit/Conf/IConfigurationProvider.hpp"
-#include "SevenBit/Conf/IConfigurationSource.hpp"
-#include "SevenBit/Conf/JsonConfiguration.hpp"
-#include "SevenBit/Conf/ObjectHolder.hpp"
+#include "SevenBit/Config/IConfigurationBuilder.hpp"
+#include "SevenBit/Config/IConfigurationProvider.hpp"
+#include "SevenBit/Config/IConfigurationSource.hpp"
+#include "SevenBit/Config/JsonConfiguration.hpp"
+#include "SevenBit/Config/ObjectHolder.hpp"
 
 class CustomConfigSource : public sb::cf::IConfigurationSource
 {
