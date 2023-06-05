@@ -38,8 +38,8 @@ namespace sb::cf::utils
         {
             str.remove_prefix(1);
         }
-        auto last = str.begin() + str.size();
-        auto res = std::from_chars(str.begin(), last, number, base);
+        auto last = str.data() + str.size();
+        auto res = std::from_chars(str.data(), last, number, base);
         auto success = res.ec == std::errc{} && (!full || res.ptr == last);
         return {success, number};
     }

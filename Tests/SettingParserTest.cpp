@@ -263,7 +263,7 @@ static Params<std::vector<std::string>, std::string, std::string, sb::cf::JsonOb
     {{"option", "inner", "inner", "inner", "inner", "inner"},
      "double",
      "1.123",
-     sb::cf::JsonObject{{"option", {{"inner", {{"inner", {{"inner", {{"inner", {{"inner", 1.123}}}}}}}}}}}}},
+     sb::cf::JsonObject{{"option", sb::cf::JsonObject{{"inner", sb::cf::JsonObject{{"inner", sb::cf::JsonObject{{"inner", sb::cf::JsonObject{{"inner", sb::cf::JsonObject{{"inner", 1.123}}}}}}}}}}}}},
 };
 
 PARAMS_TEST_COMBINED_4(SettingParserTest, ShouldParseDeepOption, OptionPrefix, KeySeparators, DeepValues, TypeMarkers)
