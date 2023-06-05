@@ -7,7 +7,5 @@ int main(int argc, char **argv)
 {
     IConfiguration::Ptr configuration = ConfigurationBuilder{}.addDefault(argc, argv).build();
 
-    std::string value = configuration->at("MySetting").get_string();
-
-    std::cout << "MySetting value: " << value;
+    std::cout << "Configuration json:" << std::endl << std::setw(2) << *configuration;
 }

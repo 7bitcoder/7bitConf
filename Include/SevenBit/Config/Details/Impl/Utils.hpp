@@ -3,6 +3,7 @@
 #include <cctype>
 
 #include "SevenBit/Config/Details/Utils.hpp"
+#include "SevenBit/Config/Exceptions.hpp"
 
 namespace sb::cf::utils
 {
@@ -27,9 +28,6 @@ namespace sb::cf::utils
 
     INLINE bool startsWith(std::string_view str, std::string_view search, bool ignoreCase)
     {
-        auto cmp = ignoreCase ? [](char a, char b) { return std::tolower(a) == std::tolower(b); }
-                              : [](char a, char b) { return a == b; };
-
         if (search.empty())
         {
             return true;
@@ -38,19 +36,17 @@ namespace sb::cf::utils
         auto searchIt = search.begin();
         for (; strIt != str.end() && searchIt != search.end(); ++strIt, ++searchIt)
         {
-            if (!cmp(*strIt, *searchIt))
+            if (*strIt == *searchIt || (ignoreCase && std::tolower(*strIt) == std::tolower(*searchIt)))
             {
-                return false;
+                continue;
             }
+            return false;
         }
         return searchIt == search.end();
     }
 
     INLINE bool endsWith(std::string_view str, std::string_view search, bool ignoreCase)
     {
-        auto cmp = ignoreCase ? [](char a, char b) { return std::tolower(a) == std::tolower(b); }
-                              : [](char a, char b) { return a == b; };
-
         if (search.empty())
         {
             return true;
@@ -59,10 +55,11 @@ namespace sb::cf::utils
         auto searchIt = search.rbegin();
         for (; strIt != str.rend() && searchIt != search.rend(); ++strIt, ++searchIt)
         {
-            if (!cmp(*strIt, *searchIt))
+            if (*strIt == *searchIt || (ignoreCase && std::tolower(*strIt) == std::tolower(*searchIt)))
             {
-                return false;
+                continue;
             }
+            return false;
         }
         return searchIt == search.rend();
     }
@@ -92,7 +89,7 @@ namespace sb::cf::utils
         return result;
     }
 
-    INLINE std::string join(const std::vector<std::string_view> &strs, const std::string &divider)
+    INLINE std::string joinViews(const std::vector<std::string_view> &strs, const std::string &divider)
     {
         std::string res;
         if (strs.empty())
@@ -102,6 +99,21 @@ namespace sb::cf::utils
         for (size_t i = 0; i < strs.size() - 1; ++i)
         {
             res += std::string{strs[i]} + divider;
+        }
+        res += strs.back();
+        return res;
+    }
+
+    INLINE std::string join(const std::vector<std::string> &strs, const std::string &divider)
+    {
+        std::string res;
+        if (strs.empty())
+        {
+            return res;
+        }
+        for (size_t i = 0; i < strs.size() - 1; ++i)
+        {
+            res += strs[i] + divider;
         }
         res += strs.back();
         return res;

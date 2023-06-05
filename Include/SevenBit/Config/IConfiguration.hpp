@@ -36,21 +36,21 @@ namespace sb::cf
 
         const JsonValue &operator[](const std::vector<std::string_view> &key) const { return atInner(key); };
 
-        JsonObject::const_iterator cBegin() const { return rootAsObject().cbegin(); }
+        JsonObject::const_iterator cbegin() const { return rootAsObject().cbegin(); }
 
         JsonObject::const_iterator cEnd() const { return rootAsObject().cend(); }
 
-        JsonObject::const_reverse_iterator crBegin() const { return rootAsObject().crbegin(); }
+        JsonObject::const_reverse_iterator crbegin() const { return rootAsObject().crbegin(); }
 
-        JsonObject::const_reverse_iterator crEnd() const { return rootAsObject().crend(); }
+        JsonObject::const_reverse_iterator crend() const { return rootAsObject().crend(); }
 
         JsonObject::const_iterator begin() const { return rootAsObject().begin(); }
 
         JsonObject::const_iterator end() const { return rootAsObject().end(); }
 
-        JsonObject::const_reverse_iterator rBegin() const { return rootAsObject().rbegin(); }
+        JsonObject::const_reverse_iterator rbegin() const { return rootAsObject().rbegin(); }
 
-        JsonObject::const_reverse_iterator rEnd() const { return rootAsObject().rend(); }
+        JsonObject::const_reverse_iterator rend() const { return rootAsObject().rend(); }
 
         virtual ~IConfiguration() = default;
     };

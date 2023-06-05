@@ -29,7 +29,7 @@ TEST_F(ConfigurationBuilderTest, ShouldBuildSimpleConfig)
 
     builder.addAppSettings("dev")
         .addJson({{"string", 1}})
-        .addCommandLine({"--string=2", "array=3,2,1"})
+        .addCommandLine({"--string=2", "array!json=[3,2,1]"})
         .addSetting("set:set", 44444)
         .addKeyPerFile("Directory");
 

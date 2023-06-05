@@ -81,9 +81,9 @@ namespace sb::cf
 
         auto end() { return rootAsObject().end(); }
 
-        auto rBegin() { return rootAsObject().rbegin(); }
+        auto rbBegin() { return rootAsObject().rbegin(); }
 
-        auto rEnd() { return rootAsObject().rend(); }
+        auto rend() { return rootAsObject().rend(); }
 
       private:
         JsonValue &throwNullPointnerException(const std::vector<std::string_view> &key) const;

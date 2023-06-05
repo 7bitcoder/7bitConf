@@ -91,7 +91,7 @@ namespace sb::cf::details
 
     INLINE JsonValue *JsonObjectExt::find(JsonArray &json, std::string_view key)
     {
-        if (auto [success, index] = utils::toNumber<size_t>(key); success)
+        if (auto [success, index] = utils::tryStringTo<size_t>(key); success)
         {
             return find(json, index);
         }
@@ -100,7 +100,7 @@ namespace sb::cf::details
 
     INLINE const JsonValue *JsonObjectExt::find(const JsonArray &json, std::string_view key)
     {
-        if (auto [success, index] = utils::toNumber<size_t>(key); success)
+        if (auto [success, index] = utils::tryStringTo<size_t>(key); success)
         {
             return find(json, index);
         }
@@ -193,8 +193,7 @@ namespace sb::cf::details
                     throw ConfigException("Bad configuration key: '" + std::string{key} +
                                           "' is not number index for array");
                 }
-                auto [_, index] = utils::toNumber<size_t>(key);
-                current = &getOrCreateFromArray(current->get_array(), index);
+                current = &getOrCreateFromArray(current->get_array(), utils::stringTo<size_t>(key));
             }
             else
             {

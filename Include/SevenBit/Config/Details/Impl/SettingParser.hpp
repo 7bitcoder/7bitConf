@@ -1,6 +1,8 @@
 #pragma once
 #include <charconv>
 #include <cstddef>
+#include <cstdint>
+#include <tao/json/type.hpp>
 
 #include "SevenBit/Config/Details/JsonObjectExt.hpp"
 #include "SevenBit/Config/Details/SettingParser.hpp"
@@ -92,6 +94,14 @@ namespace sb::cf::details
         {
             return String;
         }
+        if (tryExtractType(key, "uint"))
+        {
+            return UInt;
+        }
+        if (tryExtractType(key, "null"))
+        {
+            return Null;
+        }
         return String;
     }
 
@@ -123,13 +133,17 @@ namespace sb::cf::details
         switch (type)
         {
         case Json:
-            return value ? json::basic_from_string<JsonTraits>(*value) : JsonValue(JsonObject{});
+            return value ? json::basic_from_string<JsonTraits>(*value) : JsonValue();
         case Int:
-            return value ? std::stoi(std::string{*value}) : 0;
+            return value ? utils::stringTo<std::int64_t>(*value) : 0;
+        case UInt:
+            return value ? utils::stringTo<std::uint64_t>(*value) : 0;
         case Bool:
-            return value ? utils::ignoreCaseEquals("true", *value) : false;
+            return value ? utils::stringTo<bool>(*value) : false;
         case Double:
-            return value ? std::stod(std::string{*value}) : 0.0;
+            return value ? utils::stringTo<double>(*value) : 0.0;
+        case Null:
+            return json::null;
         case String:
         default:
             return std::string{value ? *value : ""};

@@ -1,11 +1,11 @@
+#include "SevenBit/Config/Details/JsonObjectExt.hpp"
+#include "SevenBit/Config/Exceptions.hpp"
+#include "SevenBit/Config/Json.hpp"
+#include "Utilities/ParamsTest.hpp"
 #include <gtest/gtest.h>
 #include <iostream>
 #include <string_view>
 #include <tao/json/type.hpp>
-
-#include "SevenBit/Config/Details/JsonObjectExt.hpp"
-#include "SevenBit/Config/Exceptions.hpp"
-#include "SevenBit/Config/Json.hpp"
 
 using namespace sb::cf::json;
 
@@ -25,7 +25,23 @@ class JsonObjectExtTest : public testing::Test
     static void TearDownTestSuite() {}
 };
 
-TEST_F(JsonObjectExtTest, ShouldFindInner)
+Params<std::string_view, bool, sb::cf::JsonValue> FindInnerData{
+    {"inner:inner:str", true, "hello2"},
+    {"inner:number", true, 1231},
+    {"array:0:key", true, "value"},
+    {"array:2:key", false, tao::json::null},
+    {"array:0.123:key", false, tao::json::null},
+    {"array:0 123:key", false, tao::json::null},
+    {"array:0 apok:key", false, tao::json::null},
+    {"array:-1:key", false, tao::json::null},
+    {"array:9notNumber:key", false, tao::json::null},
+    {"inner:inner:nonExisting", false, tao::json::null},
+    {"inner:inner:str:nonExisting", false, tao::json::null},
+    {"nonExisting", false, tao::json::null},
+    {"inner::inner:str", false, tao::json::null},
+
+};
+PARAMS_TEST(JsonObjectExtTest, ShouldFindInner, FindInnerData)
 {
     sb::cf::JsonObject json = {{"str", "hello"},
                                {"number", 123},
@@ -39,18 +55,13 @@ TEST_F(JsonObjectExtTest, ShouldFindInner)
                                       {"number", 1232},
                                   }}}}};
 
-    EXPECT_EQ(*sb::cf::details::JsonObjectExt::findInner(json, "inner:inner:str"), "hello2");
-    EXPECT_EQ(*sb::cf::details::JsonObjectExt::findInner(json, "array:0:key"), "value");
-    EXPECT_FALSE(sb::cf::details::JsonObjectExt::findInner(json, "array:2:key"));
-    EXPECT_FALSE(sb::cf::details::JsonObjectExt::findInner(json, "array:0.123:key"));
-    EXPECT_FALSE(sb::cf::details::JsonObjectExt::findInner(json, "array:0 123:key"));
-    EXPECT_FALSE(sb::cf::details::JsonObjectExt::findInner(json, "array:0 apok:key"));
-    EXPECT_FALSE(sb::cf::details::JsonObjectExt::findInner(json, "array:-1:key"));
-    EXPECT_FALSE(sb::cf::details::JsonObjectExt::findInner(json, "array:9notNumber:key"));
-    EXPECT_FALSE(sb::cf::details::JsonObjectExt::findInner(json, "inner:inner:nonExisting"));
-    EXPECT_FALSE(sb::cf::details::JsonObjectExt::findInner(json, "inner:inner:str:nonExisting"));
-    EXPECT_FALSE(sb::cf::details::JsonObjectExt::findInner(json, "nonExisting"));
-    EXPECT_FALSE(sb::cf::details::JsonObjectExt::findInner(json, "inner::inner:str"));
+    auto &[keys, expectedFound, expectedValue] = GetParam();
+    auto valuePtr = sb::cf::details::JsonObjectExt::findInner(json, keys);
+    EXPECT_EQ(!!valuePtr, expectedFound);
+    if (valuePtr)
+    {
+        EXPECT_EQ(*valuePtr, expectedValue);
+    }
 }
 
 TEST_F(JsonObjectExtTest, ShouldGetOrCreateInner)

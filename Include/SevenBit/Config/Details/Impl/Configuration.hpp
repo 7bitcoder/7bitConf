@@ -128,7 +128,7 @@ namespace sb::cf
 
     INLINE JsonValue &Configuration::throwNullPointnerException(const std::vector<std::string_view> &key) const
     {
-        throw NullPointnerException{"Value was not found: " + utils::join(key, ":")};
+        throw NullPointnerException{"Value was not found: " + utils::joinViews(key, ":")};
     }
 
     INLINE JsonValue &Configuration::throwNullPointnerException(std::string_view key) const

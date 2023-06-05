@@ -19,6 +19,8 @@ namespace sb::cf::details
         enum SettingType
         {
             Int,
+            UInt,
+            Null,
             Bool,
             String,
             Double,
