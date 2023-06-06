@@ -35,7 +35,7 @@ Compilers:
 - clang 6.0+
 - MSVC 2015+
 
-### Installation
+## Installation
 
 - Using Conan.io package manager - Recommended
   Download and install Conan* then install package*, see conan documentation for package installation guide
@@ -55,7 +55,7 @@ Compilers:
   Download source code from the most recent release, build or install the project using CMake*,
   for more details see the `Building Library`* guide.
 
-### Usage
+## Usage
 
 This library provides centralized configuration management, and multiple configuration sources (files, environment variables, command line arguments, custom sources) are combined into one json object (see taocpp json documentation).
 
@@ -101,7 +101,7 @@ int main(int argc, char **argv)
 
 The Example will print combined configuration from appsettings.json, environment variables and command line arguments. Source-adding order matters, the least source overrides the previous one.
 
-#### Command Line
+### Command Line
 
 Command line configuration source is added using addCommandLine(argc, argv) builder method.
 
@@ -116,7 +116,7 @@ Example arguments:
 - --Strings:2=hello will override or create a third element in the Strings array setting with "hello"
 - --Array:1!uint=123 will override the second element in Array with unsigned integer 123
 
-##### Supported types:
+#### Supported types:
 
 - string - default type, could be specified explicitly
 - uint - unsigned 64 bit integer
@@ -125,7 +125,7 @@ Example arguments:
 - bool - case insensitive "true" or "false" or number (non-zero is considered as true)
 - json - json string for example {"hello": "value"}
 
-#### Environment Variables
+### Environment Variables
 
 Environment variables configuration source is added using addEnvironmentVariables() builder method. This method will load all available variables. Call addEnvironmentVariables with a string to specify a prefix for environment variables:
 
@@ -137,11 +137,11 @@ All rules for command line arguments are also valid for environment variables, s
 
 option Array:2!uint=123 would be rewritten as Array\_\_2\_\_\_uint=123
 
-#### Json File
+### Json File
 
 Json file configuration source is added using addJsonFile(std::filesystem::path jsonFilePath) builder method. If the file does not exist method will throw an exception, call this method with an additional bool optional argument = true to prevent throwing an exception in this case
 
-#### App Settings
+### App Settings
 
 App Settings configuration source is added using addAppSettings() builder method.
 this source will use JSON file configuration source with "appsettings.json" file and isOptional = true parameters. addAppSettings is overloaded with an environment name string parameter
@@ -152,7 +152,7 @@ addAppSettings("myenv")
 
 will additionally load "appsettings.myenv.json" after loading appsettings.json
 
-#### Key Per File
+### Key Per File
 
 Key Per File configuration source is added using addKeyPerFile(std::filesystem::path directoryPath) builder method.
 this source will load all json files from the directory and save file contents under file name option name, the nested option is supported with \_\_ for example:
@@ -168,15 +168,15 @@ addKeyPerFile("MyDirectory")
 
 will load two json files, first under "firstSetting" option name, the second config will be stored in "nested" object which will be in "second" object
 
-#### Json Stream
+### Json Stream
 
 Json stream configuration source is added using addJsonStream(std::istream & stream) builder method. the stream must return the proper json file otherwise the method will throw an exception
 
-#### Json Object
+### Json Object
 
 Json object configuration source is added using addJson(JsonObject json) builder method.
 
-#### In Memory
+### In Memory
 
 In memory settings configuration source is added using addInMemory(std::vector<std::string, JsonValue>) builder method. keys is string with nested options separated with ':'
 
