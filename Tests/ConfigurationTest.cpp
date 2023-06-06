@@ -27,7 +27,7 @@ TEST_F(ConfigurationTest, ShouldLoadConfig)
                     .addAppSettings("dev")
                     .addJson({{"string", 1}})
                     .addCommandLine({"--string=2", "Array:0!int=33"})
-                    .addSetting("set:set", 44444)
+                    .AddInMemory("set:set", 44444)
                     .addKeyPerFile("Directory")
                     .build();
 

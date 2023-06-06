@@ -56,7 +56,7 @@ PARAMS_TEST(JsonObjectExtTest, ShouldFindInner, FindInnerData)
                                   }}}}};
 
     auto &[keys, expectedFound, expectedValue] = GetParam();
-    auto valuePtr = sb::cf::details::JsonObjectExt::findInner(json, keys);
+    auto valuePtr = sb::cf::details::JsonObjectExt::deepFind(json, keys);
     EXPECT_EQ(!!valuePtr, expectedFound);
     if (valuePtr)
     {

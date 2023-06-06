@@ -5,9 +5,8 @@
 #include "SevenBit/Config/Details/Utils.hpp"
 #include "SevenBit/Config/Exceptions.hpp"
 
-namespace sb::cf::utils
+namespace sb::cf::details::utils
 {
-
     INLINE bool isNumberString(std::string_view str)
     {
         for (auto ch : str)
@@ -118,4 +117,4 @@ namespace sb::cf::utils
         res += strs.back();
         return res;
     }
-} // namespace sb::cf::utils
+} // namespace sb::cf::details::utils

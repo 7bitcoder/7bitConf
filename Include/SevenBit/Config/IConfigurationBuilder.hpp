@@ -54,7 +54,7 @@ namespace sb::cf
             return add(JsonFileConfigurationSource::create(std::move(filePath), isOptional));
         }
 
-        IConfigurationBuilder &addJsonStream(std::istringstream &stream)
+        IConfigurationBuilder &addJsonStream(std::istream &stream)
         {
             return add(JsonStreamConfigurationSource::create(stream));
         }
@@ -78,12 +78,22 @@ namespace sb::cf
             return add(EnvironmentVarsConfigurationSource::create(std::move(prefix), std::move(config)));
         }
 
-        IConfigurationBuilder &addCommandLine(int argc, char *const *const argv, SettingParserConfig config = {})
+        IConfigurationBuilder &addCommandLine(int argc, char *const *const argv)
+        {
+            return addCommandLine(argc, argv, {});
+        }
+
+        IConfigurationBuilder &addCommandLine(std::vector<std::string_view> args)
+        {
+            return addCommandLine(std::move(args), {});
+        }
+
+        IConfigurationBuilder &addCommandLine(int argc, char *const *const argv, SettingParserConfig config)
         {
             return add(CommandLineConfigurationSource::create(argc, argv, std::move(config)));
         }
 
-        IConfigurationBuilder &addCommandLine(std::vector<std::string_view> args, SettingParserConfig config = {})
+        IConfigurationBuilder &addCommandLine(std::vector<std::string_view> args, SettingParserConfig config)
         {
             return add(CommandLineConfigurationSource::create(std::move(args), std::move(config)));
         }
@@ -117,12 +127,12 @@ namespace sb::cf
                                                              std::move(ignoreCondition)));
         }
 
-        IConfigurationBuilder &addSetting(std::string_view key, JsonValue value)
+        IConfigurationBuilder &AddInMemory(std::string_view key, JsonValue value)
         {
-            return addSettings({{key, std::move(value)}});
+            return AddInMemory({{key, std::move(value)}});
         }
 
-        IConfigurationBuilder &addSettings(std::vector<std::pair<std::string_view, JsonValue>> settings)
+        IConfigurationBuilder &AddInMemory(std::vector<std::pair<std::string_view, JsonValue>> settings)
         {
             return add(SettingsConfigurationSource::create(std::move(settings)));
         }

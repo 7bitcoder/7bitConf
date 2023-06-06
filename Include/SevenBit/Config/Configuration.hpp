@@ -35,6 +35,8 @@ namespace sb::cf
 
         const std::vector<IConfigurationProvider::Ptr> &getProviders() const;
 
+        std::vector<IConfigurationProvider::Ptr> &getProviders();
+
         std::string toString(std::size_t indent = 1, std::string newLineMark = "\n") const override;
 
         JsonValue &root();
@@ -53,21 +55,21 @@ namespace sb::cf
 
         const JsonValue *find(std::string_view key) const override;
 
-        JsonValue *findInner(std::string_view key);
+        JsonValue *deepFind(std::string_view key);
 
-        const JsonValue *findInner(std::string_view key) const override;
+        const JsonValue *deepFind(std::string_view key) const override;
 
-        JsonValue *findInner(const std::vector<std::string_view> &key);
+        JsonValue *deepFind(const std::vector<std::string_view> &key);
 
-        const JsonValue *findInner(const std::vector<std::string_view> &key) const override;
+        const JsonValue *deepFind(const std::vector<std::string_view> &key) const override;
 
-        JsonValue &atInner(std::string_view key);
+        JsonValue &deepAt(std::string_view key);
 
-        const JsonValue &atInner(std::string_view key) const override;
+        const JsonValue &deepAt(std::string_view key) const override;
 
-        JsonValue &atInner(const std::vector<std::string_view> &key);
+        JsonValue &deepAt(const std::vector<std::string_view> &key);
 
-        const JsonValue &atInner(const std::vector<std::string_view> &key) const override;
+        const JsonValue &deepAt(const std::vector<std::string_view> &key) const override;
 
         JsonValue &operator[](std::string_view key);
 

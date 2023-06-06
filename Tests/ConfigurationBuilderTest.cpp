@@ -30,7 +30,7 @@ TEST_F(ConfigurationBuilderTest, ShouldBuildSimpleConfig)
     builder.addAppSettings("dev")
         .addJson({{"string", 1}})
         .addCommandLine({"--string=2", "array!json=[3,2,1]"})
-        .addSetting("set:set", 44444)
+        .AddInMemory("set:set", 44444)
         .addKeyPerFile("Directory");
 
     EXPECT_NO_THROW(builder.build());
@@ -45,7 +45,7 @@ TEST_F(ConfigurationBuilderTest, ShouldBuildConfigWithProperties)
     auto conf = builder.addAppSettings("dev")
                     .addJson({{"string", 1}})
                     .addCommandLine({"--string=2", "array=3,2,1"})
-                    .addSetting("set:set", 44444)
+                    .AddInMemory("set:set", 44444)
                     .addKeyPerFile("Directory")
                     .add(std::make_unique<CustomConfigSource>())
                     .add(std::make_unique<CustomConfigSource>())

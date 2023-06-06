@@ -22,19 +22,19 @@ namespace sb::cf
 
         virtual const JsonValue *find(std::string_view key) const = 0;
 
-        virtual const JsonValue *findInner(std::string_view key) const = 0;
+        virtual const JsonValue *deepFind(std::string_view key) const = 0;
 
-        virtual const JsonValue *findInner(const std::vector<std::string_view> &key) const = 0;
+        virtual const JsonValue *deepFind(const std::vector<std::string_view> &key) const = 0;
 
-        const JsonValue &operator[](std::string_view key) const { return atInner(key); };
+        const JsonValue &operator[](std::string_view key) const { return deepAt(key); };
 
         virtual const JsonValue &at(const std::string &key) const = 0;
 
-        virtual const JsonValue &atInner(std::string_view key) const = 0;
+        virtual const JsonValue &deepAt(std::string_view key) const = 0;
 
-        virtual const JsonValue &atInner(const std::vector<std::string_view> &key) const = 0;
+        virtual const JsonValue &deepAt(const std::vector<std::string_view> &key) const = 0;
 
-        const JsonValue &operator[](const std::vector<std::string_view> &key) const { return atInner(key); };
+        const JsonValue &operator[](const std::vector<std::string_view> &key) const { return deepAt(key); };
 
         JsonObject::const_iterator cbegin() const { return rootAsObject().cbegin(); }
 

@@ -29,11 +29,11 @@ namespace sb::cf::details
         static JsonValue *find(JsonObject &json, std::string_view key);
         static const JsonValue *find(const JsonObject &json, std::string_view key);
 
-        static JsonValue *findInner(JsonObject &json, std::string_view key);
-        static const JsonValue *findInner(const JsonObject &json, std::string_view key);
+        static JsonValue *deepFind(JsonObject &json, std::string_view key);
+        static const JsonValue *deepFind(const JsonObject &json, std::string_view key);
 
-        static JsonValue *findInner(JsonObject &json, const std::vector<std::string_view> &key);
-        static const JsonValue *findInner(const JsonObject &json, const std::vector<std::string_view> &key);
+        static JsonValue *deepFind(JsonObject &json, const std::vector<std::string_view> &key);
+        static const JsonValue *deepFind(const JsonObject &json, const std::vector<std::string_view> &key);
 
         static JsonValue &getOrCreateInner(JsonObject &json, std::string_view key);
 

@@ -16,7 +16,7 @@ namespace sb::cf::details
 
     INLINE JsonObject SettingParser::parseSetting(std::string_view setting) const
     {
-        auto keyValue = utils::split(setting, _config.settingSplitter, 2);
+        auto keyValue = details::utils::split(setting, _config.settingSplitter, 2);
         if (keyValue.size() == 1)
         {
             return parseSetting(setting, std::nullopt);
@@ -55,13 +55,13 @@ namespace sb::cf::details
     INLINE std::string SettingParser::sanitizeKey(std::string_view key) const
     {
         std::string str{key};
-        utils::replaceAll(str, _config.alternativeKeySplitter, _config.keySplitter);
+        details::utils::replaceAll(str, _config.alternativeKeySplitter, _config.keySplitter);
         return str;
     }
 
     INLINE std::vector<std::string_view> SettingParser::parseKey(std::string_view key) const
     {
-        if (utils::startsWith(key, _config.settingPrefix))
+        if (details::utils::startsWith(key, _config.settingPrefix))
         {
             key = key.substr(_config.settingPrefix.size());
         }
@@ -69,7 +69,7 @@ namespace sb::cf::details
         {
             throw SettingParserException{"Key canot be empty"};
         }
-        return utils::split(key, _config.keySplitter);
+        return details::utils::split(key, _config.keySplitter);
     }
 
     INLINE SettingParser::SettingType SettingParser::extractType(std::string_view &key) const
@@ -107,17 +107,17 @@ namespace sb::cf::details
 
     INLINE bool SettingParser::tryExtractType(std::string_view &value, std::string_view typeStr) const
     {
-        if (utils::endsWith(value, typeStr, true))
+        if (details::utils::endsWith(value, typeStr, true))
         {
             auto mutated = value;
             mutated.remove_suffix(typeStr.size());
-            if (utils::endsWith(mutated, _config.typeMarker))
+            if (details::utils::endsWith(mutated, _config.typeMarker))
             {
                 mutated.remove_suffix(_config.typeMarker.size());
                 value = mutated;
                 return true;
             }
-            if (utils::endsWith(mutated, _config.alternativeTypeMarker))
+            if (details::utils::endsWith(mutated, _config.alternativeTypeMarker))
             {
                 mutated.remove_suffix(_config.alternativeTypeMarker.size());
                 value = mutated;
@@ -135,13 +135,13 @@ namespace sb::cf::details
         case Json:
             return value ? json::basic_from_string<JsonTraits>(*value) : JsonValue();
         case Int:
-            return value ? utils::stringTo<std::int64_t>(*value) : 0;
+            return value ? details::utils::stringTo<std::int64_t>(*value) : 0;
         case UInt:
-            return value ? utils::stringTo<std::uint64_t>(*value) : 0;
+            return value ? details::utils::stringTo<std::uint64_t>(*value) : 0;
         case Bool:
-            return value ? utils::stringTo<bool>(*value) : false;
+            return value ? details::utils::stringTo<bool>(*value) : false;
         case Double:
-            return value ? utils::stringTo<double>(*value) : 0.0;
+            return value ? details::utils::stringTo<double>(*value) : 0.0;
         case Null:
             return json::null;
         case String:

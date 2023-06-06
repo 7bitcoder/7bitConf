@@ -40,56 +40,56 @@ namespace sb::cf
 
     INLINE JsonValue *Configuration::find(std::string_view key) { return details::JsonObjectExt::find(root(), key); }
 
-    INLINE const JsonValue *Configuration::findInner(std::string_view key) const
+    INLINE const JsonValue *Configuration::deepFind(std::string_view key) const
     {
-        return details::JsonObjectExt::findInner(rootAsObject(), key);
+        return details::JsonObjectExt::deepFind(rootAsObject(), key);
     }
 
-    INLINE JsonValue *Configuration::findInner(std::string_view key)
+    INLINE JsonValue *Configuration::deepFind(std::string_view key)
     {
-        return details::JsonObjectExt::findInner(rootAsObject(), key);
+        return details::JsonObjectExt::deepFind(rootAsObject(), key);
     }
 
-    INLINE const JsonValue *Configuration::findInner(const std::vector<std::string_view> &key) const
+    INLINE const JsonValue *Configuration::deepFind(const std::vector<std::string_view> &key) const
     {
-        return details::JsonObjectExt::findInner(rootAsObject(), key);
+        return details::JsonObjectExt::deepFind(rootAsObject(), key);
     }
 
-    INLINE JsonValue *Configuration::findInner(const std::vector<std::string_view> &key)
+    INLINE JsonValue *Configuration::deepFind(const std::vector<std::string_view> &key)
     {
-        return details::JsonObjectExt::findInner(rootAsObject(), key);
+        return details::JsonObjectExt::deepFind(rootAsObject(), key);
     }
 
-    INLINE JsonValue &Configuration::atInner(std::string_view key)
+    INLINE JsonValue &Configuration::deepAt(std::string_view key)
     {
-        if (auto value = findInner(key))
+        if (auto value = deepFind(key))
         {
             return *value;
         }
         return throwNullPointnerException(key);
     }
 
-    INLINE const JsonValue &Configuration::atInner(std::string_view key) const
+    INLINE const JsonValue &Configuration::deepAt(std::string_view key) const
     {
-        if (auto value = findInner(key))
+        if (auto value = deepFind(key))
         {
             return *value;
         }
         return throwNullPointnerException(key);
     }
 
-    INLINE JsonValue &Configuration::atInner(const std::vector<std::string_view> &key)
+    INLINE JsonValue &Configuration::deepAt(const std::vector<std::string_view> &key)
     {
-        if (auto value = findInner(key))
+        if (auto value = deepFind(key))
         {
             return *value;
         }
         return throwNullPointnerException(key);
     }
 
-    INLINE const JsonValue &Configuration::atInner(const std::vector<std::string_view> &key) const
+    INLINE const JsonValue &Configuration::deepAt(const std::vector<std::string_view> &key) const
     {
-        if (auto value = findInner(key))
+        if (auto value = deepFind(key))
         {
             return *value;
         }
@@ -101,7 +101,7 @@ namespace sb::cf
         return details::JsonObjectExt::getOrCreateInner(rootAsObject(), key);
     };
 
-    INLINE const JsonValue &Configuration::operator[](std::string_view key) const { return atInner(key); };
+    INLINE const JsonValue &Configuration::operator[](std::string_view key) const { return deepAt(key); };
 
     INLINE JsonValue &Configuration::operator[](const std::vector<std::string_view> &key)
     {
@@ -110,7 +110,7 @@ namespace sb::cf
 
     INLINE const JsonValue &Configuration::operator[](const std::vector<std::string_view> &key) const
     {
-        return atInner(key);
+        return deepAt(key);
     };
 
     INLINE void Configuration::reload()
@@ -126,9 +126,11 @@ namespace sb::cf
 
     INLINE const std::vector<IConfigurationProvider::Ptr> &Configuration::getProviders() const { return _providers; }
 
+    INLINE std::vector<IConfigurationProvider::Ptr> &Configuration::getProviders() { return _providers; }
+
     INLINE JsonValue &Configuration::throwNullPointnerException(const std::vector<std::string_view> &key) const
     {
-        throw NullPointnerException{"Value was not found: " + utils::joinViews(key, ":")};
+        throw NullPointnerException{"Value was not found: " + details::utils::joinViews(key, ":")};
     }
 
     INLINE JsonValue &Configuration::throwNullPointnerException(std::string_view key) const

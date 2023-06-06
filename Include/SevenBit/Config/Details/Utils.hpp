@@ -12,7 +12,7 @@
 
 #include "SevenBit/Config/Exceptions.hpp"
 
-namespace sb::cf::utils
+namespace sb::cf::details::utils
 {
     EXPORT bool ignoreCaseEquals(std::string_view stra, std::string_view strb);
 
@@ -31,7 +31,7 @@ namespace sb::cf::utils
 
     EXPORT bool isNumberString(std::string_view str);
 
-    template <class TNumber> std::pair<bool, TNumber> tryStringTo(std::string_view str, bool full = true, int base = 10)
+    template <class TNumber> std::pair<bool, TNumber> tryStringTo(std::string_view str, bool full = true)
     {
         TNumber number = 0;
         while (!str.empty() && std::isspace(str.front()))
@@ -39,12 +39,12 @@ namespace sb::cf::utils
             str.remove_prefix(1);
         }
         auto last = str.data() + str.size();
-        auto res = std::from_chars(str.data(), last, number, base);
+        auto res = std::from_chars(str.data(), last, number);
         auto success = res.ec == std::errc{} && (!full || res.ptr == last);
         return {success, number};
     }
 
-    template <> inline std::pair<bool, double> tryStringTo<double>(std::string_view str, bool full, int base)
+    template <> inline std::pair<bool, double> tryStringTo<double>(std::string_view str, bool full)
     {
         try
         {
@@ -60,32 +60,32 @@ namespace sb::cf::utils
         }
     }
 
-    template <> inline std::pair<bool, bool> tryStringTo<bool>(std::string_view str, bool full, int base)
+    template <> inline std::pair<bool, bool> tryStringTo<bool>(std::string_view str, bool full)
     {
-        if (utils::ignoreCaseEquals("true", str))
+        if (ignoreCaseEquals("true", str))
         {
             return {true, true};
         }
-        else if (utils::ignoreCaseEquals("false", str))
+        else if (ignoreCaseEquals("false", str))
         {
             return {true, false};
         }
-        else if (auto [success, number] = utils::tryStringTo<int>(str, full); success)
+        else if (auto [success, number] = tryStringTo<int>(str, full); success)
         {
             return {true, number};
         }
         return {false, false};
     }
 
-    template <class TNumber> TNumber stringTo(std::string_view str, bool full = true, int base = 10)
+    template <class TNumber> TNumber stringTo(std::string_view str, bool full = true)
     {
-        if (auto [success, number] = utils::tryStringTo<TNumber>(str, full, base); success)
+        if (auto [success, number] = tryStringTo<TNumber>(str, full); success)
         {
             return number;
         }
         throw ConfigException{"Cannot convert string to number" + std::string{str}};
     }
-} // namespace sb::cf::utils
+} // namespace sb::cf::details::utils
 
 #ifdef _7BIT_CONFIG_ADD_IMPL
 #include "SevenBit/Config/Details/Impl/Utils.hpp"

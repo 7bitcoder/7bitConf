@@ -59,7 +59,7 @@ namespace sb::cf
         for (auto env = _7BIT_CONFIG_ENV_PTR; *env; env++)
         {
             std::string_view envStr = *env;
-            if (utils::startsWith(envStr, _source->getPrefix()))
+            if (details::utils::startsWith(envStr, _source->getPrefix()))
             {
                 result.push_back(envStr.substr(_source->getPrefix().size()));
             }

@@ -74,9 +74,12 @@ namespace sb::cf
             if (extension == ".json")
             {
                 auto fileSource = JsonFileConfigurationSource::create(filePath);
-                auto mapSource =
-                    MapConfigurationSource::create(std::move(fileSource), [filePath](JsonObject config) -> JsonObject {
-                        return JsonObject{{filePath.stem().generic_string(), std::move(config)}};
+                auto mapSource = MapConfigurationSource::create(
+                    std::move(fileSource), [name = filePath.stem().generic_string()](JsonObject config) -> JsonObject {
+                        auto res = JsonObject{};
+                        details::JsonObjectExt::getOrCreateInner(res, details::utils::split(name, "__")) =
+                            std::move(config);
+                        return res;
                     });
                 sources.add(mapSource);
             }
@@ -87,7 +90,7 @@ namespace sb::cf
     INLINE bool KeyPerFileConfigurationSource::canIgnore(std::filesystem::path filePath) const
     {
         auto &ignorePrefix = getIgnorePrefix();
-        if (!ignorePrefix.empty() && utils::startsWith(filePath.filename().generic_string(), ignorePrefix))
+        if (!ignorePrefix.empty() && details::utils::startsWith(filePath.filename().generic_string(), ignorePrefix))
         {
             return true;
         }

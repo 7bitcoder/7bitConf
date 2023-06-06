@@ -91,7 +91,7 @@ namespace sb::cf::details
 
     INLINE JsonValue *JsonObjectExt::find(JsonArray &json, std::string_view key)
     {
-        if (auto [success, index] = utils::tryStringTo<size_t>(key); success)
+        if (auto [success, index] = details::utils::tryStringTo<size_t>(key); success)
         {
             return find(json, index);
         }
@@ -100,7 +100,7 @@ namespace sb::cf::details
 
     INLINE const JsonValue *JsonObjectExt::find(const JsonArray &json, std::string_view key)
     {
-        if (auto [success, index] = utils::tryStringTo<size_t>(key); success)
+        if (auto [success, index] = details::utils::tryStringTo<size_t>(key); success)
         {
             return find(json, index);
         }
@@ -133,17 +133,17 @@ namespace sb::cf::details
         return nullptr;
     }
 
-    INLINE JsonValue *JsonObjectExt::findInner(JsonObject &json, std::string_view key)
+    INLINE JsonValue *JsonObjectExt::deepFind(JsonObject &json, std::string_view key)
     {
-        return findInner(json, utils::split(key, ":"));
+        return deepFind(json, details::utils::split(key, ":"));
     }
 
-    INLINE const JsonValue *JsonObjectExt::findInner(const JsonObject &json, std::string_view key)
+    INLINE const JsonValue *JsonObjectExt::deepFind(const JsonObject &json, std::string_view key)
     {
-        return findInner(json, utils::split(key, ":"));
+        return deepFind(json, details::utils::split(key, ":"));
     }
 
-    INLINE JsonValue *JsonObjectExt::findInner(JsonObject &json, const std::vector<std::string_view> &key)
+    INLINE JsonValue *JsonObjectExt::deepFind(JsonObject &json, const std::vector<std::string_view> &key)
     {
         checkSegmentSize(key);
         JsonValue *current = find(json, key[0]);
@@ -154,7 +154,7 @@ namespace sb::cf::details
         return current;
     }
 
-    INLINE const JsonValue *JsonObjectExt::findInner(const JsonObject &json, const std::vector<std::string_view> &key)
+    INLINE const JsonValue *JsonObjectExt::deepFind(const JsonObject &json, const std::vector<std::string_view> &key)
     {
         checkSegmentSize(key);
         const JsonValue *current = find(json, key[0]);
@@ -167,7 +167,7 @@ namespace sb::cf::details
 
     INLINE JsonValue &JsonObjectExt::getOrCreateInner(JsonObject &json, std::string_view key)
     {
-        return getOrCreateInner(json, utils::split(key, ":"));
+        return getOrCreateInner(json, details::utils::split(key, ":"));
     }
 
     INLINE JsonValue &JsonObjectExt::getOrCreateInner(JsonObject &json, const std::vector<std::string_view> &keys)
@@ -181,7 +181,7 @@ namespace sb::cf::details
             {
                 throw ConfigException("Bad configuration key: '" + std::string{key} + "' is not an object or array");
             }
-            auto isNumber = utils::isNumberString(key);
+            auto isNumber = details::utils::isNumberString(key);
             if (current->is_uninitialized()) // mark for new one
             {
                 *current = isNumber ? JsonValue(JsonArray{}) : JsonValue(JsonObject{});
@@ -193,7 +193,7 @@ namespace sb::cf::details
                     throw ConfigException("Bad configuration key: '" + std::string{key} +
                                           "' is not number index for array");
                 }
-                current = &getOrCreateFromArray(current->get_array(), utils::stringTo<size_t>(key));
+                current = &getOrCreateFromArray(current->get_array(), details::utils::stringTo<size_t>(key));
             }
             else
             {

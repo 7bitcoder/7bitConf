@@ -39,9 +39,9 @@ PARAMS_TEST(UtilsTest, ShouldSplitString, SplitStrData)
     auto &[string, delim, expected, max] = GetParam();
     if (max < 0)
     {
-        EXPECT_EQ(sb::cf::utils::split(string, delim), expected);
+        EXPECT_EQ(sb::cf::details::utils::split(string, delim), expected);
     }
-    EXPECT_EQ(sb::cf::utils::split(string, delim, max), expected);
+    EXPECT_EQ(sb::cf::details::utils::split(string, delim, max), expected);
 }
 
 Params<std::vector<std::string_view>, std::string, std::string> JoinStrData{
@@ -59,7 +59,7 @@ Params<std::vector<std::string_view>, std::string, std::string> JoinStrData{
 PARAMS_TEST(UtilsTest, ShouldJoinStrings, JoinStrData)
 {
     auto &[strings, delim, expected] = GetParam();
-    EXPECT_EQ(sb::cf::utils::joinViews(strings, delim), expected);
+    EXPECT_EQ(sb::cf::details::utils::joinViews(strings, delim), expected);
 }
 
 Params<std::string_view, std::string_view, bool, bool> StartsWithData{
@@ -74,7 +74,7 @@ Params<std::string_view, std::string_view, bool, bool> StartsWithData{
 PARAMS_TEST(UtilsTest, ShouldStartsWith, StartsWithData)
 {
     auto &[string, search, ignoreCase, expected] = GetParam();
-    EXPECT_EQ(sb::cf::utils::startsWith(string, search, ignoreCase), expected);
+    EXPECT_EQ(sb::cf::details::utils::startsWith(string, search, ignoreCase), expected);
 }
 
 Params<std::string_view, std::string_view, bool, bool> EndsWithData{
@@ -89,13 +89,13 @@ Params<std::string_view, std::string_view, bool, bool> EndsWithData{
 PARAMS_TEST(UtilsTest, ShouldEndsWith, EndsWithData)
 {
     auto &[string, search, ignoreCase, expected] = GetParam();
-    EXPECT_EQ(sb::cf::utils::endsWith(string, search, ignoreCase), expected);
+    EXPECT_EQ(sb::cf::details::utils::endsWith(string, search, ignoreCase), expected);
 }
 
 TEST_F(UtilsTest, ShouldReplaceAllStrings)
 {
     std::string str = "bup__hup__mub";
-    EXPECT_TRUE(sb::cf::utils::replaceAll(str, "__", ":"));
+    EXPECT_TRUE(sb::cf::details::utils::replaceAll(str, "__", ":"));
     EXPECT_EQ(str, "bup:hup:mub");
 }
 
@@ -115,7 +115,7 @@ Params<std::string_view, std::string_view, bool> IgnoreCaseEqualsData{
 PARAMS_TEST(UtilsTest, ShouldIgnoreCaseCompareStrings, IgnoreCaseEqualsData)
 {
     auto &[string, search, expected] = GetParam();
-    EXPECT_EQ(sb::cf::utils::ignoreCaseEquals(string, search), expected);
+    EXPECT_EQ(sb::cf::details::utils::ignoreCaseEquals(string, search), expected);
 }
 
 Params<std::string_view, bool> CheckNumberStringsData{
@@ -126,7 +126,7 @@ Params<std::string_view, bool> CheckNumberStringsData{
 PARAMS_TEST(UtilsTest, ShouldCheckNumberStrings, CheckNumberStringsData)
 {
     auto &[string, expected] = GetParam();
-    EXPECT_EQ(sb::cf::utils::isNumberString(string), expected);
+    EXPECT_EQ(sb::cf::details::utils::isNumberString(string), expected);
 }
 
 Params<std::string_view, bool, std::pair<bool, int>> ConvertToNumberIntData{
@@ -136,7 +136,7 @@ Params<std::string_view, bool, std::pair<bool, int>> ConvertToNumberIntData{
 PARAMS_TEST(UtilsTest, ShouldConvertToIntNumber, ConvertToNumberIntData)
 {
     auto &[string, full, expected] = GetParam();
-    auto [success, result] = sb::cf::utils::tryStringTo<int>(string, full);
+    auto [success, result] = sb::cf::details::utils::tryStringTo<int>(string, full);
 
     EXPECT_EQ(success, expected.first);
     if (success)
@@ -153,7 +153,7 @@ Params<std::string_view, bool, std::pair<bool, double>> ConvertToNumberDoubleDat
 PARAMS_TEST(UtilsTest, ShouldConvertToDoubleNumber, ConvertToNumberDoubleData)
 {
     auto &[string, full, expected] = GetParam();
-    auto [success, result] = sb::cf::utils::tryStringTo<double>(string, full);
+    auto [success, result] = sb::cf::details::utils::tryStringTo<double>(string, full);
 
     EXPECT_EQ(success, expected.first);
     if (success)
@@ -171,7 +171,7 @@ Params<std::string_view, bool, std::pair<bool, bool>> ConvertToBoolData{
 PARAMS_TEST(UtilsTest, ShouldConvertToBool, ConvertToBoolData)
 {
     auto &[string, full, expected] = GetParam();
-    auto [success, result] = sb::cf::utils::tryStringTo<bool>(string, full);
+    auto [success, result] = sb::cf::details::utils::tryStringTo<bool>(string, full);
 
     EXPECT_EQ(success, expected.first);
     if (success)

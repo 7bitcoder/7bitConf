@@ -6,6 +6,7 @@
 #include "SevenBit/Config/Details/Impl/CommandLineConfiguration.hpp"
 #include "SevenBit/Config/Details/Impl/Configuration.hpp"
 #include "SevenBit/Config/Details/Impl/ConfigurationBuilder.hpp"
+#include "SevenBit/Config/Details/Impl/ConfigurationManager.hpp"
 #include "SevenBit/Config/Details/Impl/ConfigurationProviderBase.hpp"
 #include "SevenBit/Config/Details/Impl/EnvironmentVarsConfiguration.hpp"
 #include "SevenBit/Config/Details/Impl/Exceptions.hpp"
