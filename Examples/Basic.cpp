@@ -20,4 +20,6 @@ int main(int argc, char **argv)
     std::cout << "Second element in array: " << secondArrayElement << std::endl;
 
     std::cout << "Configuration json:" << std::endl << std::setw(2) << *configuration;
+
+    return 0;
 }
