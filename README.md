@@ -2,7 +2,6 @@
 [![MainCI](https://github.com/7bitcoder/7bitConfig/actions/workflows/MainCI.yml/badge.svg?branch=main)](https://github.com/7bitcoder/7bitConfig/actions/workflows/MainCI.yml)
 
 <div align="center">
-
 <img src="7bitConfig-logo.svg" alt="logo" width="500" height="auto" />
   <p>
     C++17 configuration provider library! 
@@ -10,45 +9,34 @@
 
 </div>
 <br />
-<details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-        <li><a href="#supported-platforms">Supported Platforms</a></li>
-      </ul>
-    </li>
-    <li><a href="#installation">Installation</a></li>
-    <li><a href="#usage">Usage</a></li>
-    <li>
-      <a href="#configuration-sources">Configuration Sources</a>
-      <ul>
-        <li><a href="#command-line">Command Line</a>
-        <ul>
-        <li><a href="#supported-types">Supported types</a></li>
-        <li><a href="#example-command-line-arguments">Example command line arguments</a></li>
-      </ul>
-        </li>
-        <li><a href="#environment-variables">Environment Variables</a></li>
-        <li><a href="#json-file">Json File</a></li>
-        <li><a href="#app-settings">App Settings</a></li>
-        <li><a href="#key-per-file">Key Per File</a></li>
-        <li><a href="#json-stream">Json Stream</a></li>
-        <li><a href="#json-object">Json Object</a></li>
-        <li><a href="#in-memory">In Memory</a></li>
-        <li><a href="#custom-configuration-source">Custom Configuration Source</a></li>
-      </ul>
-    </li>
-    <li><a href="#build-library">Build Library</a>
-      <ul>
-        <li><a href="#build-library-with-conan">Build Library With Conan</a></li>
-        <li><a href="#install-library">Install Library</a></li>
-      </ul>
-    </li>
-    <li><a href="#license">License</a></li>
-</details>
+
+**Table of Contents**
+
+- [About The Project](#about-the-project")
+  - [Built With](#built-with")
+  - [Supported Platforms](#supported-platforms")
+- [Installation](#installation")
+  - [Using Conan Package Manager](#using-conan-package-manager)
+  - [Header Only](#header-only)
+  - [Header Only Single File](#header-only-single-file)
+  - [Building Library Locally](#building-library-locally)
+- [Usage](#usage")
+- [Configuration Sources](#configuration-sources")
+  - [Command Line](#command-line")
+    - [Supported Types](#supported-types")
+    - [Example Command Line Arguments](#example-command-line-arguments")
+  - [Environment Variables](#environment-variables")
+  - [Json File](#json-file")
+  - [App Settings](#app-settings")
+  - [Key Per File](#key-per-file")
+  - [Json Stream](#json-stream")
+  - [Json Object](#json-object")
+  - [In Memory](#in-memory")
+  - [Custom Configuration Source](#custom-configuration-source")
+- [Build Library](#build-library)
+  - [Build Library With Conan](#build-library-with-conan)
+  - [Install Library](#install-library)
+- [License](#license)
 
 ## About The Project
 
@@ -79,11 +67,11 @@ The library is officially supported on the following platforms:
 
 ## Installation
 
-#### Using Conan package manager - Recommended
+#### Using Conan Package Manager - Recommended
 
 Download and install [Conan.io](https://conan.io/downloads.html) then install [package](https://conan.io/center/7bitconfig), see Conan documentation for the package installation guide
 
-#### Header only
+#### Header Only
 
 Download source code from the most recent release and copy the include folder into your project location, for example, copy into the '/SevenBitConfig' folder. Include this folder into the project, with [CMake](https://cmake.org/), u can use:
 
@@ -91,11 +79,11 @@ Download source code from the most recent release and copy the include folder in
 include_directories(SevenBitConfig/Include)
 ```
 
-#### Header only single file
+#### Header Only Single File
 
 Download the SevenBitConfig.hpp header file from the most recent [release](https://github.com/7bitCoder/7bitConfig/releases/latest), copy this file to your project location and include it.
 
-#### Building library as Static/Shared
+#### Building Library Locally
 
 Download source code from the most recent release, build or install the project using [CMake](https://cmake.org/), for more details, see the [Building Library](#build-library) guide.
 
