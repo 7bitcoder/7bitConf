@@ -11,4 +11,3 @@ class SevenBitConfRecipe(ConanFile):
 
     def requirements(self):
         self.requires("gtest/1.13.0")
-        self.requires("taocpp-json/1.0.0-beta.13")

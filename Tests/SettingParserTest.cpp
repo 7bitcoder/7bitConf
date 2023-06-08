@@ -3,7 +3,6 @@
 #include <gtest/internal/gtest-param-util.h>
 #include <iostream>
 #include <string_view>
-#include <tao/json/type.hpp>
 #include <tuple>
 
 #include "SevenBit/Config/Details/SettingParser.hpp"

@@ -3,3 +3,4 @@
 #define _7BIT_CONFIG_HEADER_ONLY_LIB
 
 #include "SevenBit/Config.hpp"
+#include "tao/json.hpp"

@@ -37,7 +37,7 @@
 
 ## About The Project
 
-7BitConfig is a simple C++ configuration provider library, the main inspiration was the asp net core configuration mechanism.
+7BitConfig is a simple C++ centralized configuration provider library, the main inspiration was the asp net core configuration mechanism.
 
 ### Built With
 
@@ -64,9 +64,9 @@ The library is officially supported on the following platforms:
 
 ## Installation
 
-- Using [Conan.io](https://conan.io/) package manager - Recommended
+- **Using [Conan.io](https://conan.io/) package manager** - Recommended
   Download and install [Conan.io](https://conan.io/downloads.html) then install [package](https://conan.io/center/7bitconfig), see Conan documentation for the package installation guide
-- Header only - Requires taocpp json installed
+- **Header only**
   Download source code from the most recent release, copy the include folder into your project location, for example, copy into the '/SevenBitConfig' folder.
   Include this folder into the project, with [CMake](https://cmake.org/), u can use:
 
@@ -74,11 +74,11 @@ The library is officially supported on the following platforms:
   include_directories(/SevenBitConfig/Include)
   ```
 
-- Header only - Single file
+- **Header only single file**
   Download SevenBitConfig.hpp header file from the most recent [release](https://github.com/7bitCoder/7bitConfig/releases/latest),
   copy this file into your project location and include it.
 
-- Building library as Static/Shared
+- **Building library as Static/Shared**
   Download source code from the most recent release, build or install the project using [CMake](https://cmake.org/),
   for more details see the [Building Library](#Build-Library) guide.
 
@@ -123,10 +123,16 @@ int main(int argc, char **argv)
     std::cout << "Second element in array: " << secondArrayElement << std::endl;
 
     std::cout << "Configuration json:" << std::endl << std::setw(2) << *configuration;
+
+    return 0;
 }
 ```
 
 The Example will print combined configuration from appsettings.json, environment variables and command line arguments. Source-adding order matters, the least source overrides the previous one.
+
+## Configuration Sources
+
+Configuration builder class builds configuration from configuration sources, there are few predefined sources ready to be used
 
 ### Command Line
 
@@ -136,81 +142,282 @@ Command line configuration source is added using addCommandLine(argc, argv) buil
 auto configuration = ConfigurationBuilder{}.addCommandLine(argc, argv).build();
 ```
 
-**Argument pattern:** [--]setting[:nestedSetting|arrayIndex...][!type]=value
+**Argument pattern:** [--]setting[:nestedSetting|arrayIndex...][!type]=[value]
 
-Setting prefix '--' is optional. Nested settings are supported using the ':' separator. If the object is an array, numbers can be used to address the proper element, by default setting value is saved as a string but other types are also supported using the '!' mark.
+Setting prefix '--' is optional. Nested settings are supported using the ':' separator. If the object is an array, numbers can be used to address the proper element, by default setting value is saved as a string but other types are also supported using the '!' mark. If a value is not provided default one will be used for specified type, see [supported types](#Supported-types)
 
-#### Example command line arguments:
+Some arguments might be filtered using overloaded method which accepts std::vector\<std::string_view\>
+For example, we could pass to configuration arguments that starts with "--SETTING":
 
-- --MySetting="" - will override or create MySetting setting with "some value"
-- --Logging:LogLevel:Default=Warning - will override or create in nested objects default log level setting with "Warning"
-- --Strings:2=hello will override or create a third element in the Strings array setting with "hello"
-- --Array:1!uint=123 will override the second element in Array with unsigned integer 123
+```cpp
+std::vector<std::string_view> configArgs;
+for (size_t i = 1; i < argc; ++i)
+{
+    std::string_view argView{argv[i]};
+    if(argView.starts_with("--SETTING")) { // starts_with() c++ 20 feature
+        configArgs.push_back(argView);
+    }
+}
+auto configuration = ConfigurationBuilder{}.addCommandLine(configArgs).build();
+```
 
-#### Supported types:
+#### Supported types
 
-- string - default type, could be specified explicitly
-- uint - unsigned 64 bit integer
-- int - 64 bit integer
-- double
-- bool - case insensitive "true" or "false" or number (non-zero is considered as true)
-- json - json string for example {"hello": "value"}
-- null - null is used as a json value
+type [default value] - description
+
+- string [""] - default type, could be specified explicitly
+- uint [0] - unsigned 64 bit integer
+- int [0] - 64 bit integer
+- double [0.0]
+- bool [false] - case insensitive "true" or "false" or number (non-zero is considered as true)
+- json [undefined] - json string for example {"hello": "value"}
+- null [null] - null is used as a json value
+
+#### Example command line arguments
+
+- --MySetting="hello" - will override or create MySetting setting with "hello" string value
+- --Switch!bool=true - will override or create Switch setting with true bool value
+- --Offset!double - will override or create Offset setting with default 0.0 double value
+- --Logging:LogLevel:Default=Warning - will override or create in nested setting with string "Warning" value
+- --Strings:2=hello - will override or create a third element in the Strings array setting with string "hello" value
+- --Array:1!uint=123 will override the second element in Array with unsigned integer 123 value
 
 ### Environment Variables
 
-Environment variables configuration source is added using addEnvironmentVariables() builder method. This method will load all available variables. Call addEnvironmentVariables with a string to specify a prefix for environment variables:
+Environment variables configuration source is added using addEnvironmentVariables() builder method.
 
-addEnvironmentVariables("CUSTOM*PREFIX*")
+```cpp
+auto configuration = ConfigurationBuilder{}.addEnvironmentVariables().build();
+```
 
-it will load all environment variables with provided prefix (the prefix is removed in final configuration option names)
+This method will load all available environment variables. Call addEnvironmentVariables with a string to specify a prefix for environment variables:
 
-All rules for command line arguments are also valid for environment variables, some operating systems might not support '!' or ':' characters in variables in that case alternative separators can be used, alternative for ':' is '\_\_' (double underscore) and for '!' is '\_\_\_' (triple underscore)
+```cpp
+auto configuration = ConfigurationBuilder{}.addEnvironmentVariables("CUSTOM_PREFIX_").build();
+```
+
+It will load all environment variables with provided prefix (the prefix is removed in the final configuration setting names)
+
+All rules for command line arguments are also valid for environment variables, some operating systems might not support '!' or ':' characters in variables, in that case, alternative separators can be used, alternative for ':' is '\_\_' (double underscore) and for '!' is '\_\_\_' (triple underscore)
 
 option Array:2!uint=123 would be rewritten as Array\_\_2\_\_\_uint=123
 
 ### Json File
 
-Json file configuration source is added using addJsonFile(std::filesystem::path jsonFilePath) builder method. If the file does not exist method will throw an exception, call this method with an additional bool optional argument = true to prevent throwing an exception in this case
+Json file configuration source is added using addJsonFile(std::filesystem::path jsonFilePath) builder method.
+
+```cpp
+auto configuration = ConfigurationBuilder{}.addJsonFile("configuration.json").build();
+```
+
+If the file does not exist method will throw an exception, call this method with an additional bool optional argument = true to prevent throwing an exception in this case
+
+```cpp
+auto configuration = ConfigurationBuilder{}.addJsonFile("configuration.json", true).build();
+```
 
 ### App Settings
 
 App Settings configuration source is added using addAppSettings() builder method.
-this source will use JSON file configuration source with "appsettings.json" file and isOptional = true parameters. addAppSettings is overloaded with an environment name string parameter
 
-If the environment name is not empty this source will additionally load "appsettings.{environment name}.json", for example:
+```cpp
+auto configuration = ConfigurationBuilder{}.addAppSettings().build();
+```
 
-addAppSettings("myenv")
+This source will use Json file configuration source with "appsettings.json" file and isOptional = true parameters. addAppSettings is overloaded with an environment name string parameter. If the environment name is not empty this source will additionally load "appsettings.{environment name}.json", for example:
+
+```cpp
+auto configuration = ConfigurationBuilder{}.addAppSettings("myenv").build();
+```
 
 will additionally load "appsettings.myenv.json" after loading appsettings.json
 
 ### Key Per File
 
 Key Per File configuration source is added using addKeyPerFile(std::filesystem::path directoryPath) builder method.
-this source will load all json files from the directory and save file contents under file name option name, the nested option is supported with \_\_ for example:
 
-Assume directory:
+```cpp
+auto configuration = ConfigurationBuilder{}.addKeyPerFile("ConfigurationsDirectory").build();
+```
+
+this source will load all json files from the "ConfigurationsDirectory" directory and save file contents under file name setting, the nested setting is supported with \_\_ for example:
+
+Assume existing directory:
 
 MyDirectory/
 
 - firstSetting.json
 - second\_\_nested.json
 
-addKeyPerFile("MyDirectory")
+```cpp
+auto configuration = ConfigurationBuilder{}.addKeyPerFile("MyDirectory").build();
+```
 
-will load two json files, first under "firstSetting" option name, the second config will be stored in "nested" object which will be in "second" object
+will load two json files, first under "firstSetting" setting name, the second config will be stored in "nested" object which will be in "second" object
+
+Method will throw exception if directory does not exists, call this method with an additional bool optional argument = true to prevent throwing an exception in this case
+
+```cpp
+auto configuration = ConfigurationBuilder{}.addKeyPerFile("MyDirectory", true).build();
+```
+
+Some files can be ignored with string ignore prefix:
+
+```cpp
+auto configuration = ConfigurationBuilder{}.addKeyPerFile("MyDirectory", true, "ignoreFile_").build();
+```
+
+or with functor:
+
+```cpp
+auto configuration = ConfigurationBuilder{}.addKeyPerFile("MyDirectory", true, [](const std::filesystem::path& file){ return file.filename().string().starts_with("ignoreFile_"); }).build();
+```
 
 ### Json Stream
 
-Json stream configuration source is added using addJsonStream(std::istream & stream) builder method. the stream must return the proper json file otherwise the method will throw an exception
+Json stream configuration source is added using addJsonStream(std::istream & stream) builder method.
+
+```cpp
+auto configuration = ConfigurationBuilder{}.addJsonStream(stream).build();
+```
+
+the stream must return the proper json file otherwise the method will throw an exception
 
 ### Json Object
 
 Json object configuration source is added using addJson(JsonObject json) builder method.
 
+```cpp
+auto configuration = ConfigurationBuilder{}.addJson({{"setting", "hello"}}).build();
+```
+
 ### In Memory
 
-In memory settings configuration source is added using addInMemory(std::vector<std::string, JsonValue>) builder method. keys is string with nested options separated with ':'
+In memory settings configuration source is added using addInMemory(std::vector<std::pair<std::string, JsonValue>>) builder method.
+First element in pair can contain ':' to provide nested setting
+
+```cpp
+auto configuration = ConfigurationBuilder{}.addInMemory({"setting:nested", "hello"}).build();
+```
+
+### Custom Configuration Source
+
+Costom configuration source can be added using add(IConfiguration::Sptr) builder method
+
+Custom configuration source must implement IConfigurationSource
+
+```cpp
+using namespace sb::cf;
+
+class CustomConfigurationProvider : public IConfigurationProvider
+{
+  private:
+    JsonObject _configuration;
+
+  public:
+    void load() override { _configuration = {{"mysettingOne", "value1"}, {"mysettingTwo", "value2"}}; }
+
+    JsonObject &getConfiguration() override { return _configuration; }
+
+    const JsonObject &getConfiguration() const override { return _configuration; }
+};
+
+class CustomConfigurationSource : public IConfigurationSource
+{
+  public:
+    IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override
+    {
+        return std::make_unique<CustomConfigurationProvider>();
+    }
+};
+
+int main(int argc, char **argv)
+{
+    IConfiguration::Ptr configuration =
+        ConfigurationBuilder{}.add(std::make_unique<CustomConfigurationSource>()).build();
+
+    return 0;
+}
+```
+
+## Build Library
+
+The library can be built locally using [Cmake](https://cmake.org/)
+
+Create a build directory and navigate to it:
+
+```sh
+mkdir build && cd build
+```
+
+Configure CMake project
+
+```sh
+cmake .. -DCMAKE_BUILD_TYPE=Debug
+```
+
+Using this command several cache variables can be set:
+
+- \<cache variable name\>: [possible values] (default value) - Description
+- \_7BIT_CONFIG_LIBRARY_TYPE: ["Shared", "Static", "HeaderOnly"] ("Static") - Library build type
+- \_7BIT_CONFIG_BUILD_TESTS: ["ON", "OFF"] ("OFF") - Turn on to build tests (requires [Gtest](https://google.github.io/googletest/) to be installed, see [Build Library With Conan](#Build-Library-With-Conan))
+- \_7BIT_CONFIG_BUILD_EXAMPLES: ["ON", "OFF"] ("OFF") - Turn on to build examples
+- \_7BIT_CONFIG_BUILD_SINGLE_HEADER: ["ON", "OFF"] ("OFF") - Turn on to build single header SevenBitConfig.hpp (requires [Quom](https://pypi.org/project/quom/) to be installed)
+- \_7BIT_CONFIG_INSTALL: ["ON", "OFF"] ("OFF") - Turn on to install the library
+
+to set cache variable pass additional option: -D\<cache variable name\>=[value]
+for example, this command will set the library type to Static and will force examples built
+
+```sh
+cmake .. -DCMAKE_BUILD_TYPE=Release -D_7BIT_CONFIG_LIBRARY_TYPE=Static -D_7BIT_CONFIG_BUILD_EXAMPLES=true
+```
+
+Build the library using the command:
+
+```sh
+cmake --build .
+```
+
+### Build Library With Conan
+
+Gtest library is added to project using Conan package manager ([Conan Installation](https://conan.io/downloads.html)),
+If Conan was freshly installed run detect command:
+
+```sh
+conan profile detect
+```
+
+To install Conan packages run this command in the library root folder:
+
+```sh
+conan install . --output-folder=build --build=missing
+```
+
+Navigate to the build directory:
+
+```sh
+cd build
+```
+
+Configure the CMake project, and add also toolchain file as a CMAKE_TOOLCHAIN_FILE cache variable:
+
+```sh
+cmake .. -DCMAKE_TOOLCHAIN_FILE:PATH="./conan_toolchain.cmake" -DCMAKE_BUILD_TYPE=Release -D_7BIT_CONFIG_BUILD_TESTS=ON
+```
+
+Build the library using the command:
+
+```sh
+cmake --build .
+```
+
+### Install Library
+
+To install the library set additional cache variables \_7BIT_CONFIG_INSTALL=ON and specify installation dir with CMAKE_INSTALL_PREFIX, then run the command
+
+```sh
+cmake --build . --config Release --target install
+```
 
 ## License
 

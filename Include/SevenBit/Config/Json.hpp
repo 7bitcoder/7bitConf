@@ -1,6 +1,6 @@
 #pragma once
 
-#include <tao/json.hpp>
+#include "tao/json/value.hpp"
 
 #include "SevenBit/Config/LibraryConfig.hpp"
 

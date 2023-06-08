@@ -7,6 +7,7 @@
 #include "SevenBit/Config/LibraryConfig.hpp"
 
 #include "SevenBit/Config/Json.hpp"
+#include "tao/json/stream.hpp"
 
 namespace sb::cf
 {
