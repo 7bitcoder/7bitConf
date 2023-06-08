@@ -7,6 +7,33 @@
 
 </div>
 <br />
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+      <ul>
+        <li><a href="#built-with">Built With</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#build-framework-locally">Installation</a></li>
+      </ul>
+    </li>
+    <li><a href="#usage">Usage</a>
+      <ul>
+        <li><a href="#hello-world">Hello World</a></li>
+        <li><a href="#dependency-injector">Dependency Injector</a></li>
+        <li><a href="#middlewares">Middlewares</a></li>
+      </ul>
+    </li>
+    <li><a href="#prebuild-binaries">Prebuild Binaries</a></li>
+    <li><a href="#license">License</a></li>
+    <li><a href="#contact">Contact</a></li>
+</details>
 
 ## About The Project
 
@@ -23,13 +50,13 @@
 
 The library is officially supported on the following platforms:
 
-Operating systems:
+**Operating systems:**
 
 - Linux
 - macOS
 - Windows
 
-Compilers:
+**Compilers:**
 
 - gcc 7.0+
 - clang 6.0+
@@ -37,27 +64,27 @@ Compilers:
 
 ## Installation
 
-- Using Conan.io package manager - Recommended
-  Download and install Conan* then install package*, see conan documentation for package installation guide
-- Header only
+- Using [Conan.io](https://conan.io/) package manager - Recommended
+  Download and install [Conan.io](https://conan.io/downloads.html) then install [package](https://conan.io/center/7bitconfig), see Conan documentation for the package installation guide
+- Header only - Requires taocpp json installed
   Download source code from the most recent release, copy the include folder into your project location, for example, copy into the '/SevenBitConfig' folder.
-  Include this folder into the project, with CMake\_, u can use:
+  Include this folder into the project, with [CMake](https://cmake.org/), u can use:
 
   ```cmake
   include_directories(/SevenBitConfig/Include)
   ```
 
 - Header only - Single file
-  Download SevenBitConfig.hpp header file from the most recent release,
+  Download SevenBitConfig.hpp header file from the most recent [release](https://github.com/7bitCoder/7bitConfig/releases/latest),
   copy this file into your project location and include it.
 
 - Building library as Static/Shared
-  Download source code from the most recent release, build or install the project using CMake*,
-  for more details see the `Building Library`* guide.
+  Download source code from the most recent release, build or install the project using [CMake](https://cmake.org/),
+  for more details see the [Building Library](#Build-Library) guide.
 
 ## Usage
 
-This library provides centralized configuration management, and multiple configuration sources (files, environment variables, command line arguments, custom sources) are combined into one json object (see taocpp json documentation).
+This library provides centralized configuration management, and multiple configuration sources (files, environment variables, command line arguments, custom sources) are combined into one json object (see taocpp json [documentation](https://github.com/taocpp/json/tree/main/doc)).
 
 Create appsettings.json file in compiled executable directory:
 
@@ -103,15 +130,19 @@ The Example will print combined configuration from appsettings.json, environment
 
 ### Command Line
 
-Command line configuration source is added using addCommandLine(argc, argv) builder method.
+Command line configuration source is added using addCommandLine(argc, argv) builder method:
 
-Argument pattern: [--]option[:nestedOption|arrayIndex...][!type]=value
+```cpp
+auto configuration = ConfigurationBuilder{}.addCommandLine(argc, argv).build();
+```
 
-Option prefix '--' is optional. Nested options are supported using the ':' separator. If the object is an array, numbers can be used to address the proper element, by default option value is saved as a string but other types are also supported using the '!' mark.
+**Argument pattern:** [--]setting[:nestedSetting|arrayIndex...][!type]=value
 
-Example arguments:
+Setting prefix '--' is optional. Nested settings are supported using the ':' separator. If the object is an array, numbers can be used to address the proper element, by default setting value is saved as a string but other types are also supported using the '!' mark.
 
-- --MySetting="some value" - will override or create MySetting setting with "some value"
+#### Example command line arguments:
+
+- --MySetting="" - will override or create MySetting setting with "some value"
 - --Logging:LogLevel:Default=Warning - will override or create in nested objects default log level setting with "Warning"
 - --Strings:2=hello will override or create a third element in the Strings array setting with "hello"
 - --Array:1!uint=123 will override the second element in Array with unsigned integer 123
@@ -124,6 +155,7 @@ Example arguments:
 - double
 - bool - case insensitive "true" or "false" or number (non-zero is considered as true)
 - json - json string for example {"hello": "value"}
+- null - null is used as a json value
 
 ### Environment Variables
 
@@ -179,5 +211,9 @@ Json object configuration source is added using addJson(JsonObject json) builder
 ### In Memory
 
 In memory settings configuration source is added using addInMemory(std::vector<std::string, JsonValue>) builder method. keys is string with nested options separated with ':'
+
+## License
+
+Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 @7bitcoder Sylwester Dawida 2023

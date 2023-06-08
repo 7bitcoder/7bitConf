@@ -10,5 +10,5 @@ class SevenBitConfRecipe(ConanFile):
         self.tool_requires("cmake/3.22.6")
 
     def requirements(self):
-        self.requires("gtest/cci.20210126")
+        self.requires("gtest/1.13.0")
         self.requires("taocpp-json/1.0.0-beta.13")
