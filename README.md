@@ -1,3 +1,6 @@
+[![DevCI](https://github.com/7bitcoder/7bitConfig/actions/workflows/DevCI.yml/badge.svg?branch=dev)](https://github.com/7bitcoder/7bitConfig/actions/workflows/DevCI.yml)
+[![MainCI](https://github.com/7bitcoder/7bitConfig/actions/workflows/MainCI.yml/badge.svg?branch=main)](https://github.com/7bitcoder/7bitConfig/actions/workflows/MainCI.yml)
+
 <div align="center">
 
   <img src="7bitConfig-logo.svg" alt="logo" width="500" height="auto" />
@@ -14,25 +17,37 @@
       <a href="#about-the-project">About The Project</a>
       <ul>
         <li><a href="#built-with">Built With</a></li>
+        <li><a href="#supported-platforms">Supported Platforms</a></li>
       </ul>
     </li>
+    <li><a href="#installation">Installation</a></li>
+    <li><a href="#usage">Usage</a></li>
     <li>
-      <a href="#getting-started">Getting Started</a>
+      <a href="#configuration-sources">Configuration Sources</a>
       <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#build-framework-locally">Installation</a></li>
+        <li><a href="#command-line">Command Line</a>
+        <ul>
+        <li><a href="#supported-types">Supported types</a></li>
+        <li><a href="#example-command-line-arguments">Example command line arguments</a></li>
+      </ul>
+        </li>
+        <li><a href="#environment-variables">Environment Variables</a></li>
+        <li><a href="#json-file">Json File</a></li>
+        <li><a href="#app-settings">App Settings</a></li>
+        <li><a href="#key-per-file">Key Per File</a></li>
+        <li><a href="#json-stream">Json Stream</a></li>
+        <li><a href="#json-object">Json Object</a></li>
+        <li><a href="#in-memory">In Memory</a></li>
+        <li><a href="#custom-configuration-source">Custom Configuration Source</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a>
+    <li><a href="#build-library">Build Library</a>
       <ul>
-        <li><a href="#hello-world">Hello World</a></li>
-        <li><a href="#dependency-injector">Dependency Injector</a></li>
-        <li><a href="#middlewares">Middlewares</a></li>
+        <li><a href="#build-library-with-conan">Build Library With Conan</a></li>
+        <li><a href="#install-library">Install Library</a></li>
       </ul>
     </li>
-    <li><a href="#prebuild-binaries">Prebuild Binaries</a></li>
     <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
 </details>
 
 ## About The Project
@@ -80,7 +95,7 @@ The library is officially supported on the following platforms:
 
 - **Building library as Static/Shared**
   Download source code from the most recent release, build or install the project using [CMake](https://cmake.org/),
-  for more details see the [Building Library](#Build-Library) guide.
+  for more details see the [Building Library](#build-library) guide.
 
 ## Usage
 
@@ -144,7 +159,7 @@ auto configuration = ConfigurationBuilder{}.addCommandLine(argc, argv).build();
 
 **Argument pattern:** [--]setting[:nestedSetting|arrayIndex...][!type]=[value]
 
-Setting prefix '--' is optional. Nested settings are supported using the ':' separator. If the object is an array, numbers can be used to address the proper element, by default setting value is saved as a string but other types are also supported using the '!' mark. If a value is not provided default one will be used for specified type, see [supported types](#Supported-types)
+Setting prefix '--' is optional. Nested settings are supported using the ':' separator. If the object is an array, numbers can be used to address the proper element, by default setting value is saved as a string but other types are also supported using the '!' mark. If a value is not provided default one will be used for specified type, see [supported types](#supported-types)
 
 Some arguments might be filtered using overloaded method which accepts std::vector\<std::string_view\>
 For example, we could pass to configuration arguments that starts with "--SETTING":
@@ -161,7 +176,7 @@ for (size_t i = 1; i < argc; ++i)
 auto configuration = ConfigurationBuilder{}.addCommandLine(configArgs).build();
 ```
 
-#### Supported types
+#### Supported Types
 
 type [default value] - description
 
@@ -173,7 +188,7 @@ type [default value] - description
 - json [undefined] - json string for example {"hello": "value"}
 - null [null] - null is used as a json value
 
-#### Example command line arguments
+#### Example Command Line Arguments
 
 - --MySetting="hello" - will override or create MySetting setting with "hello" string value
 - --Switch!bool=true - will override or create Switch setting with true bool value
@@ -307,6 +322,9 @@ Costom configuration source can be added using add(IConfiguration::Sptr) builder
 Custom configuration source must implement IConfigurationSource
 
 ```cpp
+#include <SevenBit/Config.hpp>
+#include <iostream>
+
 using namespace sb::cf;
 
 class CustomConfigurationProvider : public IConfigurationProvider
@@ -360,7 +378,7 @@ Using this command several cache variables can be set:
 
 - \<cache variable name\>: [possible values] (default value) - Description
 - \_7BIT_CONFIG_LIBRARY_TYPE: ["Shared", "Static", "HeaderOnly"] ("Static") - Library build type
-- \_7BIT_CONFIG_BUILD_TESTS: ["ON", "OFF"] ("OFF") - Turn on to build tests (requires [Gtest](https://google.github.io/googletest/) to be installed, see [Build Library With Conan](#Build-Library-With-Conan))
+- \_7BIT_CONFIG_BUILD_TESTS: ["ON", "OFF"] ("OFF") - Turn on to build tests (requires [Gtest](https://google.github.io/googletest/) to be installed, see [Build Library With Conan](#build-library-with-conan))
 - \_7BIT_CONFIG_BUILD_EXAMPLES: ["ON", "OFF"] ("OFF") - Turn on to build examples
 - \_7BIT_CONFIG_BUILD_SINGLE_HEADER: ["ON", "OFF"] ("OFF") - Turn on to build single header SevenBitConfig.hpp (requires [Quom](https://pypi.org/project/quom/) to be installed)
 - \_7BIT_CONFIG_INSTALL: ["ON", "OFF"] ("OFF") - Turn on to install the library
