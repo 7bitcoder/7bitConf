@@ -79,23 +79,25 @@ The library is officially supported on the following platforms:
 
 ## Installation
 
-- **Using [Conan.io](https://conan.io/) package manager** - Recommended
-    Download and install [Conan.io](https://conan.io/downloads.html) then install [package](https://conan.io/center/7bitconfig), see Conan documentation for the package installation guide
-- **Header only**
-    Download source code from the most recent release and copy the include folder into your project location, for example, copy into the '/SevenBitConfig' folder.
-    Include this folder into the project, with [CMake](https://cmake.org/), u can use:
+#### Using Conan package manager - Recommended
 
-`cmake
-  include_directories(/SevenBitConfig/Include)
-  `
+Download and install [Conan.io](https://conan.io/downloads.html) then install [package](https://conan.io/center/7bitconfig), see Conan documentation for the package installation guide
 
-- **Header only single file**
-  Download the SevenBitConfig.hpp header file from the most recent [release](https://github.com/7bitCoder/7bitConfig/releases/latest),
-    copy this file to your project location and include it.
+#### Header only
 
-- **Building library as Static/Shared**
-    Download source code from the most recent release, build or install the project using [CMake](https://cmake.org/),
-    for more details, see the [Building Library](#build-library) guide.
+Download source code from the most recent release and copy the include folder into your project location, for example, copy into the '/SevenBitConfig' folder. Include this folder into the project, with [CMake](https://cmake.org/), u can use:
+
+```cmake
+include_directories(SevenBitConfig/Include)
+```
+
+#### Header only single file
+
+Download the SevenBitConfig.hpp header file from the most recent [release](https://github.com/7bitCoder/7bitConfig/releases/latest), copy this file to your project location and include it.
+
+#### Building library as Static/Shared
+
+Download source code from the most recent release, build or install the project using [CMake](https://cmake.org/), for more details, see the [Building Library](#build-library) guide.
 
 ## Usage
 
