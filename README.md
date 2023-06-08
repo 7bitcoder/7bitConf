@@ -10,7 +10,10 @@
 </div>
 <br />
 
-**Table of Contents**
+<details>
+  <summary>
+Table of Contents
+  </summary>
 
 - [About The Project](#about-the-project)
   - [Built With](#built-with)
@@ -37,6 +40,7 @@
   - [Build Library With Conan](#build-library-with-conan)
   - [Install Library](#install-library)
 - [License](#license)
+</details>
 
 ## About The Project
 
@@ -307,7 +311,7 @@ auto configuration = ConfigurationBuilder{}.addInMemory({"setting:nested", "hell
 
 ### Custom Configuration Source
 
-A custom configuration source can be added using the add(IConfiguration::Sptr) builder method
+A custom configuration source can be added using the add(IConfigurationSource::Sptr) builder method
 
 A custom configuration source must implement IConfigurationSource
 
