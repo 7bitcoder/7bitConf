@@ -1,6 +1,5 @@
 #pragma once
 
-#include <charconv>
 #include <cstddef>
 #include <exception>
 #include <limits>
@@ -31,59 +30,80 @@ namespace sb::cf::details::utils
 
     EXPORT bool isNumberString(std::string_view str);
 
-    template <class TNumber> std::pair<bool, TNumber> tryStringTo(std::string_view str, bool full = true)
+    template <class T> struct UnsupportedType : std::false_type
     {
-        TNumber number = 0;
-        while (!str.empty() && std::isspace(str.front()))
-        {
-            str.remove_prefix(1);
-        }
-        auto last = str.data() + str.size();
-        auto res = std::from_chars(str.data(), last, number);
-        auto success = res.ec == std::errc{} && (!full || res.ptr == last);
-        return {success, number};
-    }
+    };
 
-    template <> inline std::pair<bool, double> tryStringTo<double>(std::string_view str, bool full)
+    template <class TNumber> TNumber convertTo(std::string_view str, size_t &processed)
     {
-        try
+        if constexpr (std::is_same_v<TNumber, double>)
         {
-            std::string string{str};
-            size_t processed = 0;
-            auto number = std::stod(string, &processed);
-            auto success = !full || processed == string.size();
-            return {success, number};
+            return std::stod(std::string{str}, &processed);
         }
-        catch (std::exception &e)
+        else if constexpr (std::is_same_v<TNumber, int>)
         {
-            return {false, 0.0};
+            return std::stoi(std::string{str}, &processed);
         }
-    }
-
-    template <> inline std::pair<bool, bool> tryStringTo<bool>(std::string_view str, bool full)
-    {
-        if (ignoreCaseEquals("true", str))
+        else if constexpr (std::is_same_v<TNumber, std::int64_t>)
         {
-            return {true, true};
+            return std::stoll(std::string{str}, &processed);
         }
-        else if (ignoreCaseEquals("false", str))
+        else if constexpr (std::is_same_v<TNumber, size_t>)
         {
-            return {true, false};
+            return std::stoul(std::string{str}, &processed);
         }
-        else if (auto [success, number] = tryStringTo<int>(str, full); success)
+        else if constexpr (std::is_same_v<TNumber, std::uint64_t>)
         {
-            return {true, number};
+            return std::stoull(std::string{str}, &processed);
         }
-        return {false, false};
+        else
+        {
+            static_assert(UnsupportedType<TNumber>::value, "unsupported type");
+        }
     }
 
     template <class TNumber> TNumber stringTo(std::string_view str, bool full = true)
     {
-        if (auto [success, number] = tryStringTo<TNumber>(str, full); success)
+        try
         {
+            size_t processed = 0;
+            auto number = convertTo<TNumber>(str, processed);
+            if (full && processed != str.size())
+            {
+                throw ConfigException{"Cannot convert string '" + std::string{str} +
+                                      "' to number, not all characters were converted"};
+            }
             return number;
         }
-        throw ConfigException{"Cannot convert string to number" + std::string{str}};
+        catch (std::exception &e)
+        {
+            throw ConfigException{"Cannot convert string '" + std::string{str} + "' to number, reason: " + e.what()};
+        }
+    }
+
+    template <> inline bool stringTo<bool>(std::string_view str, bool full)
+    {
+        if (ignoreCaseEquals("true", str))
+        {
+            return true;
+        }
+        else if (ignoreCaseEquals("false", str))
+        {
+            return false;
+        }
+        return stringTo<int>(str, full);
+    }
+
+    template <class TNumber> std::pair<bool, TNumber> tryStringTo(std::string_view str, bool full = true)
+    {
+        try
+        {
+            return {true, stringTo<TNumber>(str, full)};
+        }
+        catch (std::exception &e)
+        {
+            return {false, 0};
+        }
     }
 } // namespace sb::cf::details::utils
 
