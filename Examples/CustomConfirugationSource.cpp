@@ -32,4 +32,6 @@ int main(int argc, char **argv)
         ConfigurationBuilder{}.add(std::make_unique<CustomConfigurationSource>()).build();
 
     std::cout << "Configuration json:" << std::endl << std::setw(2) << *configuration;
+
+    return 0;
 }

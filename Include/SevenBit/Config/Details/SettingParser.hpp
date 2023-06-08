@@ -13,7 +13,7 @@
 
 namespace sb::cf::details
 {
-    EXPORT class SettingParser
+    class EXPORT SettingParser
     {
       private:
         enum SettingType

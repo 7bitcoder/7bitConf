@@ -12,8 +12,8 @@
 
 namespace sb::cf
 {
-    class MapConfigurationSource : public IConfigurationSource,
-                                   public std::enable_shared_from_this<MapConfigurationSource>
+    class EXPORT MapConfigurationSource : public IConfigurationSource,
+                                          public std::enable_shared_from_this<MapConfigurationSource>
     {
       private:
         IConfigurationSource::SPtr _source;
@@ -32,7 +32,7 @@ namespace sb::cf
         IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
     };
 
-    EXPORT class MapConfigurationProvider : public ConfigurationProviderBase
+    class EXPORT MapConfigurationProvider : public ConfigurationProviderBase
     {
       private:
         MapConfigurationSource::SPtr _source;

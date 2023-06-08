@@ -11,7 +11,7 @@
 
 namespace sb::cf::details
 {
-    EXPORT struct JsonObjectExt
+    struct EXPORT JsonObjectExt
     {
         static void deepMerge(JsonValue &json, JsonValue override);
         static void deepMerge(JsonArray &json, JsonArray override);

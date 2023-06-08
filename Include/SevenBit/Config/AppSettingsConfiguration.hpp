@@ -10,7 +10,7 @@
 
 namespace sb::cf
 {
-    EXPORT class AppSettingsConfigurationSource : public IConfigurationSource
+    class EXPORT AppSettingsConfigurationSource : public IConfigurationSource
     {
       private:
         std::string _envName;

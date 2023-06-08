@@ -7,10 +7,10 @@
 #include "SevenBit/Config/EnvironmentVarsConfiguration.hpp"
 
 #ifdef _WIN32
-extern char **_environ;
+extern "C" __declspec(dllimport) char **_environ;
 #define _7BIT_CONFIG_ENV_PTR _environ
 #else
-extern char **environ;
+extern "C" char **environ;
 #define _7BIT_CONFIG_ENV_PTR environ
 #endif
 
@@ -56,12 +56,17 @@ namespace sb::cf
     INLINE std::vector<std::string_view> EnvironmentVarsConfigurationProvider::getEnvVars()
     {
         std::vector<std::string_view> result;
+        auto &prefix = _source->getPrefix();
         for (auto env = _7BIT_CONFIG_ENV_PTR; *env; env++)
         {
             std::string_view envStr = *env;
-            if (details::utils::startsWith(envStr, _source->getPrefix()))
+            if (prefix.empty())
             {
-                result.push_back(envStr.substr(_source->getPrefix().size()));
+                result.push_back(envStr);
+            }
+            else if (details::utils::startsWith(envStr, prefix))
+            {
+                result.push_back(envStr.substr(prefix.size()));
             }
         }
         return result;

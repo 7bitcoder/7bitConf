@@ -13,7 +13,7 @@
 
 namespace sb::cf
 {
-    EXPORT class Configuration : public IConfiguration
+    class EXPORT Configuration : public IConfiguration
     {
       private:
         std::vector<IConfigurationProvider::Ptr> _providers;

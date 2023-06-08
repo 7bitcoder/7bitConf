@@ -15,12 +15,12 @@
 #include "SevenBit/Config/EnvironmentVarsConfiguration.hpp"
 #include "SevenBit/Config/IConfiguration.hpp"
 #include "SevenBit/Config/IObject.hpp"
+#include "SevenBit/Config/InMemoryConfiguration.hpp"
 #include "SevenBit/Config/JsonConfiguration.hpp"
 #include "SevenBit/Config/JsonFileConfiguration.hpp"
 #include "SevenBit/Config/JsonStreamConfiguration.hpp"
 #include "SevenBit/Config/KeyPerFileConfiguration.hpp"
 #include "SevenBit/Config/OptionsParserConfig.hpp"
-#include "SevenBit/Config/SettingsConfiguration.hpp"
 
 namespace sb::cf
 {
@@ -30,9 +30,9 @@ namespace sb::cf
 
         virtual IConfigurationBuilder &add(IConfigurationSource::SPtr) = 0;
 
-        virtual std::unordered_map<std::string, IObject::Ptr> &getProperties() = 0;
+        virtual std::unordered_map<std::string, IObject::SPtr> &getProperties() = 0;
 
-        virtual const std::unordered_map<std::string, IObject::Ptr> &getProperties() const = 0;
+        virtual const std::unordered_map<std::string, IObject::SPtr> &getProperties() const = 0;
 
         virtual std::vector<IConfigurationSource::SPtr> &getSources() = 0;
 
@@ -134,7 +134,7 @@ namespace sb::cf
 
         IConfigurationBuilder &AddInMemory(std::vector<std::pair<std::string_view, JsonValue>> settings)
         {
-            return add(SettingsConfigurationSource::create(std::move(settings)));
+            return add(InMemoryConfigurationSource::create(std::move(settings)));
         }
 
         IConfigurationBuilder &addDefault(int argc, char *const *const argv)

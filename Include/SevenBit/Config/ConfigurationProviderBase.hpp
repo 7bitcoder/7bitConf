@@ -8,7 +8,7 @@
 
 namespace sb::cf
 {
-    EXPORT class ConfigurationProviderBase : public IConfigurationProvider
+    class EXPORT ConfigurationProviderBase : public IConfigurationProvider
     {
       protected:
         JsonObject _configuration;

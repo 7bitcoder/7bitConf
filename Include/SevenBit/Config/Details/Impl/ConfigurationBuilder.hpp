@@ -35,9 +35,9 @@ namespace sb::cf
 
     INLINE std::vector<IConfigurationSource::SPtr> &ConfigurationBuilder::getSources() { return _sources; }
 
-    INLINE std::unordered_map<std::string, IObject::Ptr> &ConfigurationBuilder::getProperties() { return _properties; }
+    INLINE std::unordered_map<std::string, IObject::SPtr> &ConfigurationBuilder::getProperties() { return _properties; }
 
-    INLINE const std::unordered_map<std::string, IObject::Ptr> &ConfigurationBuilder::getProperties() const
+    INLINE const std::unordered_map<std::string, IObject::SPtr> &ConfigurationBuilder::getProperties() const
     {
         return _properties;
     }
