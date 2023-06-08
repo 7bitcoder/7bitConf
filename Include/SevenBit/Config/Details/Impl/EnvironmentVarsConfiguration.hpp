@@ -6,13 +6,16 @@
 #include "SevenBit/Config/Details/JsonObjectExt.hpp"
 #include "SevenBit/Config/EnvironmentVarsConfiguration.hpp"
 
+extern "C"
+{
 #ifdef _WIN32
-extern char **_environ;
+    __declspec(dllimport) char **_environ;
 #define _7BIT_CONFIG_ENV_PTR _environ
 #else
-extern char **environ;
+    extern char **environ;
 #define _7BIT_CONFIG_ENV_PTR environ
 #endif
+}
 
 namespace sb::cf
 {

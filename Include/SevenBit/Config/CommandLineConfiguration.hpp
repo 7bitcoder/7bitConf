@@ -13,7 +13,7 @@
 
 namespace sb::cf
 {
-    EXPORT class CommandLineConfigurationSource : public IConfigurationSource,
+    class EXPORT CommandLineConfigurationSource : public IConfigurationSource,
                                                   public std::enable_shared_from_this<CommandLineConfigurationSource>
     {
       private:
@@ -37,7 +37,7 @@ namespace sb::cf
         IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
     };
 
-    EXPORT class CommandLineConfigurationProvider : public ConfigurationProviderBase
+    class EXPORT CommandLineConfigurationProvider : public ConfigurationProviderBase
     {
       private:
         CommandLineConfigurationSource::SPtr _source;

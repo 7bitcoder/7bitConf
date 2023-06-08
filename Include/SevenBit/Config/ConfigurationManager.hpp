@@ -7,7 +7,7 @@
 
 namespace sb::cf
 {
-    EXPORT class ConfigurationManager : public ConfigurationBuilder, public Configuration
+    class EXPORT ConfigurationManager : public ConfigurationBuilder, public Configuration
     {
       public:
         IConfigurationBuilder &add(IConfigurationSource::SPtr source) override;

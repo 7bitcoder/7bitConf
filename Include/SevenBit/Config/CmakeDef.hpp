@@ -1,7 +1,7 @@
 #pragma once
 
 #ifndef _7BIT_CONFIG_SHARED_LIB
-/* #undef _7BIT_CONFIG_SHARED_LIB */
+#define _7BIT_CONFIG_SHARED_LIB 
 #endif
 
 #ifndef _7BIT_CONFIG_STATIC_LIB
@@ -9,7 +9,7 @@
 #endif
 
 #ifndef _7BIT_CONFIG_HEADER_ONLY_LIB
-#define _7BIT_CONFIG_HEADER_ONLY_LIB 
+/* #undef _7BIT_CONFIG_HEADER_ONLY_LIB */
 #endif
 
 

@@ -11,7 +11,7 @@
 
 namespace sb::cf
 {
-    EXPORT class EnvironmentVarsConfigurationSource
+    class EXPORT EnvironmentVarsConfigurationSource
         : public IConfigurationSource,
           public std::enable_shared_from_this<EnvironmentVarsConfigurationSource>
     {
@@ -34,7 +34,7 @@ namespace sb::cf
         IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
     };
 
-    EXPORT class EnvironmentVarsConfigurationProvider : public ConfigurationProviderBase
+    class EXPORT EnvironmentVarsConfigurationProvider : public ConfigurationProviderBase
     {
       private:
         EnvironmentVarsConfigurationSource::SPtr _source;

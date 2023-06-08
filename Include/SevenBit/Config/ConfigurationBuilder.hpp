@@ -11,10 +11,10 @@
 
 namespace sb::cf
 {
-    EXPORT class ConfigurationBuilder : public IConfigurationBuilder
+    class EXPORT ConfigurationBuilder : public IConfigurationBuilder
     {
       private:
-        std::unordered_map<std::string, IObject::Ptr> _properties;
+        std::unordered_map<std::string, IObject::SPtr> _properties;
 
         std::vector<IConfigurationSource::SPtr> _sources;
 
@@ -35,9 +35,9 @@ namespace sb::cf
 
         const std::vector<IConfigurationSource::SPtr> &getSources() const override;
 
-        std::unordered_map<std::string, IObject::Ptr> &getProperties() override;
+        std::unordered_map<std::string, IObject::SPtr> &getProperties() override;
 
-        const std::unordered_map<std::string, IObject::Ptr> &getProperties() const override;
+        const std::unordered_map<std::string, IObject::SPtr> &getProperties() const override;
 
         IConfiguration::Ptr build() override;
 

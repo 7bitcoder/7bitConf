@@ -12,7 +12,7 @@
 
 namespace sb::cf
 {
-    EXPORT class KeyPerFileConfigurationSource : public IConfigurationSource
+    class EXPORT KeyPerFileConfigurationSource : public IConfigurationSource
     {
       private:
         std::filesystem::path _directoryPath;

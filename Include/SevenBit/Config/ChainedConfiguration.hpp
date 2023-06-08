@@ -10,7 +10,7 @@
 
 namespace sb::cf
 {
-    EXPORT class ChainedConfigurationSource : public IConfigurationSource
+    class EXPORT ChainedConfigurationSource : public IConfigurationSource
     {
       private:
         std::vector<IConfigurationSource::SPtr> _sources;
@@ -32,13 +32,17 @@ namespace sb::cf
         auto end() { return _sources.end(); }
     };
 
-    EXPORT class ChainedConfigurationProvider : public ConfigurationProviderBase
+    class EXPORT ChainedConfigurationProvider : public ConfigurationProviderBase
     {
       private:
         std::vector<IConfigurationProvider::Ptr> _providers;
 
       public:
         ChainedConfigurationProvider(std::vector<IConfigurationProvider::Ptr> providers);
+
+        ChainedConfigurationProvider(const ChainedConfigurationProvider &) = delete;
+
+        ChainedConfigurationProvider &operator=(const ChainedConfigurationProvider &) = delete;
 
         void load() override;
     };

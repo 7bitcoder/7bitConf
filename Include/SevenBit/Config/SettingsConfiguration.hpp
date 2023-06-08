@@ -13,7 +13,7 @@
 
 namespace sb::cf
 {
-    EXPORT class SettingsConfigurationSource : public IConfigurationSource,
+    class EXPORT SettingsConfigurationSource : public IConfigurationSource,
                                                public std::enable_shared_from_this<SettingsConfigurationSource>
     {
       private:
@@ -39,7 +39,7 @@ namespace sb::cf
         auto end() { return _settings.end(); }
     };
 
-    EXPORT class SettingsConfigurationProvider : public ConfigurationProviderBase
+    class EXPORT SettingsConfigurationProvider : public ConfigurationProviderBase
     {
       private:
         SettingsConfigurationSource::SPtr _source;

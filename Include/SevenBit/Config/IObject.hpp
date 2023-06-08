@@ -9,6 +9,7 @@ namespace sb::cf
     struct IObject
     {
         using Ptr = std::unique_ptr<IObject>;
+        using SPtr = std::shared_ptr<IObject>;
 
         virtual ~IObject() = default;
     };

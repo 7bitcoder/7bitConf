@@ -9,7 +9,7 @@
 
 namespace sb::cf
 {
-    EXPORT class JsonStreamConfigurationSource : public IConfigurationSource,
+    class EXPORT JsonStreamConfigurationSource : public IConfigurationSource,
                                                  public std::enable_shared_from_this<JsonStreamConfigurationSource>
     {
       private:
@@ -28,7 +28,7 @@ namespace sb::cf
         IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
     };
 
-    EXPORT class JsonStreamConfigurationProvider : public ConfigurationProviderBase
+    class EXPORT JsonStreamConfigurationProvider : public ConfigurationProviderBase
     {
       private:
         JsonStreamConfigurationSource::SPtr _source;
