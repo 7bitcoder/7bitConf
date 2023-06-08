@@ -14,7 +14,7 @@ jobs:
   test-gcc:
     strategy:
       matrix:
-        version: [7, 8, 10, 11]
+        version: [8, 10, 11]
         os: [ubuntu-20.04]
 
     runs-on: ${{ matrix.os }}
@@ -45,7 +45,7 @@ jobs:
   test-clang:
     strategy:
       matrix:
-        version: [6, 13, 14, 15]
+        version: [13, 14, 15]
         os: [ubuntu-20.04]
 
     runs-on: ${{ matrix.os }}
