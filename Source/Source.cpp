@@ -10,6 +10,7 @@
 #include "SevenBit/Config/Details/Impl/ConfigurationProviderBase.hpp"
 #include "SevenBit/Config/Details/Impl/EnvironmentVarsConfiguration.hpp"
 #include "SevenBit/Config/Details/Impl/Exceptions.hpp"
+#include "SevenBit/Config/Details/Impl/InMemoryConfiguration.hpp"
 #include "SevenBit/Config/Details/Impl/JsonConfiguration.hpp"
 #include "SevenBit/Config/Details/Impl/JsonFileConfiguration.hpp"
 #include "SevenBit/Config/Details/Impl/JsonObjectExt.hpp"
@@ -17,5 +18,4 @@
 #include "SevenBit/Config/Details/Impl/KeyPerFileConfiguration.hpp"
 #include "SevenBit/Config/Details/Impl/MapConfiguration.hpp"
 #include "SevenBit/Config/Details/Impl/SettingParser.hpp"
-#include "SevenBit/Config/Details/Impl/SettingsConfiguration.hpp"
 #include "SevenBit/Config/Details/Impl/Utils.hpp"

@@ -1,40 +1,40 @@
 #pragma once
 
 #include "SevenBit/Config/Details/JsonObjectExt.hpp"
+#include "SevenBit/Config/InMemoryConfiguration.hpp"
 #include "SevenBit/Config/Json.hpp"
-#include "SevenBit/Config/SettingsConfiguration.hpp"
 
 namespace sb::cf
 {
-    INLINE SettingsConfigurationSource::SettingsConfigurationSource(
+    INLINE InMemoryConfigurationSource::InMemoryConfigurationSource(
         std::vector<std::pair<std::string_view, JsonValue>> settings, SettingParserConfig parserCfg)
         : _settings(std::move(settings)), _settingsParser(std::move(parserCfg))
     {
     }
 
-    INLINE SettingsConfigurationSource::SPtr SettingsConfigurationSource::create(
+    INLINE InMemoryConfigurationSource::SPtr InMemoryConfigurationSource::create(
         std::vector<std::pair<std::string_view, JsonValue>> settings, SettingParserConfig parserCfg)
     {
-        return SettingsConfigurationSource::SPtr(
-            new SettingsConfigurationSource{std::move(settings), std::move(parserCfg)});
+        return InMemoryConfigurationSource::SPtr(
+            new InMemoryConfigurationSource{std::move(settings), std::move(parserCfg)});
     }
 
-    INLINE const details::SettingParser &SettingsConfigurationSource::getSettingParser() const
+    INLINE const details::SettingParser &InMemoryConfigurationSource::getSettingParser() const
     {
         return _settingsParser;
     }
 
-    INLINE IConfigurationProvider::Ptr SettingsConfigurationSource::build(IConfigurationBuilder &builder)
+    INLINE InMemoryConfigurationProvider::Ptr InMemoryConfigurationSource::build(IConfigurationBuilder &builder)
     {
-        return std::make_unique<SettingsConfigurationProvider>(shared_from_this());
+        return std::make_unique<InMemoryConfigurationProvider>(shared_from_this());
     }
 
-    INLINE SettingsConfigurationProvider::SettingsConfigurationProvider(SettingsConfigurationSource::SPtr source)
+    INLINE InMemoryConfigurationProvider::InMemoryConfigurationProvider(InMemoryConfigurationSource::SPtr source)
         : _source(std::move(source))
     {
     }
 
-    INLINE void SettingsConfigurationProvider::load()
+    INLINE void InMemoryConfigurationProvider::load()
     {
         clear();
         for (auto &[key, value] : *_source)
