@@ -11,10 +11,30 @@ runs:
     - name: Install Conan
       uses: turtlebrowser/get-conan@main
 
+    - name: Set Proper Conan Profile
+      uses: kanga333/variable-mapper@master
+      with:
+        key: "${{ runner.os }}"
+        map: |
+          {
+            "ubuntu-20.04": {
+              "use_conan_profile": "linux-gcc-x86_64",
+            },
+            "ubuntu-22.04": {
+              "use_conan_profile": "linux-gcc-x86_64",
+            },
+            "macos-12": {
+              "use_conan_profile": "mac-appple-clang-x86_64",
+            },
+            "windows-2022": {
+              "use_conan_profile": "windows-msvc-x86_64",
+            },
+          }
+
     - name: Configure Conan
-      run: conan profile detect
+      run: conan config install https://github.com/7bitcoder/conan-config.git
       shell: pwsh
 
     - name: Install Conan Packages in ${{ inputs.install-dir }}
-      run: conan install . --output-folder=${{ inputs.install-dir }} --build=missing
+      run: conan install . --output-folder=${{ inputs.install-dir }} --build=missing -pr={{ env.use_conan_profile }}
       shell: pwsh
