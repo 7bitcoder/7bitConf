@@ -3,7 +3,7 @@
 #include "SevenBit/Config/Exceptions.hpp"
 #include "SevenBit/Config/Json.hpp"
 #include "SevenBit/Config/JsonStreamConfiguration.hpp"
-#include "tao/json/from_stream.hpp"
+#include <tao/json/from_stream.hpp>
 
 namespace sb::cf
 {

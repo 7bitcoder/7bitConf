@@ -1,5 +1,4 @@
 [![DevCI](https://github.com/7bitcoder/7bitConfig/actions/workflows/DevCI.yml/badge.svg?branch=dev)](https://github.com/7bitcoder/7bitConfig/actions/workflows/DevCI.yml)
-[![MainCI](https://github.com/7bitcoder/7bitConfig/actions/workflows/MainCI.yml/badge.svg?branch=main)](https://github.com/7bitcoder/7bitConfig/actions/workflows/MainCI.yml)
 
 <div align="center">
 <img src="7bitConfig-logo.svg" alt="logo" width="500" height="auto" />
@@ -71,6 +70,8 @@ The library is officially supported on the following platforms:
 
 ## Installation
 
+All options except Conan, requires [taocpp json](https://github.com/taocpp/json) version 1.0.0-beta.13 to be already installed.
+
 #### Using Conan Package Manager - Recommended
 
 Download and install [Conan.io](https://conan.io/downloads.html) then install [package](https://conan.io/center/7bitconfig), see Conan documentation for the package installation guide
@@ -85,7 +86,7 @@ include_directories(SevenBitConfig/Include)
 
 #### Header Only Single File
 
-Download the SevenBitConfig.hpp header file from the most recent [release](https://github.com/7bitCoder/7bitConfig/releases/latest), copy this file to your project location and include it.
+Download SevenBitConfig.hpp header file from the most recent release, copy this file into your project location and include it.
 
 #### Building Library Locally
 
@@ -354,7 +355,7 @@ int main(int argc, char **argv)
 
 ## Build Library
 
-The library can be built locally using [Cmake](https://cmake.org/)
+The library can be built locally using [Cmake](https://cmake.org/), library requires [Taocpp Json](https://github.com/taocpp/json) to be already installed, the easiest way is to [build library with conan](#build-library-with-conan)
 
 Create a build directory and navigate to it:
 
@@ -374,7 +375,7 @@ Using this command several cache variables can be set:
 - \_7BIT_CONFIG_LIBRARY_TYPE: ["Shared", "Static", "HeaderOnly"] ("Static") - Library build type
 - \_7BIT_CONFIG_BUILD_TESTS: ["ON", "OFF"] ("OFF") - Turn on to build tests (requires [Gtest](https://google.github.io/googletest/) to be installed, see [Build Library With Conan](#build-library-with-conan))
 - \_7BIT_CONFIG_BUILD_EXAMPLES: ["ON", "OFF"] ("OFF") - Turn on to build examples
-- \_7BIT_CONFIG_BUILD_SINGLE_HEADER: ["ON", "OFF"] ("OFF") - Turn on to build single header SevenBitConfig.hpp (requires [Quom](https://pypi.org/project/quom/) to be installed)
+- \_7BIT_CONFIG_BUILD_SINGLE_HEADER: ["ON", "OFF"] ("OFF") - Turn on to build single header SevenBitConfig.hpp (requires Quom to be installed)
 - \_7BIT_CONFIG_INSTALL: ["ON", "OFF"] ("OFF") - Turn on to install the library
 
 To set cache variable pass additional option: -D\<cache variable name\>=[value],

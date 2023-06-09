@@ -1,6 +1,8 @@
 
 include(GenerateExportHeader)
 
+find_package(taocpp-json REQUIRED)
+
 if(_7BIT_CONFIG_SHARED_LIB)
   add_library(7bitConfig SHARED
     Source.cpp ${_7BIT_CONFIG_ALL_HEADERS}
@@ -11,6 +13,16 @@ elseif(_7BIT_CONFIG_STATIC_LIB)
   )
 elseif(_7BIT_CONFIG_HEADER_ONLY_LIB)
   add_library(7bitConfig INTERFACE)
+endif()
+
+if(_7BIT_CONFIG_HEADER_ONLY_LIB)
+  target_link_libraries(7bitConfig INTERFACE
+    taocpp::json
+  )
+else()
+  target_link_libraries(7bitConfig
+    taocpp::json
+  )
 endif()
 
 add_library(7bitConfig::7bitConfig ALIAS 7bitConfig)
