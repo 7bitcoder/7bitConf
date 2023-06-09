@@ -356,7 +356,7 @@ int main(int argc, char **argv)
 
 ## Build Library
 
-The library can be built locally using [Cmake](https://cmake.org/), Library requires [Taocpp Json](https://github.com/taocpp/json) to be already installed, the best is to [Build Library With Conan](#build-library-with-conan)
+The library can be built locally using [Cmake](https://cmake.org/), library requires [Taocpp Json](https://github.com/taocpp/json) to be already installed, the easiest way is to [build library with conan](#build-library-with-conan)
 
 Create a build directory and navigate to it:
 
