@@ -28,7 +28,7 @@ jobs:
           version: ${{ matrix.version }}
 
       - name: Install Conan Packages
-        uses: ./.github/actions/conan-install
+        uses: ./.github/actions/conan-auto-install
         with:
           install-dir: ${{ env.BUILD_DIR }}
 
@@ -59,7 +59,7 @@ jobs:
           version: ${{ matrix.version }}
 
       - name: Install Conan Packages
-        uses: ./.github/actions/conan-install
+        uses: ./.github/actions/conan-auto-install
         with:
           install-dir: ${{ env.BUILD_DIR }}
 
