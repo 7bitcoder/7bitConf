@@ -1,11 +1,12 @@
 #pragma once
 
+#include <tao/json/to_string.hpp>
+
 #include "SevenBit/Config/Configuration.hpp"
 #include "SevenBit/Config/Details/JsonObjectExt.hpp"
 #include "SevenBit/Config/Details/Utils.hpp"
 #include "SevenBit/Config/Exceptions.hpp"
 #include "SevenBit/Config/Json.hpp"
-#include "tao/json/to_string.hpp"
 
 namespace sb::cf
 {
