@@ -42,6 +42,8 @@ namespace sb::cf
         IConfiguration::Ptr build() override;
 
         void clear() override;
+
+        ~ConfigurationBuilder() = default;
     };
 } // namespace sb::cf
 
