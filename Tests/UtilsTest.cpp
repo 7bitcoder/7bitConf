@@ -1,4 +1,4 @@
-#include "SevenBit/Config/Details/Utils.hpp"
+#include "SevenBit/Conf/Details/Utils.hpp"
 #include "Utilities/ParamsTest.hpp"
 #include <cstddef>
 #include <gtest/gtest.h>

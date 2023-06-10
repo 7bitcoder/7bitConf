@@ -1,5 +1,5 @@
 
-#include "SevenBit/Config/Json.hpp"
+#include "SevenBit/Conf/Json.hpp"
 #include <gtest/gtest.h>
 #include <string>
 #include <tuple>

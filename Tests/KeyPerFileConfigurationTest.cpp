@@ -3,8 +3,8 @@
 #include <string>
 
 #include "Mocks/ConfigurationBuilderMock.hpp"
-#include "SevenBit/Config/JsonFileConfiguration.hpp"
-#include "SevenBit/Config/KeyPerFileConfiguration.hpp"
+#include "SevenBit/Conf/JsonFileConfiguration.hpp"
+#include "SevenBit/Conf/KeyPerFileConfiguration.hpp"
 
 class KeyPerFileConfigurationTest : public testing::Test
 {

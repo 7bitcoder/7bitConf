@@ -4,8 +4,8 @@
 #include <string_view>
 
 #include "Classes/CustomConfigSource.hpp"
-#include "SevenBit/Config/ConfigurationBuilder.hpp"
-#include "SevenBit/Config/ObjectHolder.hpp"
+#include "SevenBit/Conf/ConfigurationBuilder.hpp"
+#include "SevenBit/Conf/ObjectHolder.hpp"
 
 class ConfigurationBuilderTest : public testing::Test
 {
