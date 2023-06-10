@@ -6,7 +6,7 @@ set(_7BIT_CONFIG_VERSION_PATCH 0)
 
 set(_7BIT_CONFIG_VERSION ${_7BIT_CONFIG_VERSION_MAJOR}.${_7BIT_CONFIG_VERSION_MINOR}.${_7BIT_CONFIG_VERSION_PATCH})
 
-project(7bitConfig LANGUAGES CXX VERSION ${_7BIT_CONFIG_VERSION})
+project(7bitConf LANGUAGES CXX VERSION ${_7BIT_CONFIG_VERSION})
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Cmake")
 
@@ -36,32 +36,32 @@ if(_7BIT_CONFIG_BUILD_SINGLE_HEADER)
 endif()
 
 if(_7BIT_CONFIG_INSTALL)
-        set(PROJECT_CONFIG_IN ${CMAKE_SOURCE_DIR}/Cmake/7bitConfigConfig.cmake.in)
-        set(PROJECT_CONFIG_OUT ${CMAKE_BINARY_DIR}/7bitConfigConfig.cmake)
-        set(CONFIG_TARGETS_FILE 7bitConfigConfigTargets.cmake)
-        set(VERSIONS_CONFIG_FILE ${CMAKE_CURRENT_BINARY_DIR}/7bitConfigConfigVersion.cmake)
-        set(EXPORT_DEST_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/7bitConfig)
+        set(PROJECT_CONFIG_IN ${CMAKE_SOURCE_DIR}/Cmake/7bitConfConfig.cmake.in)
+        set(PROJECT_CONFIG_OUT ${CMAKE_BINARY_DIR}/7bitConfConfig.cmake)
+        set(CONFIG_TARGETS_FILE 7bitConfConfigTargets.cmake)
+        set(VERSIONS_CONFIG_FILE ${CMAKE_CURRENT_BINARY_DIR}/7bitConfConfigVersion.cmake)
+        set(EXPORT_DEST_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/7bitConf)
 
         install(DIRECTORY ${_7BIT_CONFIG_HEADERS_DIR}/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
         install(
-                TARGETS 7bitConfig
-                EXPORT 7bitConfig
+                TARGETS 7bitConf
+                EXPORT 7bitConf
                 LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
                 ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
                 RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
         export(
-                TARGETS 7bitConfig
-                NAMESPACE 7bitConfig::
+                TARGETS 7bitConf
+                NAMESPACE 7bitConf::
                 FILE ${CMAKE_CURRENT_BINARY_DIR}/${CONFIG_TARGETS_FILE})
 
         install(
-                EXPORT 7bitConfig
-                EXPORT 7bitConfig
+                EXPORT 7bitConf
+                EXPORT 7bitConf
                 DESTINATION ${EXPORT_DEST_DIR}
-                NAMESPACE 7bitConfig::
-                NAMESPACE 7bitConfig::
+                NAMESPACE 7bitConf::
+                NAMESPACE 7bitConf::
                 FILE ${CONFIG_TARGETS_FILE})
 
         include(CMakePackageConfigHelpers)
@@ -73,7 +73,7 @@ if(_7BIT_CONFIG_INSTALL)
 
         install(FILES ${PROJECT_CONFIG_OUT} ${VERSIONS_CONFIG_FILE} DESTINATION ${EXPORT_DEST_DIR})
 
-        export(PACKAGE 7bitConfig)
+        export(PACKAGE 7bitConf)
 
         include(CPack)
 endif()

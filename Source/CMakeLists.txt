@@ -2,23 +2,23 @@
 include(GenerateExportHeader)
 
 if(_7BIT_CONFIG_SHARED_LIB)
-  add_library(7bitConfig SHARED
+  add_library(7bitConf SHARED
     Source.cpp ${_7BIT_CONFIG_ALL_HEADERS}
   )
 elseif(_7BIT_CONFIG_STATIC_LIB)
-  add_library(7bitConfig STATIC
+  add_library(7bitConf STATIC
     Source.cpp ${_7BIT_CONFIG_ALL_HEADERS}
   )
 elseif(_7BIT_CONFIG_HEADER_ONLY_LIB)
-  add_library(7bitConfig INTERFACE)
+  add_library(7bitConf INTERFACE)
 endif()
 
-add_library(7bitConfig::7bitConfig ALIAS 7bitConfig)
+add_library(7bitConf::7bitConf ALIAS 7bitConf)
 
 target_include_directories(
-  7bitConfig INTERFACE
+  7bitConf INTERFACE
   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Include>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-set_target_properties(7bitConfig PROPERTIES VERSION ${_7BIT_CONFIG_VERSION})
-set_target_properties(7bitConfig PROPERTIES DEBUG_POSTFIX d)
+set_target_properties(7bitConf PROPERTIES VERSION ${_7BIT_CONFIG_VERSION})
+set_target_properties(7bitConf PROPERTIES DEBUG_POSTFIX d)

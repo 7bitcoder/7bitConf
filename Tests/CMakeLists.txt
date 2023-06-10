@@ -12,7 +12,7 @@ target_link_libraries(Tests PUBLIC
 )
 
 target_link_libraries(Tests PUBLIC
-    7bitConfig
+    7bitConf
 )
 
 file(GLOB_RECURSE FILES CONFIGURE_DEPENDS Files/*)
