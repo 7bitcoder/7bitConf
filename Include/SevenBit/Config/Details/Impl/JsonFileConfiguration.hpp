@@ -5,7 +5,7 @@
 
 #include "SevenBit/Config/Exceptions.hpp"
 #include "SevenBit/Config/JsonFileConfiguration.hpp"
-#include "tao/json/from_file.hpp"
+#include <tao/json/from_file.hpp>
 
 namespace sb::cf
 {

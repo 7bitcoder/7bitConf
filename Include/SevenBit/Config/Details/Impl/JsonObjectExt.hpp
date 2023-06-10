@@ -1,15 +1,13 @@
 #pragma once
+#include <algorithm>
+#include <cstddef>
+#include <string>
+#include <tao/json/type.hpp>
 
 #include "SevenBit/Config/Details/JsonObjectExt.hpp"
 #include "SevenBit/Config/Details/Utils.hpp"
 #include "SevenBit/Config/Exceptions.hpp"
 #include "SevenBit/Config/Json.hpp"
-#include "SevenBit/Config/LibraryConfig.hpp"
-#include <algorithm>
-#include <charconv>
-#include <cstddef>
-#include <string>
-#include <tao/json/type.hpp>
 
 namespace sb::cf::details
 {

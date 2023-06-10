@@ -152,8 +152,8 @@ static Params<std::string, std::string, std::string> FailParseOptionValues = {
     {"option", "int", "\n"},
     // UInt
     {"option", "uint", "123 abcd"},
-    {"option", "uint", "-123"},
     {"option", "uint", "123 "},
+    {"option", "uint", "-12"},
     {"option", "uint", "123.123"},
     {"option", "uint", " as 123 abcd"},
     {"option", "uint", "abcd"},
