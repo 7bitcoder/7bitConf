@@ -1,4 +1,4 @@
-#include <SevenBit/Config.hpp>
+#include <SevenBit/Conf.hpp>
 #include <iostream>
 #include <memory>
 

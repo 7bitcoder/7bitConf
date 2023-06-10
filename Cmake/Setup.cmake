@@ -15,65 +15,65 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/lib)
 
 set(CPACK_PROJECT_NAME ${CMAKE_PROJECT_NAME})
-set(CPACK_PROJECT_VERSION ${_7BIT_CONFIG_VERSION})
-set(CPACK_PACKAGE_VENDOR "https://github.com/7bitCoder/7bitConfig")
+set(CPACK_PROJECT_VERSION ${_7BIT_CONF_VERSION})
+set(CPACK_PACKAGE_VENDOR "https://github.com/7bitCoder/7bitConf")
 set(CPACK_PACKAGE_CONTACT "https://${CPACK_PACKAGE_VENDOR}")
-set(CPACK_PACKAGE_VERSION_MAJOR ${_7BIT_CONFIG_VERSION_MAJOR})
-set(CPACK_PACKAGE_VERSION_MINOR ${_7BIT_CONFIG_VERSION_MINOR})
-set(CPACK_PACKAGE_VERSION_PATCH ${_7BIT_CONFIG_VERSION_PATCH})
+set(CPACK_PACKAGE_VERSION_MAJOR ${_7BIT_CONF_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${_7BIT_CONF_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${_7BIT_CONF_VERSION_PATCH})
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "7bitInjector is a simple C++ dependency injection library")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
 set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README.md")
 set(CPACK_SOURCE_GENERATOR "TGZ;ZIP")
 
-set(_7BIT_CONFIG_HEADERS_DIR "${CMAKE_SOURCE_DIR}/Include")
+set(_7BIT_CONF_HEADERS_DIR "${CMAKE_SOURCE_DIR}/Include")
 
-set(_7BIT_CONFIG_MAIN_HEADER "${_7BIT_CONFIG_HEADERS_DIR}/SevenBit/Config.hpp")
-file(GLOB _7BIT_CONFIG_TOP_HEADERS "${_7BIT_CONFIG_HEADERS_DIR}/SevenBit/Config/*.hpp")
-file(GLOB _7BIT_CONFIG_DETAILS_HEADERS "${_7BIT_CONFIG_HEADERS_DIR}/SevenBit/Config/Details/*.hpp")
-file(GLOB _7BIT_CONFIG_IMPL_HEADERS "${_7BIT_CONFIG_HEADERS_DIR}/SevenBit/Config/Impl/*.hpp")
-set(_7BIT_CONFIG_ALL_HEADERS ${_7BIT_CONFIG_MAIN_HEADER} ${_7BIT_CONFIG_TOP_HEADERS} ${_7BIT_CONFIG_DETAILS_HEADERS} ${_7BIT_CONFIG_IMPL_HEADERS})
+set(_7BIT_CONF_MAIN_HEADER "${_7BIT_CONF_HEADERS_DIR}/SevenBit/Conf.hpp")
+file(GLOB _7BIT_CONF_TOP_HEADERS "${_7BIT_CONF_HEADERS_DIR}/SevenBit/Conf/*.hpp")
+file(GLOB _7BIT_CONF_DETAILS_HEADERS "${_7BIT_CONF_HEADERS_DIR}/SevenBit/Conf/Details/*.hpp")
+file(GLOB _7BIT_CONF_IMPL_HEADERS "${_7BIT_CONF_HEADERS_DIR}/SevenBit/Conf/Impl/*.hpp")
+set(_7BIT_CONF_ALL_HEADERS ${_7BIT_CONF_MAIN_HEADER} ${_7BIT_CONF_TOP_HEADERS} ${_7BIT_CONF_DETAILS_HEADERS} ${_7BIT_CONF_IMPL_HEADERS})
 
-source_group("Header Files\\SevenBit" FILES ${_7BIT_CONFIG_TOP_HEADERS})
-source_group("Header Files\\SevenBit\\Details" FILES ${_7BIT_CONFIG_DETAILS_HEADERS})
-source_group("Header Files\\SevenBit\\Details\\Impl" FILES ${_7BIT_CONFIG_IMPL_HEADERS})
+source_group("Header Files\\SevenBit" FILES ${_7BIT_CONF_TOP_HEADERS})
+source_group("Header Files\\SevenBit\\Details" FILES ${_7BIT_CONF_DETAILS_HEADERS})
+source_group("Header Files\\SevenBit\\Details\\Impl" FILES ${_7BIT_CONF_IMPL_HEADERS})
 
-set(_7BIT_CONFIG_LIBRARY_TYPE "Static" CACHE STRING "Library build type: Shared;Static;HeaderOnly")
-set(_7BIT_CONFIG_LIBRARY_TYPE_VALUES "Shared;Static;HeaderOnly" CACHE STRING "List of possible _7BIT_CONFIG_LIBRARY_TYPE values")
+set(_7BIT_CONF_LIBRARY_TYPE "Static" CACHE STRING "Library build type: Shared;Static;HeaderOnly")
+set(_7BIT_CONF_LIBRARY_TYPE_VALUES "Shared;Static;HeaderOnly" CACHE STRING "List of possible _7BIT_CONF_LIBRARY_TYPE values")
 
-set_property(CACHE _7BIT_CONFIG_LIBRARY_TYPE PROPERTY STRINGS Shared Static HeaderOnly)
+set_property(CACHE _7BIT_CONF_LIBRARY_TYPE PROPERTY STRINGS Shared Static HeaderOnly)
 
-option(_7BIT_CONFIG_BUILD_PIC "Build position independent code (-fPIC)" OFF)
-option(_7BIT_CONFIG_BUILD_EXAMPLES "Build example" OFF)
-option(_7BIT_CONFIG_BUILD_TESTS "Build tests" OFF)
-option(_7BIT_CONFIG_INSTALL "Installs 7bitConfig" OFF)
-option(_7BIT_CONFIG_BUILD_SINGLE_HEADER "Builds single header SevenBitConf.hpp" OFF)
+option(_7BIT_CONF_BUILD_PIC "Build position independent code (-fPIC)" OFF)
+option(_7BIT_CONF_BUILD_EXAMPLES "Build example" OFF)
+option(_7BIT_CONF_BUILD_TESTS "Build tests" OFF)
+option(_7BIT_CONF_INSTALL "Installs 7bitConf" OFF)
+option(_7BIT_CONF_BUILD_SINGLE_HEADER "Builds single header SevenBitConf.hpp" OFF)
 
-if(_7BIT_CONFIG_BUILD_PIC)
+if(_7BIT_CONF_BUILD_PIC)
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
 
-if(_7BIT_CONFIG_LIBRARY_TYPE STREQUAL "Shared")
-    set(_7BIT_CONFIG_BUILD_LIBRARY_TYPE "Shared")
-    set(_7BIT_CONFIG_SHARED_LIB true)
-elseif(_7BIT_CONFIG_LIBRARY_TYPE STREQUAL "HeaderOnly")
-    set(_7BIT_CONFIG_BUILD_LIBRARY_TYPE "HeaderOnly")
-    set(_7BIT_CONFIG_HEADER_ONLY_LIB true)
+if(_7BIT_CONF_LIBRARY_TYPE STREQUAL "Shared")
+    set(_7BIT_CONF_BUILD_LIBRARY_TYPE "Shared")
+    set(_7BIT_CONF_SHARED_LIB true)
+elseif(_7BIT_CONF_LIBRARY_TYPE STREQUAL "HeaderOnly")
+    set(_7BIT_CONF_BUILD_LIBRARY_TYPE "HeaderOnly")
+    set(_7BIT_CONF_HEADER_ONLY_LIB true)
 else()
-    set(_7BIT_CONFIG_BUILD_LIBRARY_TYPE "Static")
-    set(_7BIT_CONFIG_STATIC_LIB true)
+    set(_7BIT_CONF_BUILD_LIBRARY_TYPE "Static")
+    set(_7BIT_CONF_STATIC_LIB true)
 endif()
 
-configure_file(${CMAKE_SOURCE_DIR}/Include/SevenBit/Config/CmakeDef.hpp.input ${CMAKE_SOURCE_DIR}/Include/SevenBit/Config/CmakeDef.hpp)
+configure_file(${CMAKE_SOURCE_DIR}/Include/SevenBit/Conf/CmakeDef.hpp.input ${CMAKE_SOURCE_DIR}/Include/SevenBit/Conf/CmakeDef.hpp)
 
 set(INFOS
-    "${CMAKE_PROJECT_NAME} version: ${_7BIT_CONFIG_VERSION}"
+    "${CMAKE_PROJECT_NAME} version: ${_7BIT_CONF_VERSION}"
     "${CMAKE_PROJECT_NAME} build type: ${CMAKE_BUILD_TYPE} "
-    "${CMAKE_PROJECT_NAME} build as ${_7BIT_CONFIG_BUILD_LIBRARY_TYPE} library"
+    "${CMAKE_PROJECT_NAME} build as ${_7BIT_CONF_BUILD_LIBRARY_TYPE} library"
     "=================================================="
-    "Build tests: ${_7BIT_CONFIG_BUILD_TESTS}"
-    "Build examples: ${_7BIT_CONFIG_BUILD_EXAMPLES}"
-    "Build single header: ${_7BIT_CONFIG_BUILD_SINGLE_HEADER}"
-    "Install project: ${_7BIT_CONFIG_INSTALL}"
+    "Build tests: ${_7BIT_CONF_BUILD_TESTS}"
+    "Build examples: ${_7BIT_CONF_BUILD_EXAMPLES}"
+    "Build single header: ${_7BIT_CONF_BUILD_SINGLE_HEADER}"
+    "Install project: ${_7BIT_CONF_INSTALL}"
 )
 printInfo("${INFOS}" = 50 7 0)

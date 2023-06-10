@@ -1,7 +1,7 @@
-[![DevCI](https://github.com/7bitcoder/7bitConfig/actions/workflows/DevCI.yml/badge.svg?branch=dev)](https://github.com/7bitcoder/7bitConfig/actions/workflows/DevCI.yml)
+[![DevCI](https://github.com/7bitcoder/7bitConf/actions/workflows/DevCI.yml/badge.svg?branch=dev)](https://github.com/7bitcoder/7bitConf/actions/workflows/DevCI.yml)
 
 <div align="center">
-<img src="7bitConfig-logo.svg" alt="logo" width="500" height="auto" />
+<img src="7bitConf-logo.svg" alt="logo" width="500" height="auto" />
   <p>
     C++17 configuration provider library! 
   </p>
@@ -43,7 +43,7 @@ Table of Contents
 
 ## About The Project
 
-7BitConfig is a simple C++ centralized configuration provider library, the main inspiration was the asp net core configuration mechanism.
+7bitConf is a simple C++ centralized configuration provider library, the main inspiration was the asp net core configuration mechanism.
 
 ### Built With
 
@@ -52,7 +52,7 @@ Table of Contents
 
 ### Supported Platforms
 
-7bitConfig requires client code and a compiler compatible with the C++17 standard or newer.
+7bitConf requires client code and a compiler compatible with the C++17 standard or newer.
 
 The library is officially supported on the following platforms:
 
@@ -74,19 +74,19 @@ All options except Conan, requires [taocpp json](https://github.com/taocpp/json)
 
 #### Using Conan Package Manager - Recommended
 
-Download and install [Conan.io](https://conan.io/downloads.html) then install [package](https://conan.io/center/7bitconfig), see Conan documentation for the package installation guide
+Download and install [Conan.io](https://conan.io/downloads.html) then install [package](https://conan.io/center/7bitconf), see Conan documentation for the package installation guide
 
 #### Header Only
 
-Download source code from the most recent release and copy the include folder into your project location, for example, copy into the '/SevenBitConfig' folder. Include this folder into the project, with [CMake](https://cmake.org/), u can use:
+Download source code from the most recent release and copy the include folder into your project location, for example, copy into the '/SevenBitConf' folder. Include this folder into the project, with [CMake](https://cmake.org/), u can use:
 
 ```cmake
-include_directories(SevenBitConfig/Include)
+include_directories(SevenBitConf/Include)
 ```
 
 #### Header Only Single File
 
-Download SevenBitConfig.hpp header file from the most recent release, copy this file into your project location and include it.
+Download SevenBitConf.hpp header file from the most recent release, copy this file into your project location and include it.
 
 #### Building Library Locally
 
@@ -111,7 +111,7 @@ Create the appsettings.json file in the compiled executable directory:
 ```
 
 ```cpp
-#include <SevenBit/Config.hpp>
+#include <SevenBit/Conf.hpp>
 #include <iostream>
 
 using namespace sb::cf;
@@ -317,7 +317,7 @@ A custom configuration source can be added using the add(IConfigurationSource::S
 A custom configuration source must implement IConfigurationSource
 
 ```cpp
-#include <SevenBit/Config.hpp>
+#include <SevenBit/Conf.hpp>
 #include <iostream>
 
 using namespace sb::cf;
@@ -372,17 +372,17 @@ cmake .. -DCMAKE_BUILD_TYPE=Debug
 Using this command several cache variables can be set:
 
 - \<cache variable name\>: [possible values] (default value) - Description
-- \_7BIT_CONFIG_LIBRARY_TYPE: ["Shared", "Static", "HeaderOnly"] ("Static") - Library build type
-- \_7BIT_CONFIG_BUILD_TESTS: ["ON", "OFF"] ("OFF") - Turn on to build tests (requires [Gtest](https://google.github.io/googletest/) to be installed, see [Build Library With Conan](#build-library-with-conan))
-- \_7BIT_CONFIG_BUILD_EXAMPLES: ["ON", "OFF"] ("OFF") - Turn on to build examples
-- \_7BIT_CONFIG_BUILD_SINGLE_HEADER: ["ON", "OFF"] ("OFF") - Turn on to build single header SevenBitConfig.hpp (requires Quom to be installed)
-- \_7BIT_CONFIG_INSTALL: ["ON", "OFF"] ("OFF") - Turn on to install the library
+- \_7BIT_CONF_LIBRARY_TYPE: ["Shared", "Static", "HeaderOnly"] ("Static") - Library build type
+- \_7BIT_CONF_BUILD_TESTS: ["ON", "OFF"] ("OFF") - Turn on to build tests (requires [Gtest](https://google.github.io/googletest/) to be installed, see [Build Library With Conan](#build-library-with-conan))
+- \_7BIT_CONF_BUILD_EXAMPLES: ["ON", "OFF"] ("OFF") - Turn on to build examples
+- \_7BIT_CONF_BUILD_SINGLE_HEADER: ["ON", "OFF"] ("OFF") - Turn on to build single header SevenBitConf.hpp (requires Quom to be installed)
+- \_7BIT_CONF_INSTALL: ["ON", "OFF"] ("OFF") - Turn on to install the library
 
 To set cache variable pass additional option: -D\<cache variable name\>=[value],
 for example, this command will set the library type to Static and will force examples built
 
 ```sh
-cmake .. -DCMAKE_BUILD_TYPE=Release -D_7BIT_CONFIG_LIBRARY_TYPE=Static -D_7BIT_CONFIG_BUILD_EXAMPLES=true
+cmake .. -DCMAKE_BUILD_TYPE=Release -D_7BIT_CONF_LIBRARY_TYPE=Static -D_7BIT_CONF_BUILD_EXAMPLES=true
 ```
 
 Build the library using the command:
@@ -415,7 +415,7 @@ cd build
 Configure the CMake project and add the toolchain file as a CMAKE_TOOLCHAIN_FILE cache variable:
 
 ```sh
-cmake .. -DCMAKE_TOOLCHAIN_FILE:PATH="./conan_toolchain.cmake" -DCMAKE_BUILD_TYPE=Release -D_7BIT_CONFIG_BUILD_TESTS=ON
+cmake .. -DCMAKE_TOOLCHAIN_FILE:PATH="./conan_toolchain.cmake" -DCMAKE_BUILD_TYPE=Release -D_7BIT_CONF_BUILD_TESTS=ON
 ```
 
 Build the library using the command:
@@ -426,7 +426,7 @@ cmake --build .
 
 ### Install Library
 
-To install the library, set the additional cache variables \_7BIT_CONFIG_INSTALL=ON and specify the installation directory with CMAKE_INSTALL_PREFIX, then run the command
+To install the library, set the additional cache variables \_7BIT_CONF_INSTALL=ON and specify the installation directory with CMAKE_INSTALL_PREFIX, then run the command
 
 ```sh
 cmake --build . --config Release --target install

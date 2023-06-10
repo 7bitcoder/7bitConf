@@ -5,10 +5,10 @@
 #include <string_view>
 #include <tuple>
 
-#include "SevenBit/Config/Details/SettingParser.hpp"
-#include "SevenBit/Config/Details/Utils.hpp"
-#include "SevenBit/Config/Exceptions.hpp"
-#include "SevenBit/Config/Json.hpp"
+#include "SevenBit/Conf/Details/SettingParser.hpp"
+#include "SevenBit/Conf/Details/Utils.hpp"
+#include "SevenBit/Conf/Exceptions.hpp"
+#include "SevenBit/Conf/Json.hpp"
 #include "Utilities/ParamsTest.hpp"
 
 class SettingParserTest : public testing::Test

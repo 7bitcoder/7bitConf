@@ -3,7 +3,7 @@
 #include <string>
 
 #include "Mocks/ConfigurationBuilderMock.hpp"
-#include "SevenBit/Config/AppSettingsConfiguration.hpp"
+#include "SevenBit/Conf/AppSettingsConfiguration.hpp"
 
 class AppSettingsConfiguration : public testing::Test
 {

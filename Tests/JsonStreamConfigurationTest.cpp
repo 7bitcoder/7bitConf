@@ -3,9 +3,9 @@
 #include <sstream>
 
 #include "Mocks/ConfigurationBuilderMock.hpp"
-#include "SevenBit/Config/Exceptions.hpp"
-#include "SevenBit/Config/Json.hpp"
-#include "SevenBit/Config/JsonStreamConfiguration.hpp"
+#include "SevenBit/Conf/Exceptions.hpp"
+#include "SevenBit/Conf/Json.hpp"
+#include "SevenBit/Conf/JsonStreamConfiguration.hpp"
 
 class JsonStreamConfigurationTest : public testing::Test
 {

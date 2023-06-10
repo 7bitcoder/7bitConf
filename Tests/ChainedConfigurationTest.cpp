@@ -4,9 +4,9 @@
 #include <string>
 
 #include "Mocks/ConfigurationBuilderMock.hpp"
-#include "SevenBit/Config/ChainedConfiguration.hpp"
-#include "SevenBit/Config/JsonConfiguration.hpp"
-#include "SevenBit/Config/JsonFileConfiguration.hpp"
+#include "SevenBit/Conf/ChainedConfiguration.hpp"
+#include "SevenBit/Conf/JsonConfiguration.hpp"
+#include "SevenBit/Conf/JsonFileConfiguration.hpp"
 
 class ChainedConfigurationTest : public testing::Test
 {

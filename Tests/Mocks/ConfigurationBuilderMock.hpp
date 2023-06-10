@@ -2,7 +2,7 @@
 
 #include <gmock/gmock.h>
 
-#include "SevenBit/Config/IConfigurationBuilder.hpp"
+#include "SevenBit/Conf/IConfigurationBuilder.hpp"
 
 struct ConfigurationBuilderMock : public sb::cf::IConfigurationBuilder
 {
