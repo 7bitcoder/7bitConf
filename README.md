@@ -1,4 +1,4 @@
-[![DevCI](https://github.com/7bitcoder/7bitConf/actions/workflows/DevCI.yml/badge.svg?branch=dev)](https://github.com/7bitcoder/7bitConf/actions/workflows/DevCI.yml)
+[![CI](https://github.com/7bitcoder/7bitConf/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/7bitcoder/7bitConf/actions/workflows/CI.yml)
 
 <div align="center">
 <img src="7bitConf-logo.svg" alt="logo" width="500" height="auto" />
