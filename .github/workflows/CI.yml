@@ -1,8 +1,8 @@
-name: DevCI
+name: CI
 
 on:
   push:
-    branches: ["dev"]
+    branches: ["dev", "main"]
     paths-ignore:
       - ".readthedocs.yaml"
       - "README.md"
