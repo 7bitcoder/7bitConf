@@ -7,28 +7,17 @@
 
 namespace sb::cf::details::utils
 {
-    template <bool ignoreCase, class It> bool equals(It begin, It end, It sBegin, It sEnd)
+    template <class TIterator, class TFunc>
+    bool edgeEqual(TIterator it, TIterator end, TIterator searchIt, TIterator searchEnd, TFunc cmp)
     {
-        constexpr auto cmp = ignoreCase ? [](char cha, char chb) { return std::tolower(cha) == std::tolower(chb); }
-                                        : [](char cha, char chb) { return cha == chb; };
-
-        return std::equal(begin, end, sBegin, sEnd, cmp);
-    }
-
-    template <bool ignoreCase, bool end> bool edgeEquals(std::string_view str, std::string_view search)
-    {
-        if (search.empty())
+        for (; it != end && searchIt != searchEnd; ++it, ++searchIt)
         {
-            return true;
+            if (!cmp(*it, *searchIt))
+            {
+                return false;
+            }
         }
-        if constexpr (end)
-        {
-            return equals<ignoreCase>(str.rbegin(), str.rend(), search.rbegin(), search.rend());
-        }
-        else
-        {
-            return equals<ignoreCase>(str.begin(), str.end(), search.begin(), search.end());
-        }
+        return searchIt == searchEnd;
     }
 
     INLINE bool isNumberString(std::string_view str)
@@ -43,32 +32,42 @@ namespace sb::cf::details::utils
         return !str.empty();
     }
 
-    INLINE bool ignoreCaseEquals(std::string_view stra, std::string_view strb)
+    INLINE bool ignoreCaseEqual(char cha, char chb) { return std::tolower(cha) == std::tolower(chb); }
+
+    INLINE bool ignoreCaseEqual(std::string_view str, std::string_view search)
     {
-        return equals<true>(stra.begin(), stra.end(), strb.begin(), strb.end());
+        return std::equal(str.begin(), str.end(), search.begin(), search.end(),
+                          [](char cha, char chb) { return ignoreCaseEqual(cha, chb); });
     }
 
     INLINE bool startsWith(std::string_view str, std::string_view search)
     {
-        return edgeEquals<false, false>(str, search);
+        return edgeEqual(str.begin(), str.end(), search.begin(), search.end(),
+                         [](char cha, char chb) { return cha == chb; });
     }
 
     INLINE bool ignoreCaseStartsWith(std::string_view str, std::string_view search)
     {
-        return edgeEquals<true, false>(str, search);
+        return edgeEqual(str.begin(), str.end(), search.begin(), search.end(),
+                         [](char cha, char chb) { return ignoreCaseEqual(cha, chb); });
     }
 
-    INLINE bool endsWith(std::string_view str, std::string_view search) { return edgeEquals<false, true>(str, search); }
+    INLINE bool endsWith(std::string_view str, std::string_view search)
+    {
+        return edgeEqual(str.rbegin(), str.rend(), search.rbegin(), search.rend(),
+                         [](char cha, char chb) { return cha == chb; });
+    }
 
     INLINE bool ignoreCaseEndsWith(std::string_view str, std::string_view search)
     {
-        return edgeEquals<true, true>(str, search);
+        return edgeEqual(str.rbegin(), str.rend(), search.rbegin(), search.rend(),
+                         [](char cha, char chb) { return ignoreCaseEqual(cha, chb); });
     }
 
     INLINE std::size_t replaceAll(std::string &inout, std::string_view what, std::string_view with)
     {
         std::size_t count = 0;
-        for (std::string::size_type pos = 0; inout.npos != (pos = inout.find(what.data(), pos, what.size()));
+        for (std::string::size_type pos = 0; std::string::npos != (pos = inout.find(what.data(), pos, what.size()));
              pos += with.size(), ++count)
         {
             inout.replace(pos, what.size(), with);
@@ -81,7 +80,7 @@ namespace sb::cf::details::utils
         std::vector<std::string_view> result;
 
         std::string::size_type begin = 0, pos = 0;
-        for (size_t cnt = 1; cnt < max && str.npos != (pos = str.find_first_of(delim, pos));
+        for (size_t cnt = 1; cnt < max && std::string_view::npos != (pos = str.find_first_of(delim, pos));
              begin = (pos += delim.size()), ++cnt)
         {
             result.push_back(str.substr(begin, pos - begin));
@@ -90,33 +89,33 @@ namespace sb::cf::details::utils
         return result;
     }
 
-    INLINE std::string joinViews(const std::vector<std::string_view> &strs, const std::string &divider)
+    INLINE std::string joinViews(const std::vector<std::string_view> &strings, const std::string &divider)
     {
         std::string res;
-        if (strs.empty())
+        if (strings.empty())
         {
             return res;
         }
-        for (size_t i = 0; i < strs.size() - 1; ++i)
+        for (size_t i = 0; i < strings.size() - 1; ++i)
         {
-            res += std::string{strs[i]} + divider;
+            res += std::string{strings[i]} + divider;
         }
-        res += strs.back();
+        res += strings.back();
         return res;
     }
 
-    INLINE std::string join(const std::vector<std::string> &strs, const std::string &divider)
+    INLINE std::string join(const std::vector<std::string> &strings, const std::string &divider)
     {
         std::string res;
-        if (strs.empty())
+        if (strings.empty())
         {
             return res;
         }
-        for (size_t i = 0; i < strs.size() - 1; ++i)
+        for (size_t i = 0; i < strings.size() - 1; ++i)
         {
-            res += strs[i] + divider;
+            res += strings[i] + divider;
         }
-        res += strs.back();
+        res += strings.back();
         return res;
     }
 } // namespace sb::cf::details::utils

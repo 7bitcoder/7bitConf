@@ -16,16 +16,16 @@ namespace sb::cf::details
     INLINE JsonObject SettingParser::parseSetting(std::string_view setting) const
     {
         auto keyValue = details::utils::split(setting, _config.settingSplitter, 2);
-        if (keyValue.size() == 1)
+        switch (keyValue.size())
         {
+        case 1:
             return parseSetting(setting, std::nullopt);
-        }
-        if (keyValue.size() == 2)
-        {
+        case 2:
             return parseSetting(keyValue[0], std::make_optional(keyValue[1]));
+        default:
+            throw SettingParserException("Wrong setting format: " + std::string{setting} +
+                                         " it should follow this scheme --<name>=<value>");
         }
-        throw SettingParserException("Wrong setting format: " + std::string{setting} +
-                                     " it should follow this scheme --<name>=<value>");
     }
 
     INLINE JsonObject SettingParser::parseSetting(std::string_view key, std::optional<std::string_view> value) const
@@ -62,11 +62,11 @@ namespace sb::cf::details
     {
         if (details::utils::startsWith(key, _config.settingPrefix))
         {
-            key = key.substr(_config.settingPrefix.size());
+            key.remove_prefix(_config.settingPrefix.size());
         }
         if (key.empty())
         {
-            throw SettingParserException{"Key canot be empty"};
+            throw SettingParserException{"Key cannot be empty"};
         }
         return details::utils::split(key, _config.keySplitter);
     }
@@ -108,20 +108,27 @@ namespace sb::cf::details
     {
         if (details::utils::ignoreCaseEndsWith(value, typeStr))
         {
-            auto mutated = value;
-            mutated.remove_suffix(typeStr.size());
-            if (details::utils::endsWith(mutated, _config.typeMarker))
+            auto original = value;
+            value.remove_suffix(typeStr.size());
+            if (tryExtractTypeMarker(value, _config.typeMarker))
             {
-                mutated.remove_suffix(_config.typeMarker.size());
-                value = mutated;
                 return true;
             }
-            if (details::utils::endsWith(mutated, _config.alternativeTypeMarker))
+            if (tryExtractTypeMarker(value, _config.alternativeTypeMarker))
             {
-                mutated.remove_suffix(_config.alternativeTypeMarker.size());
-                value = mutated;
                 return true;
             }
+            value = original;
+        }
+        return false;
+    }
+
+    INLINE bool SettingParser::tryExtractTypeMarker(std::string_view &value, std::string_view typeMarker) const
+    {
+        if (details::utils::endsWith(value, typeMarker))
+        {
+            value.remove_suffix(typeMarker.size());
+            return true;
         }
         return false;
     }
@@ -138,7 +145,7 @@ namespace sb::cf::details
         case UInt:
             return value ? details::utils::stringTo<std::uint64_t>(*value) : 0;
         case Bool:
-            return value ? details::utils::stringTo<bool>(*value) : false;
+            return value && details::utils::stringTo<bool>(*value);
         case Double:
             return value ? details::utils::stringTo<double>(*value) : 0.0;
         case Null:

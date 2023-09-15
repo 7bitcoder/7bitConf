@@ -129,7 +129,7 @@ Params<std::string_view, std::string_view, bool> IgnoreCaseEqualsData{
 PARAMS_TEST(UtilsTest, ShouldIgnoreCaseCompareStrings, IgnoreCaseEqualsData)
 {
     auto &[string, search, expected] = GetParam();
-    EXPECT_EQ(sb::cf::details::utils::ignoreCaseEquals(string, search), expected);
+    EXPECT_EQ(sb::cf::details::utils::ignoreCaseEqual(string, search), expected);
 }
 
 Params<std::string_view, bool> CheckNumberStringsData{

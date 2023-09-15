@@ -30,7 +30,7 @@ namespace sb::cf::details
         SettingParserConfig _config;
 
       public:
-        SettingParser(SettingParserConfig config = {});
+        explicit SettingParser(SettingParserConfig config = {});
 
         JsonObject parseSetting(std::string_view setting) const;
 
@@ -44,6 +44,8 @@ namespace sb::cf::details
         SettingType extractType(std::string_view &value) const;
 
         bool tryExtractType(std::string_view &value, std::string_view typeStr) const;
+
+        bool tryExtractTypeMarker(std::string_view &value, std::string_view typeMarker) const;
 
         JsonObject parseSetting(const std::vector<std::string_view> &key, JsonValue value) const;
 

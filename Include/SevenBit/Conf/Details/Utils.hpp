@@ -14,7 +14,9 @@
 
 namespace sb::cf::details::utils
 {
-    EXPORT bool ignoreCaseEquals(std::string_view stra, std::string_view strb);
+    EXPORT bool ignoreCaseEqual(char cha, char chb);
+
+    EXPORT bool ignoreCaseEqual(std::string_view str, std::string_view search);
 
     EXPORT bool startsWith(std::string_view str, std::string_view search);
 
@@ -29,9 +31,9 @@ namespace sb::cf::details::utils
     EXPORT std::vector<std::string_view> split(std::string_view str, const std::string_view &delim = "/",
                                                size_t max = std::numeric_limits<size_t>::max());
 
-    EXPORT std::string joinViews(const std::vector<std::string_view> &strs, const std::string &divider);
+    EXPORT std::string joinViews(const std::vector<std::string_view> &strings, const std::string &divider);
 
-    EXPORT std::string join(const std::vector<std::string> &strs, const std::string &divider);
+    EXPORT std::string join(const std::vector<std::string> &strings, const std::string &divider);
 
     EXPORT bool isNumberString(std::string_view str);
 
@@ -66,11 +68,11 @@ namespace sb::cf::details::utils
 
     template <> inline std::pair<bool, bool> tryStringTo<bool>(std::string_view str, bool full)
     {
-        if (ignoreCaseEquals("true", str))
+        if (ignoreCaseEqual(str, "true"))
         {
             return {true, true};
         }
-        else if (ignoreCaseEquals("false", str))
+        else if (ignoreCaseEqual(str, "false"))
         {
             return {true, false};
         }
@@ -87,7 +89,7 @@ namespace sb::cf::details::utils
         {
             return number;
         }
-        throw ConfigException{"Cannot convert string to number" + std::string{str}};
+        throw ConfigException{"Cannot convert string to number: " + std::string{str}};
     }
 } // namespace sb::cf::details::utils
 
