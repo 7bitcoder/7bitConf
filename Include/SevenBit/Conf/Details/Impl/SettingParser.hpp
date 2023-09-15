@@ -25,7 +25,7 @@ namespace sb::cf::details
             return parseSetting(keyValue[0], std::make_optional(keyValue[1]));
         }
         throw SettingParserException("Wrong setting format: " + std::string{setting} +
-                                     " if should follow this scheme --<name>=<value>");
+                                     " it should follow this scheme --<name>=<value>");
     }
 
     INLINE JsonObject SettingParser::parseSetting(std::string_view key, std::optional<std::string_view> value) const
@@ -106,7 +106,7 @@ namespace sb::cf::details
 
     INLINE bool SettingParser::tryExtractType(std::string_view &value, std::string_view typeStr) const
     {
-        if (details::utils::endsWith(value, typeStr, true))
+        if (details::utils::ignoreCaseEndsWith(value, typeStr))
         {
             auto mutated = value;
             mutated.remove_suffix(typeStr.size());

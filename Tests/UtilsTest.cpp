@@ -62,34 +62,48 @@ PARAMS_TEST(UtilsTest, ShouldJoinStrings, JoinStrData)
     EXPECT_EQ(sb::cf::details::utils::joinViews(strings, delim), expected);
 }
 
-Params<std::string_view, std::string_view, bool, bool> StartsWithData{
-    {"1234567", "123", false, true}, {"1234567", "", false, true},     {"1234567", "1", false, true},
-    {"123", "123", false, true},     {"123", "1234", false, false},    {"123", "890", false, false},
-    {"123", "1245", false, false},   {"1234567", "234", false, false}, {"", "234", false, false},
-    {"123", "234", false, false},    {"AbcdeFsd", "abC", true, true},  {"AbcdeFsd", "", true, true},
-    {"1234567", "1", true, true},    {"abcd", "A", true, true},        {"abcd", "ab", true, true},
-    {"abcd", "abcdE", true, false},  {"123", "890", true, false},      {"123", "1245", true, false},
-    {"1234567", "234", true, false}, {"", "234", true, false},         {"123", "234", true, false},
+Params<std::string_view, std::string_view, bool> StartsWithData{
+    {"1234567", "123", true}, {"1234567", "", true}, {"1234567", "1", true}, {"123", "123", true},
+    {"123", "1234", false},   {"123", "890", false}, {"123", "1245", false}, {"1234567", "234", false},
+    {"", "234", false},       {"123", "234", false},
 };
 PARAMS_TEST(UtilsTest, ShouldStartsWith, StartsWithData)
 {
-    auto &[string, search, ignoreCase, expected] = GetParam();
-    EXPECT_EQ(sb::cf::details::utils::startsWith(string, search, ignoreCase), expected);
+    auto &[string, search, expected] = GetParam();
+    EXPECT_EQ(sb::cf::details::utils::startsWith(string, search), expected);
 }
 
-Params<std::string_view, std::string_view, bool, bool> EndsWithData{
-    {"1234567", "567", false, true}, {"1234567", "", false, true},     {"1234567", "7", false, true},
-    {"123", "123", false, true},     {"123", "1234", false, false},    {"123", "890", false, false},
-    {"123", "1245", false, false},   {"1234567", "234", false, false}, {"", "234", false, false},
-    {"123", "234", false, false},    {"AbcdeFsd", "fSD", true, true},  {"AbcdeFsd", "", true, true},
-    {"1234567", "7", true, true},    {"abcd", "D", true, true},        {"abcd", "SD", true, false},
-    {"123", "890", true, false},     {"123", "1245", true, false},     {"1234567", "234", true, false},
-    {"", "234", true, false},        {"123", "234", true, false},
+Params<std::string_view, std::string_view, bool> IgnoreCaseStartsWithData{
+    {"AbcdeFsd", "abC", true}, {"AbcdeFsd", "", true},   {"1234567", "1", true}, {"abcd", "A", true},
+    {"abcd", "ab", true},      {"abcd", "abcdE", false}, {"123", "890", false},  {"123", "1245", false},
+    {"1234567", "234", false}, {"", "234", false},       {"123", "234", false},
+};
+PARAMS_TEST(UtilsTest, ShouldIgnoreCaseStartsWith, IgnoreCaseStartsWithData)
+{
+    auto &[string, search, expected] = GetParam();
+    EXPECT_EQ(sb::cf::details::utils::ignoreCaseStartsWith(string, search), expected);
+}
+
+Params<std::string_view, std::string_view, bool> EndsWithData{
+    {"1234567", "567", true}, {"1234567", "", true}, {"1234567", "7", true}, {"123", "123", true},
+    {"123", "1234", false},   {"123", "890", false}, {"123", "1245", false}, {"1234567", "234", false},
+    {"", "234", false},       {"123", "234", false},
 };
 PARAMS_TEST(UtilsTest, ShouldEndsWith, EndsWithData)
 {
-    auto &[string, search, ignoreCase, expected] = GetParam();
-    EXPECT_EQ(sb::cf::details::utils::endsWith(string, search, ignoreCase), expected);
+    auto &[string, search, expected] = GetParam();
+    EXPECT_EQ(sb::cf::details::utils::endsWith(string, search), expected);
+}
+
+Params<std::string_view, std::string_view, bool> IgnoreCaseEndsWithData{
+    {"AbcdeFsd", "fSD", true}, {"AbcdeFsd", "", true}, {"1234567", "7", true}, {"abcd", "D", true},
+    {"abcd", "SD", false},     {"123", "890", false},  {"123", "1245", false}, {"1234567", "234", false},
+    {"", "234", false},        {"123", "234", false},
+};
+PARAMS_TEST(UtilsTest, ShouldIgnoreCaseEndsWith, IgnoreCaseEndsWithData)
+{
+    auto &[string, search, expected] = GetParam();
+    EXPECT_EQ(sb::cf::details::utils::ignoreCaseEndsWith(string, search), expected);
 }
 
 TEST_F(UtilsTest, ShouldReplaceAllStrings)

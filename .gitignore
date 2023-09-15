@@ -1,6 +1,8 @@
-/build
+/*build*
 /.cache
 /.vscode
+/.idea
 .DS_Store
 CmakeUserPresets.json
+conan_provider.cmake
 CmakePresets.json

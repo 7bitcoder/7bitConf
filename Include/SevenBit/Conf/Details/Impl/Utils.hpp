@@ -7,6 +7,30 @@
 
 namespace sb::cf::details::utils
 {
+    template <bool ignoreCase, class It> bool equals(It begin, It end, It sBegin, It sEnd)
+    {
+        constexpr auto cmp = ignoreCase ? [](char cha, char chb) { return std::tolower(cha) == std::tolower(chb); }
+                                        : [](char cha, char chb) { return cha == chb; };
+
+        return std::equal(begin, end, sBegin, sEnd, cmp);
+    }
+
+    template <bool ignoreCase, bool end> bool edgeEquals(std::string_view str, std::string_view search)
+    {
+        if (search.empty())
+        {
+            return true;
+        }
+        if constexpr (end)
+        {
+            return equals<ignoreCase>(str.rbegin(), str.rend(), search.rbegin(), search.rend());
+        }
+        else
+        {
+            return equals<ignoreCase>(str.begin(), str.end(), search.begin(), search.end());
+        }
+    }
+
     INLINE bool isNumberString(std::string_view str)
     {
         for (auto ch : str)
@@ -21,46 +45,24 @@ namespace sb::cf::details::utils
 
     INLINE bool ignoreCaseEquals(std::string_view stra, std::string_view strb)
     {
-        return std::equal(stra.begin(), stra.end(), strb.begin(), strb.end(),
-                          [](char cha, char chb) { return std::tolower(cha) == std::tolower(chb); });
+        return equals<true>(stra.begin(), stra.end(), strb.begin(), strb.end());
     }
 
-    INLINE bool startsWith(std::string_view str, std::string_view search, bool ignoreCase)
+    INLINE bool startsWith(std::string_view str, std::string_view search)
     {
-        if (search.empty())
-        {
-            return true;
-        }
-        auto strIt = str.begin();
-        auto searchIt = search.begin();
-        for (; strIt != str.end() && searchIt != search.end(); ++strIt, ++searchIt)
-        {
-            if (*strIt == *searchIt || (ignoreCase && std::tolower(*strIt) == std::tolower(*searchIt)))
-            {
-                continue;
-            }
-            return false;
-        }
-        return searchIt == search.end();
+        return edgeEquals<false, false>(str, search);
     }
 
-    INLINE bool endsWith(std::string_view str, std::string_view search, bool ignoreCase)
+    INLINE bool ignoreCaseStartsWith(std::string_view str, std::string_view search)
     {
-        if (search.empty())
-        {
-            return true;
-        }
-        auto strIt = str.rbegin();
-        auto searchIt = search.rbegin();
-        for (; strIt != str.rend() && searchIt != search.rend(); ++strIt, ++searchIt)
-        {
-            if (*strIt == *searchIt || (ignoreCase && std::tolower(*strIt) == std::tolower(*searchIt)))
-            {
-                continue;
-            }
-            return false;
-        }
-        return searchIt == search.rend();
+        return edgeEquals<true, false>(str, search);
+    }
+
+    INLINE bool endsWith(std::string_view str, std::string_view search) { return edgeEquals<false, true>(str, search); }
+
+    INLINE bool ignoreCaseEndsWith(std::string_view str, std::string_view search)
+    {
+        return edgeEquals<true, true>(str, search);
     }
 
     INLINE std::size_t replaceAll(std::string &inout, std::string_view what, std::string_view with)
