@@ -46,7 +46,7 @@ namespace sb::cf::details
         }
     }
 
-    INLINE IJsonTransformer &SettingParser::getTransformer(std::string_view &key) const
+    INLINE const IJsonTransformer &SettingParser::getTransformer(std::string_view &key) const
     {
         for (auto &[type, transformer] : _transformers)
         {
@@ -55,7 +55,7 @@ namespace sb::cf::details
                 return *transformer;
             }
         }
-        return *_transformers.front().second;
+        return _transformers.getDefault();
     }
 
     INLINE bool SettingParser::tryExtractType(std::string_view &key, std::string_view type) const

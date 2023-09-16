@@ -8,6 +8,7 @@
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
 #include "SevenBit/Conf/Details/IJsonTransformer.hpp"
+#include "SevenBit/Conf/Details/JsonTransformersLookup.hpp"
 #include "SevenBit/Conf/Details/Setting.hpp"
 #include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/Json.hpp"
@@ -15,8 +16,6 @@
 
 namespace sb::cf::details
 {
-    using JsonTransformersLookup = std::vector<std::pair<std::string_view, IJsonTransformer::Ptr>>;
-
     class EXPORT SettingParser
     {
       private:
@@ -31,7 +30,7 @@ namespace sb::cf::details
         Setting parse(std::string_view key, std::optional<std::string_view> value) const;
 
       private:
-        IJsonTransformer &getTransformer(std::string_view &key) const;
+        const IJsonTransformer &getTransformer(std::string_view &key) const;
 
         bool tryExtractType(std::string_view &key, std::string_view type) const;
 

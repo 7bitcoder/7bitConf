@@ -61,9 +61,10 @@ namespace sb::cf::details
 
         static void deepMerge(JsonObject &json, JsonObject override);
 
-        static void updateWithSetting(JsonObject &json, Setting &setting);
+        static void updateWithSetting(JsonObject &json, Setting setting);
 
         static void checkSegmentSize(const std::vector<std::string_view> &key);
+        
         static void checkKey(std::string_view key);
     };
 

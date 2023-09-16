@@ -260,7 +260,7 @@ namespace sb::cf::details
         }
     }
 
-    INLINE void JsonExt::updateWithSetting(JsonObject &json, Setting &setting)
+    INLINE void JsonExt::updateWithSetting(JsonObject &json, Setting setting)
     {
         deepGetOrOverride(json, setting.getKey()) = std::move(setting.getValue());
     }
