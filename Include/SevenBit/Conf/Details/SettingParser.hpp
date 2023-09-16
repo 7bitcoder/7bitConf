@@ -7,30 +7,23 @@
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
+#include "SevenBit/Conf/Details/IJsonTypeTransformer.hpp"
 #include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/Json.hpp"
 #include "SevenBit/Conf/OptionsParserConfig.hpp"
 
 namespace sb::cf::details
 {
+    using JsonTransformersMap = std::vector<std::pair<std::string_view, IJsonTypeTransformer::Ptr>>;
+
     class EXPORT SettingParser
     {
       private:
-        enum SettingType
-        {
-            Int,
-            UInt,
-            Null,
-            Bool,
-            String,
-            Double,
-            Json
-        };
-
         SettingParserConfig _config;
+        JsonTransformersMap _transformers;
 
       public:
-        explicit SettingParser(SettingParserConfig config = {});
+        explicit SettingParser(JsonTransformersMap transformers, SettingParserConfig config = {});
 
         JsonObject parseSetting(std::string_view setting) const;
 
@@ -39,9 +32,7 @@ namespace sb::cf::details
       private:
         std::vector<std::string_view> parseKey(std::string_view key) const;
 
-        JsonValue parseValue(SettingType type, std::optional<std::string_view> value) const;
-
-        SettingType extractType(std::string_view &value) const;
+        IJsonTypeTransformer &getTransformer(std::string_view &value) const;
 
         bool tryExtractType(std::string_view &value, std::string_view typeStr) const;
 

@@ -11,7 +11,10 @@
 
 namespace sb::cf::details
 {
-    INLINE SettingParser::SettingParser(SettingParserConfig cfg) : _config(cfg) {}
+    INLINE SettingParser::SettingParser(JsonTransformersMap transformers, SettingParserConfig cfg)
+        : _transformers(std::move(transformers)), _config(cfg)
+    {
+    }
 
     INLINE JsonObject SettingParser::parseSetting(std::string_view setting) const
     {
@@ -32,10 +35,10 @@ namespace sb::cf::details
     {
         try
         {
-            auto type = extractType(key);
+            auto &transformer = getTransformer(key);
             auto keyStr = sanitizeKey(key);
             auto keys = parseKey(keyStr);
-            return parseSetting(std::move(keys), parseValue(type, value));
+            return parseSetting(std::move(keys), transformer.transform(value));
         }
         catch (std::exception &e)
         {
@@ -71,37 +74,16 @@ namespace sb::cf::details
         return details::utils::split(key, _config.keySplitter);
     }
 
-    INLINE SettingParser::SettingType SettingParser::extractType(std::string_view &key) const
+    INLINE IJsonTypeTransformer &SettingParser::getTransformer(std::string_view &key) const
     {
-        if (tryExtractType(key, "bool"))
+        for (auto &[typeStr, transformer] : _transformers)
         {
-            return Bool;
+            if (tryExtractType(key, typeStr))
+            {
+                return *transformer;
+            }
         }
-        if (tryExtractType(key, "int"))
-        {
-            return Int;
-        }
-        if (tryExtractType(key, "double"))
-        {
-            return Double;
-        }
-        if (tryExtractType(key, "json"))
-        {
-            return Json;
-        }
-        if (tryExtractType(key, "string"))
-        {
-            return String;
-        }
-        if (tryExtractType(key, "uint"))
-        {
-            return UInt;
-        }
-        if (tryExtractType(key, "null"))
-        {
-            return Null;
-        }
-        return String;
+        return *_transformers.front();
     }
 
     INLINE bool SettingParser::tryExtractType(std::string_view &value, std::string_view typeStr) const
@@ -131,28 +113,5 @@ namespace sb::cf::details
             return true;
         }
         return false;
-    }
-
-    INLINE JsonValue SettingParser::parseValue(SettingParser::SettingType type,
-                                               std::optional<std::string_view> value) const
-    {
-        switch (type)
-        {
-        case Json:
-            return value ? json::basic_from_string<JsonTraits>(*value) : JsonValue();
-        case Int:
-            return value ? details::utils::stringTo<std::int64_t>(*value) : 0;
-        case UInt:
-            return value ? details::utils::stringTo<std::uint64_t>(*value) : 0;
-        case Bool:
-            return value && details::utils::stringTo<bool>(*value);
-        case Double:
-            return value ? details::utils::stringTo<double>(*value) : 0.0;
-        case Null:
-            return json::null;
-        case String:
-        default:
-            return std::string{value ? *value : ""};
-        };
     }
 } // namespace sb::cf::details
