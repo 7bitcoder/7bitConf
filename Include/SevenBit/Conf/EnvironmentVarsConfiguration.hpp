@@ -6,7 +6,7 @@
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
 #include "SevenBit/Conf/ConfigurationProviderBase.hpp"
-#include "SevenBit/Conf/Details/SettingParser.hpp"
+#include "SevenBit/Conf/Details/SettingReader.hpp"
 #include "SevenBit/Conf/IConfigurationSource.hpp"
 
 namespace sb::cf
@@ -17,7 +17,7 @@ namespace sb::cf
     {
       private:
         std::string _prefix;
-        details::SettingParser _parser;
+        details::SettingReader _reader;
 
         EnvironmentVarsConfigurationSource(std::string prefix, SettingParserConfig parserConfig);
 
@@ -29,7 +29,7 @@ namespace sb::cf
 
         const std::string &getPrefix();
 
-        const details::SettingParser &getSettingParser();
+        const details::SettingReader &getSettingReader();
 
         IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
     };

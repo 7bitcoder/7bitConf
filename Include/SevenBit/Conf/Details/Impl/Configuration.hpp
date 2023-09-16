@@ -3,7 +3,7 @@
 #include <tao/json/to_string.hpp>
 
 #include "SevenBit/Conf/Configuration.hpp"
-#include "SevenBit/Conf/Details/JsonObjectExt.hpp"
+#include "SevenBit/Conf/Details/JsonExt.hpp"
 #include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"
 #include "SevenBit/Conf/Json.hpp"
@@ -36,29 +36,29 @@ namespace sb::cf
 
     INLINE const JsonValue *Configuration::find(std::string_view key) const
     {
-        return details::JsonObjectExt::find(root(), key);
+        return details::JsonExt::find(root(), key);
     }
 
-    INLINE JsonValue *Configuration::find(std::string_view key) { return details::JsonObjectExt::find(root(), key); }
+    INLINE JsonValue *Configuration::find(std::string_view key) { return details::JsonExt::find(root(), key); }
 
     INLINE const JsonValue *Configuration::deepFind(std::string_view key) const
     {
-        return details::JsonObjectExt::deepFind(rootAsObject(), key);
+        return details::JsonExt::deepFind(rootAsObject(), key);
     }
 
     INLINE JsonValue *Configuration::deepFind(std::string_view key)
     {
-        return details::JsonObjectExt::deepFind(rootAsObject(), key);
+        return details::JsonExt::deepFind(rootAsObject(), key);
     }
 
     INLINE const JsonValue *Configuration::deepFind(const std::vector<std::string_view> &key) const
     {
-        return details::JsonObjectExt::deepFind(rootAsObject(), key);
+        return details::JsonExt::deepFind(rootAsObject(), key);
     }
 
     INLINE JsonValue *Configuration::deepFind(const std::vector<std::string_view> &key)
     {
-        return details::JsonObjectExt::deepFind(rootAsObject(), key);
+        return details::JsonExt::deepFind(rootAsObject(), key);
     }
 
     INLINE JsonValue &Configuration::deepAt(std::string_view key)
@@ -99,14 +99,14 @@ namespace sb::cf
 
     INLINE JsonValue &Configuration::operator[](std::string_view key)
     {
-        return details::JsonObjectExt::getOrCreateInner(rootAsObject(), key);
+        return details::JsonExt::deepGetOrOverride(rootAsObject(), key);
     };
 
     INLINE const JsonValue &Configuration::operator[](std::string_view key) const { return deepAt(key); };
 
     INLINE JsonValue &Configuration::operator[](const std::vector<std::string_view> &key)
     {
-        return details::JsonObjectExt::getOrCreateInner(rootAsObject(), key);
+        return details::JsonExt::deepGetOrOverride(rootAsObject(), key);
     };
 
     INLINE const JsonValue &Configuration::operator[](const std::vector<std::string_view> &key) const
@@ -121,7 +121,7 @@ namespace sb::cf
         for (auto &provider : _providers)
         {
             provider->load();
-            details::JsonObjectExt::deepMerge(configRoot, std::move(provider->getConfiguration()));
+            details::JsonExt::deepMerge(configRoot, std::move(provider->getConfiguration()));
         }
     }
 

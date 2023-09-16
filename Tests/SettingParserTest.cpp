@@ -104,7 +104,7 @@ PARAMS_TEST_COMBINED_3(SettingParserTest, ShouldParseSimpleOptions, OptionPrefix
     const auto &[name, type, value, expected] = params;
     sb::cf::details::SettingParser parser;
 
-    EXPECT_EQ((parser.parseSetting(prefix + name + typeMark + type + "=" + value)), expected);
+    EXPECT_EQ((parser.parse(prefix + name + typeMark + type + "=" + value)), expected);
 }
 
 static Params<std::string, std::string, sb::cf::JsonObject> EmptyOptionsValues = {
@@ -120,14 +120,14 @@ PARAMS_TEST_COMBINED_3(SettingParserTest, ShouldParseEmptyOptions, OptionPrefix,
     auto &[prefix, params, typeMark] = GetParam();
     auto &[name, type, expected] = params;
     sb::cf::details::SettingParser parser;
-    EXPECT_EQ((parser.parseSetting(prefix + name + typeMark + type)), expected);
+    EXPECT_EQ((parser.parse(prefix + name + typeMark + type)), expected);
 }
 
 TEST_F(SettingParserTest, ShouldParseEmptyJsonOption)
 {
     sb::cf::details::SettingParser parser;
-    EXPECT_EQ((parser.parseSetting("option!json")), (sb::cf::JsonObject{{"option", sb::cf::JsonValue{}}}));
-    EXPECT_EQ((parser.parseSetting("--option!json")), (sb::cf::JsonObject{{"option", sb::cf::JsonValue{}}}));
+    EXPECT_EQ((parser.parse("option!json")), (sb::cf::JsonObject{{"option", sb::cf::JsonValue{}}}));
+    EXPECT_EQ((parser.parse("--option!json")), (sb::cf::JsonObject{{"option", sb::cf::JsonValue{}}}));
 }
 
 static OneParams<std::string> EmptyOptionValues = {"=hello", "=", ""};
@@ -137,7 +137,7 @@ PARAMS_TEST_COMBINED_2(SettingParserTest, ShouldFailParseEmptyOption, OptionPref
 
     sb::cf::details::SettingParser parser;
 
-    EXPECT_THROW(parser.parseSetting(prefix + option), sb::cf::SettingParserException);
+    EXPECT_THROW(parser.parse(prefix + option), sb::cf::SettingParserException);
 }
 
 static Params<std::string, std::string, std::string> FailParseOptionValues = {
@@ -198,7 +198,7 @@ PARAMS_TEST_COMBINED_3(SettingParserTest, ShouldFailParseOption, OptionPrefix, F
     auto &[name, type, value] = params;
     sb::cf::details::SettingParser parser;
 
-    EXPECT_THROW(parser.parseSetting(prefix + name + typeMark + type + "=" + value), sb::cf::SettingParserException);
+    EXPECT_THROW(parser.parse(prefix + name + typeMark + type + "=" + value), sb::cf::SettingParserException);
 }
 
 static Params<size_t, std::string, std::string, sb::cf::JsonValue> ListValues = {
@@ -242,7 +242,7 @@ PARAMS_TEST_COMBINED_4(SettingParserTest, ShouldParseListValueOption, OptionPref
     sb::cf::JsonArray expectedArray(index + 1, sb::cf::JsonValue());
     expectedArray[index] = expectedValue;
 
-    EXPECT_EQ(parser.parseSetting(prefix + "array" + separator + std::to_string(index) + typeMark + type + "=" + value),
+    EXPECT_EQ(parser.parse(prefix + "array" + separator + std::to_string(index) + typeMark + type + "=" + value),
               (sb::cf::JsonObject{{"array", std::move(expectedArray)}}));
 }
 
@@ -278,7 +278,6 @@ PARAMS_TEST_COMBINED_4(SettingParserTest, ShouldParseDeepOption, OptionPrefix, K
     auto &[prefix, separator, params, typeMark] = GetParam();
     auto &[keys, type, value, expected] = params;
 
-    EXPECT_EQ(
-        parser.parseSetting(prefix + sb::cf::details::utils::join(keys, separator) + typeMark + type + "=" + value),
-        expected);
+    EXPECT_EQ(parser.parse(prefix + sb::cf::details::utils::join(keys, separator) + typeMark + type + "=" + value),
+              expected);
 }

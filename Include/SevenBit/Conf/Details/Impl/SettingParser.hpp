@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <tao/json/from_string.hpp>
 
-#include "SevenBit/Conf/Details/JsonObjectExt.hpp"
+#include "SevenBit/Conf/Details/JsonExt.hpp"
 #include "SevenBit/Conf/Details/SettingParser.hpp"
 #include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"
@@ -11,34 +11,33 @@
 
 namespace sb::cf::details
 {
-    INLINE SettingParser::SettingParser(JsonTransformersMap transformers, SettingParserConfig cfg)
+    INLINE SettingParser::SettingParser(JsonTransformersLookup transformers, SettingParserConfig cfg)
         : _transformers(std::move(transformers)), _config(cfg)
     {
     }
 
-    INLINE JsonObject SettingParser::parseSetting(std::string_view setting) const
+    INLINE Setting SettingParser::parse(std::string_view setting) const
     {
         auto keyValue = details::utils::split(setting, _config.settingSplitter, 2);
         switch (keyValue.size())
         {
         case 1:
-            return parseSetting(setting, std::nullopt);
+            return parse(setting, std::nullopt);
         case 2:
-            return parseSetting(keyValue[0], std::make_optional(keyValue[1]));
+            return parse(keyValue[0], std::make_optional(keyValue[1]));
         default:
             throw SettingParserException("Wrong setting format: " + std::string{setting} +
                                          " it should follow this scheme --<name>=<value>");
         }
     }
 
-    INLINE JsonObject SettingParser::parseSetting(std::string_view key, std::optional<std::string_view> value) const
+    INLINE Setting SettingParser::parse(std::string_view key, std::optional<std::string_view> value) const
     {
         try
         {
             auto &transformer = getTransformer(key);
             auto keyStr = sanitizeKey(key);
-            auto keys = parseKey(keyStr);
-            return parseSetting(std::move(keys), transformer.transform(value));
+            return Setting(parseKey(keyStr), transformer.transform(value));
         }
         catch (std::exception &e)
         {
@@ -47,11 +46,45 @@ namespace sb::cf::details
         }
     }
 
-    INLINE JsonObject SettingParser::parseSetting(const std::vector<std::string_view> &key, JsonValue value) const
+    INLINE IJsonTransformer &SettingParser::getTransformer(std::string_view &key) const
     {
-        JsonObject result{};
-        JsonObjectExt::getOrCreateInner(result, key) = std::move(value);
-        return result;
+        for (auto &[type, transformer] : _transformers)
+        {
+            if (tryExtractType(key, type))
+            {
+                return *transformer;
+            }
+        }
+        return *_transformers.front().second;
+    }
+
+    INLINE bool SettingParser::tryExtractType(std::string_view &key, std::string_view type) const
+    {
+        if (details::utils::ignoreCaseEndsWith(key, type))
+        {
+            auto original = key;
+            key.remove_suffix(type.size());
+            if (tryExtractTypeMarker(key, _config.typeMarker))
+            {
+                return true;
+            }
+            if (tryExtractTypeMarker(key, _config.alternativeTypeMarker))
+            {
+                return true;
+            }
+            key = original;
+        }
+        return false;
+    }
+
+    INLINE bool SettingParser::tryExtractTypeMarker(std::string_view &key, std::string_view typeMarker) const
+    {
+        if (details::utils::endsWith(key, typeMarker))
+        {
+            key.remove_suffix(typeMarker.size());
+            return true;
+        }
+        return false;
     }
 
     INLINE std::string SettingParser::sanitizeKey(std::string_view key) const
@@ -72,46 +105,5 @@ namespace sb::cf::details
             throw SettingParserException{"Key cannot be empty"};
         }
         return details::utils::split(key, _config.keySplitter);
-    }
-
-    INLINE IJsonTypeTransformer &SettingParser::getTransformer(std::string_view &key) const
-    {
-        for (auto &[typeStr, transformer] : _transformers)
-        {
-            if (tryExtractType(key, typeStr))
-            {
-                return *transformer;
-            }
-        }
-        return *_transformers.front();
-    }
-
-    INLINE bool SettingParser::tryExtractType(std::string_view &value, std::string_view typeStr) const
-    {
-        if (details::utils::ignoreCaseEndsWith(value, typeStr))
-        {
-            auto original = value;
-            value.remove_suffix(typeStr.size());
-            if (tryExtractTypeMarker(value, _config.typeMarker))
-            {
-                return true;
-            }
-            if (tryExtractTypeMarker(value, _config.alternativeTypeMarker))
-            {
-                return true;
-            }
-            value = original;
-        }
-        return false;
-    }
-
-    INLINE bool SettingParser::tryExtractTypeMarker(std::string_view &value, std::string_view typeMarker) const
-    {
-        if (details::utils::endsWith(value, typeMarker))
-        {
-            value.remove_suffix(typeMarker.size());
-            return true;
-        }
-        return false;
     }
 } // namespace sb::cf::details

@@ -2,7 +2,7 @@
 
 #include "SevenBit/Conf/AppSettingsConfiguration.hpp"
 #include "SevenBit/Conf/ChainedConfiguration.hpp"
-#include "SevenBit/Conf/Details/JsonObjectExt.hpp"
+#include "SevenBit/Conf/Details/JsonExt.hpp"
 #include "SevenBit/Conf/JsonFileConfiguration.hpp"
 
 namespace sb::cf

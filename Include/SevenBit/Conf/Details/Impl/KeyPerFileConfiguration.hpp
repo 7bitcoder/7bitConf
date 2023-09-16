@@ -1,7 +1,7 @@
 #pragma once
 
 #include "SevenBit/Conf/ChainedConfiguration.hpp"
-#include "SevenBit/Conf/Details/JsonObjectExt.hpp"
+#include "SevenBit/Conf/Details/JsonExt.hpp"
 #include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/JsonFileConfiguration.hpp"
 #include "SevenBit/Conf/KeyPerFileConfiguration.hpp"
@@ -77,8 +77,7 @@ namespace sb::cf
                 auto mapSource = MapConfigurationSource::create(
                     std::move(fileSource), [name = filePath.stem().generic_string()](JsonObject config) -> JsonObject {
                         auto res = JsonObject{};
-                        details::JsonObjectExt::getOrCreateInner(res, details::utils::split(name, "__")) =
-                            std::move(config);
+                        details::JsonExt::deepGetOrOverride(res, details::utils::split(name, "__")) = std::move(config);
                         return res;
                     });
                 sources.add(mapSource);

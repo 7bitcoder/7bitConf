@@ -1,7 +1,7 @@
 #pragma once
 
 #include "SevenBit/Conf/ConfigurationManager.hpp"
-#include "SevenBit/Conf/Details/JsonObjectExt.hpp"
+#include "SevenBit/Conf/Details/JsonExt.hpp"
 
 namespace sb::cf
 {
@@ -10,7 +10,7 @@ namespace sb::cf
         ConfigurationBuilder::add(source);
         auto &provider = getProviders().emplace_back(source->build(*this));
         provider->load();
-        details::JsonObjectExt::deepMerge(rootAsObject(), std::move(provider->getConfiguration()));
+        details::JsonExt::deepMerge(rootAsObject(), std::move(provider->getConfiguration()));
         return *this;
     }
 } // namespace sb::cf

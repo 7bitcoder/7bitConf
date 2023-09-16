@@ -7,40 +7,39 @@
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
-#include "SevenBit/Conf/Details/IJsonTypeTransformer.hpp"
+#include "SevenBit/Conf/Details/IJsonTransformer.hpp"
+#include "SevenBit/Conf/Details/Setting.hpp"
 #include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/Json.hpp"
 #include "SevenBit/Conf/OptionsParserConfig.hpp"
 
 namespace sb::cf::details
 {
-    using JsonTransformersMap = std::vector<std::pair<std::string_view, IJsonTypeTransformer::Ptr>>;
+    using JsonTransformersLookup = std::vector<std::pair<std::string_view, IJsonTransformer::Ptr>>;
 
     class EXPORT SettingParser
     {
       private:
         SettingParserConfig _config;
-        JsonTransformersMap _transformers;
+        JsonTransformersLookup _transformers;
 
       public:
-        explicit SettingParser(JsonTransformersMap transformers, SettingParserConfig config = {});
+        SettingParser(JsonTransformersLookup transformers, SettingParserConfig cfg);
 
-        JsonObject parseSetting(std::string_view setting) const;
+        Setting parse(std::string_view setting) const;
 
-        JsonObject parseSetting(std::string_view key, std::optional<std::string_view> value) const;
+        Setting parse(std::string_view key, std::optional<std::string_view> value) const;
 
       private:
-        std::vector<std::string_view> parseKey(std::string_view key) const;
+        IJsonTransformer &getTransformer(std::string_view &key) const;
 
-        IJsonTypeTransformer &getTransformer(std::string_view &value) const;
+        bool tryExtractType(std::string_view &key, std::string_view type) const;
 
-        bool tryExtractType(std::string_view &value, std::string_view typeStr) const;
-
-        bool tryExtractTypeMarker(std::string_view &value, std::string_view typeMarker) const;
-
-        JsonObject parseSetting(const std::vector<std::string_view> &key, JsonValue value) const;
+        bool tryExtractTypeMarker(std::string_view &key, std::string_view typeMarker) const;
 
         std::string sanitizeKey(std::string_view key) const;
+
+        std::vector<std::string_view> parseKey(std::string_view key) const;
     };
 } // namespace sb::cf::details
 

@@ -7,7 +7,7 @@ namespace sb::cf
 {
     INLINE CommandLineConfigurationSource::CommandLineConfigurationSource(std::vector<std::string_view> args,
                                                                           SettingParserConfig config)
-        : _args(std::move(args)), _parser(std::move(config))
+        : _args(std::move(args)), _reader(config)
     {
     }
 
@@ -21,22 +21,21 @@ namespace sb::cf
             args.reserve(argc - 1);
             for (size_t i = 1; i < argc; ++i)
             {
-                args.push_back(argv[i]);
+                args.emplace_back(argv[i]);
             }
         }
-        return create(std::move(args), std::move(config));
+        return create(std::move(args), config);
     }
 
     INLINE CommandLineConfigurationSource::SPtr CommandLineConfigurationSource::create(
         std::vector<std::string_view> args, SettingParserConfig config)
     {
-        return CommandLineConfigurationSource::SPtr(
-            new CommandLineConfigurationSource{std::move(args), std::move(config)});
+        return CommandLineConfigurationSource::SPtr(new CommandLineConfigurationSource{std::move(args), config});
     }
 
     INLINE const std::vector<std::string_view> &CommandLineConfigurationSource::getArgs() const { return _args; }
 
-    INLINE const details::SettingParser &CommandLineConfigurationSource::getOptionsParser() const { return _parser; }
+    INLINE const details::SettingReader &CommandLineConfigurationSource::getOptionsReader() const { return _reader; }
 
     INLINE IConfigurationProvider::Ptr CommandLineConfigurationSource::build(IConfigurationBuilder &builder)
     {
@@ -52,9 +51,7 @@ namespace sb::cf
     INLINE void CommandLineConfigurationProvider::load()
     {
         clear();
-        for (auto &arg : _source->getArgs())
-        {
-            update(_source->getOptionsParser().parseSetting(arg));
-        }
+        auto &reader = _source->getOptionsReader();
+        set(reader.read(_source->getArgs().begin(), _source->getArgs().end()));
     }
 } // namespace sb::cf

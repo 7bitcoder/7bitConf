@@ -10,25 +10,24 @@
 
 #include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/Json.hpp"
-#include "SevenBit/Conf/OptionsParserConfig.hpp"
 
 namespace sb::cf::details
 {
-    struct IJsonTypeTransformer
+    struct IJsonTransformer
     {
-        using Ptr = std::unique_ptr<IJsonTypeTransformer>;
+        using Ptr = std::unique_ptr<IJsonTransformer>;
 
         virtual JsonValue transform(std::optional<std::string_view> value) const = 0;
 
-        virtual ~IJsonTypeTransformer() = default;
+        virtual ~IJsonTransformer() = default;
     };
 
-    struct StringTransformer : public IJsonTypeTransformer
+    struct StringTransformer : public IJsonTransformer
     {
         JsonValue transform(std::optional<std::string_view> value) const { return std::string{value ? *value : ""}; }
     };
 
-    struct JsonTransformer : public IJsonTypeTransformer
+    struct JsonTransformer : public IJsonTransformer
     {
         JsonValue transform(std::optional<std::string_view> value) const
         {
@@ -36,7 +35,7 @@ namespace sb::cf::details
         }
     };
 
-    struct IntTransformer : public IJsonTypeTransformer
+    struct IntTransformer : public IJsonTransformer
     {
         JsonValue transform(std::optional<std::string_view> value) const
         {
@@ -44,7 +43,7 @@ namespace sb::cf::details
         }
     };
 
-    struct UIntTransformer : public IJsonTypeTransformer
+    struct UIntTransformer : public IJsonTransformer
     {
         JsonValue transform(std::optional<std::string_view> value) const
         {
@@ -52,7 +51,7 @@ namespace sb::cf::details
         }
     };
 
-    struct BoolTransformer : public IJsonTypeTransformer
+    struct BoolTransformer : public IJsonTransformer
     {
         virtual JsonValue transform(std::optional<std::string_view> value) const
         {
@@ -60,7 +59,7 @@ namespace sb::cf::details
         }
     };
 
-    struct DoubleTransformer : public IJsonTypeTransformer
+    struct DoubleTransformer : public IJsonTransformer
     {
         virtual JsonValue transform(std::optional<std::string_view> value) const
         {
@@ -68,12 +67,11 @@ namespace sb::cf::details
         }
     };
 
-    struct NullTransformer : public IJsonTypeTransformer
+    struct NullTransformer : public IJsonTransformer
     {
         virtual JsonValue transform(std::optional<std::string_view> value) const { return json::null; }
     };
 } // namespace sb::cf::details
 
 #ifdef _7BIT_CONF_ADD_IMPL
-#include "SevenBit/Conf/Details/Impl/SettingParser.hpp"
 #endif

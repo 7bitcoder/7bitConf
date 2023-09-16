@@ -1,4 +1,4 @@
-#include "SevenBit/Conf/Details/JsonObjectExt.hpp"
+#include "SevenBit/Conf/Details/JsonExt.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"
 #include "SevenBit/Conf/Json.hpp"
 #include "Utilities/ParamsTest.hpp"
@@ -55,7 +55,7 @@ PARAMS_TEST(JsonObjectExtTest, ShouldFindInner, FindInnerData)
                                   }}}}};
 
     auto &[keys, expectedFound, expectedValue] = GetParam();
-    auto valuePtr = sb::cf::details::JsonObjectExt::deepFind(json, keys);
+    auto valuePtr = sb::cf::details::JsonExt::deepFind(json, keys);
     EXPECT_EQ(!!valuePtr, expectedFound);
     if (valuePtr)
     {
@@ -63,7 +63,7 @@ PARAMS_TEST(JsonObjectExtTest, ShouldFindInner, FindInnerData)
     }
 }
 
-TEST_F(JsonObjectExtTest, ShouldGetOrCreateInner)
+TEST_F(JsonObjectExtTest, ShouldDeepGetOrOverride)
 {
     sb::cf::JsonObject json = {{"str", "hello"},
                                {"number", 123},
@@ -76,8 +76,8 @@ TEST_F(JsonObjectExtTest, ShouldGetOrCreateInner)
                                       {"number", 1232},
                                   }}}}};
 
-    sb::cf::details::JsonObjectExt::getOrCreateInner(json, "inner:inner:str") = "hello3";
-    sb::cf::details::JsonObjectExt::getOrCreateInner(json, "inner:inner:inner:str") = "hello5";
+    sb::cf::details::JsonExt::deepGetOrOverride(json, "inner:inner:str") = "hello3";
+    sb::cf::details::JsonExt::deepGetOrOverride(json, "inner:inner:inner:str") = "hello5";
 
     sb::cf::JsonObject expectedJson = {{"str", "hello"},
                                        {"number", 123},
@@ -95,11 +95,11 @@ TEST_F(JsonObjectExtTest, ShouldGetOrCreateInner)
     EXPECT_EQ(json, expectedJson);
 }
 
-TEST_F(JsonObjectExtTest, ShouldGetOrCreateInnerArrayElement)
+TEST_F(JsonObjectExtTest, ShouldDeepGetOrOverrideArrayElement)
 {
     sb::cf::JsonObject json = {{"str", "hello"}};
 
-    sb::cf::details::JsonObjectExt::getOrCreateInner(json, "array:3:object") = "value";
+    sb::cf::details::JsonExt::deepGetOrOverride(json, "array:3:object") = "value";
 
     sb::cf::JsonObject expected = {
         {"str", "hello"},
@@ -110,11 +110,11 @@ TEST_F(JsonObjectExtTest, ShouldGetOrCreateInnerArrayElement)
     EXPECT_EQ(json, expected);
 }
 
-TEST_F(JsonObjectExtTest, ShouldGetOrCreateExistingArrayElement)
+TEST_F(JsonObjectExtTest, ShouldDeepGetOrOverrideExistingArrayElement)
 {
     sb::cf::JsonObject json = {{"str", "hello"}, {"array", sb::cf::JsonArray{1234, {{"second", "element"}}}}};
 
-    sb::cf::details::JsonObjectExt::getOrCreateInner(json, "array:3:object") = "value";
+    sb::cf::details::JsonExt::deepGetOrOverride(json, "array:3:object") = "value";
 
     sb::cf::JsonObject expected = {
         {"str", "hello"},
@@ -124,18 +124,18 @@ TEST_F(JsonObjectExtTest, ShouldGetOrCreateExistingArrayElement)
     EXPECT_EQ(json, expected);
 }
 
-TEST_F(JsonObjectExtTest, ShouldGetOrCreateInnerWrongArrayElement)
+TEST_F(JsonObjectExtTest, ShouldDeepGetOrOverrideWrongArrayElement)
 {
     sb::cf::JsonObject json = {{"str", "hello"}};
 
-    sb::cf::details::JsonObjectExt::getOrCreateInner(json, "array:-3:object") = "value";
+    sb::cf::details::JsonExt::deepGetOrOverride(json, "array:-3:object") = "value";
 
     sb::cf::JsonObject expected = {{"str", "hello"}, {"array", {{"-3", {{"object", "value"}}}}}};
 
     EXPECT_EQ(json, expected);
 }
 
-TEST_F(JsonObjectExtTest, ShouldFailGetOrCreateInner)
+TEST_F(JsonObjectExtTest, ShouldDeepGetOrOverrideDestroy)
 {
     sb::cf::JsonObject json = {{"str", "hello"},
                                {"number", 123},
@@ -148,14 +148,27 @@ TEST_F(JsonObjectExtTest, ShouldFailGetOrCreateInner)
                                       {"number", 1232},
                                   }}}}};
 
-    EXPECT_ANY_THROW(sb::cf::details::JsonObjectExt::getOrCreateInner(json, "inner:inner:str:fail"));
+    sb::cf::details::JsonExt::deepGetOrOverride(json, "inner:inner:str:fail") = "value";
+
+    sb::cf::JsonObject expected = {{"str", "hello"},
+                                   {"number", 123},
+                                   {"inner",
+                                    {{"str", "hello1"},
+                                     {"number", 1231},
+                                     {"inner",
+                                      {
+                                          {"str", {{"fail", "value"}}},
+                                          {"number", 1232},
+                                      }}}}};
+
+    EXPECT_EQ(json, expected);
 }
 
-TEST_F(JsonObjectExtTest, ShouldFailGetOrCreateInnerEmpty)
+TEST_F(JsonObjectExtTest, ShouldFaildDeepGetOrOverrideEmpty)
 {
     sb::cf::JsonObject json = {{"str", "hello"}};
 
-    EXPECT_ANY_THROW(sb::cf::details::JsonObjectExt::getOrCreateInner(json, std::vector<std::string_view>{}));
+    EXPECT_ANY_THROW(sb::cf::details::JsonExt::deepGetOrOverride(json, std::vector<std::string_view>{}));
 }
 
 TEST_F(JsonObjectExtTest, SouldDeepMergeEmptyJsonValue)
@@ -164,7 +177,7 @@ TEST_F(JsonObjectExtTest, SouldDeepMergeEmptyJsonValue)
 
     sb::cf::JsonValue jsonOverride = {{"str", "helloOv"}};
 
-    sb::cf::details::JsonObjectExt::deepMerge(json, std::move(jsonOverride));
+    sb::cf::details::JsonExt::deepMerge(json, std::move(jsonOverride));
 
     sb::cf::JsonValue expected = {{"str", "helloOv"}};
 
@@ -196,7 +209,7 @@ TEST_F(JsonObjectExtTest, SouldDeepMergeJsonValue)
                                              {"number", 12323},
                                          }}}}};
 
-    sb::cf::details::JsonObjectExt::deepMerge(json, std::move(jsonOverride));
+    sb::cf::details::JsonExt::deepMerge(json, std::move(jsonOverride));
 
     sb::cf::JsonObject expectedJson = {{"str", "helloOv"},
                                        {"number", 123},
@@ -233,7 +246,7 @@ TEST_F(JsonObjectExtTest, SouldDeepMergeJsonArray)
         {{"number", 123}},
     };
 
-    sb::cf::details::JsonObjectExt::deepMerge(json, std::move(jsonOverride));
+    sb::cf::details::JsonExt::deepMerge(json, std::move(jsonOverride));
 
     sb::cf::JsonArray expectedJson{{{"str", "hello22"}},
                                    {{"number", 123}},
