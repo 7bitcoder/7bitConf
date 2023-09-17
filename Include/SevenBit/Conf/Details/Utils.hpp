@@ -18,6 +18,10 @@ namespace sb::cf::details::utils
 
     EXPORT bool ignoreCaseEqual(std::string_view str, std::string_view search);
 
+    EXPORT bool backwardContainsAt(std::string_view str, size_t index, std::string_view search);
+
+    EXPORT bool ignoreCaseContainsAt(std::string_view str, size_t index, std::string_view search);
+
     EXPORT bool startsWith(std::string_view str, std::string_view search);
 
     EXPORT bool ignoreCaseStartsWith(std::string_view str, std::string_view search);

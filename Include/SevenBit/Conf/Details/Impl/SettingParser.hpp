@@ -11,90 +11,49 @@
 
 namespace sb::cf::details
 {
-    INLINE SettingParser::SettingParser(JsonTransformersLookup transformers, SettingParserConfig cfg)
-        : _transformers(std::move(transformers)), _config(cfg)
-    {
-    }
+    INLINE SettingParser::SettingParser(SettingParserConfig cfg) : _config(cfg) {}
 
-    INLINE Setting SettingParser::parse(std::string_view setting) const
+    INLINE SettingParserResult SettingParser::parse(std::string_view setting) const
     {
         auto keyValue = details::utils::split(setting, _config.settingSplitter, 2);
-        switch (keyValue.size())
+        if (keyValue.empty() || keyValue.size() > 2)
         {
-        case 1:
-            return parse(setting, std::nullopt);
-        case 2:
-            return parse(keyValue[0], std::make_optional(keyValue[1]));
-        default:
             throw SettingParserException("Wrong setting format: " + std::string{setting} +
-                                         " it should follow this scheme --<name>=<value>");
+                                         " it should follow this scheme [--]setting[:nestedSetting]...[!type]=[value]");
         }
+        auto result = parseKey(keyValue[0]);
+        if (keyValue.size() == 2)
+        {
+            result.setValue(keyValue[1]);
+        }
+        return result;
     }
 
-    INLINE Setting SettingParser::parse(std::string_view key, std::optional<std::string_view> value) const
+    INLINE SettingParserResult SettingParser::parseKey(std::string_view key) const
     {
-        try
+        key = checkAndPrepareKey(key);
+        std::optional<std::string_view> type;
+        std::vector<std::string_view> keys;
+        std::size_t i = key.size(), dividerSize = 0;
+        do
         {
-            auto &transformer = getTransformer(key);
-            auto keyStr = sanitizeKey(key);
-            return Setting(parseKey(keyStr), transformer.transform(value));
-        }
-        catch (std::exception &e)
-        {
-            throw SettingParserException{"Error for setting: '" + std::string{key} + "', value: '" +
-                                         std::string{value ? *value : ""} + "' error: " + e.what()};
-        }
-    }
-
-    INLINE const IJsonTransformer &SettingParser::getTransformer(std::string_view &key) const
-    {
-        for (auto &[type, transformer] : _transformers)
-        {
-            if (tryExtractType(key, type))
+            --i;
+            auto canFindTypeMark = keys.empty() && !type.has_value();
+            if (canFindTypeMark &&
+                (dividerSize = tryFindDividersAt(key, i, _config.typeMarker, _config.alternativeTypeMarker)))
             {
-                return *transformer;
+                type = extractElement(key, i, dividerSize);
             }
-        }
-        return _transformers.getDefault();
-    }
-
-    INLINE bool SettingParser::tryExtractType(std::string_view &key, std::string_view type) const
-    {
-        if (details::utils::ignoreCaseEndsWith(key, type))
-        {
-            auto original = key;
-            key.remove_suffix(type.size());
-            if (tryExtractTypeMarker(key, _config.typeMarker))
+            else if ((dividerSize = tryFindDividersAt(key, i, _config.keySplitter, _config.alternativeKeySplitter)))
             {
-                return true;
+                keys.emplace_back(extractElement(key, i, dividerSize));
             }
-            if (tryExtractTypeMarker(key, _config.alternativeTypeMarker))
-            {
-                return true;
-            }
-            key = original;
-        }
-        return false;
+        } while (i);
+        keys.emplace_back(key);
+        return {{keys.rbegin(), keys.rend()}, type ? *type : ""};
     }
 
-    INLINE bool SettingParser::tryExtractTypeMarker(std::string_view &key, std::string_view typeMarker) const
-    {
-        if (details::utils::endsWith(key, typeMarker))
-        {
-            key.remove_suffix(typeMarker.size());
-            return true;
-        }
-        return false;
-    }
-
-    INLINE std::string SettingParser::sanitizeKey(std::string_view key) const
-    {
-        std::string str{key};
-        details::utils::replaceAll(str, _config.alternativeKeySplitter, _config.keySplitter);
-        return str;
-    }
-
-    INLINE std::vector<std::string_view> SettingParser::parseKey(std::string_view key) const
+    INLINE std::string_view SettingParser::checkAndPrepareKey(std::string_view key) const
     {
         if (details::utils::startsWith(key, _config.settingPrefix))
         {
@@ -104,6 +63,28 @@ namespace sb::cf::details
         {
             throw SettingParserException{"Key cannot be empty"};
         }
-        return details::utils::split(key, _config.keySplitter);
+        return key;
+    }
+
+    INLINE std::size_t SettingParser::tryFindDividersAt(std::string_view key, size_t index, std::string_view divider,
+                                                        std::string_view alternativeDivider) const
+    {
+        auto size = tryFindDividerAt(key, index, divider);
+        return size ? size : tryFindDividerAt(key, index, alternativeDivider);
+    }
+
+    INLINE std::size_t SettingParser::tryFindDividerAt(std::string_view key, size_t index,
+                                                       std::string_view divider) const
+    {
+        return details::utils::backwardContainsAt(key, index, divider) ? divider.size() : 0;
+    }
+
+    INLINE std::string_view SettingParser::extractElement(std::string_view &key, size_t &index,
+                                                          size_t dividerSize) const
+    {
+        auto element = key.substr(index + 1);
+        key.remove_suffix(dividerSize + element.size());
+        index = key.size();
+        return element;
     }
 } // namespace sb::cf::details

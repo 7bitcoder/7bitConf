@@ -7,8 +7,9 @@
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
-#include "SevenBit/Conf/Details/IJsonTransformer.hpp"
-#include "SevenBit/Conf/Details/JsonTransformersLookup.hpp"
+#include "JsonExt.hpp"
+#include "SevenBit/Conf/Details/IJsonDeserializer.hpp"
+#include "SevenBit/Conf/Details/JsonDeserializers.hpp"
 #include "SevenBit/Conf/Details/SettingParser.hpp"
 #include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/Json.hpp"
@@ -20,12 +21,10 @@ namespace sb::cf::details
     {
       private:
         SettingParser _parser;
+        JsonDeserializers _deserializers;
 
       public:
-        explicit SettingReader(SettingParserConfig config = {})
-            : _parser(JsonTransformersLookup::createDefault(), std::move(config))
-        {
-        }
+        SettingReader(SettingParserConfig config = {}) : _parser(config) {}
 
         template <class It> JsonObject read(It begin, It end) const
         {
@@ -38,7 +37,21 @@ namespace sb::cf::details
         {
             for (auto it = begin; it != end; ++it)
             {
-                details::JsonExt::updateWithSetting(result, _parser.parse(*it));
+                readInto(*it, result);
+            }
+        }
+
+        void readInto(std::string_view setting, JsonObject &result) const
+        {
+            try
+            {
+                auto parserResult = _parser.parse(setting);
+                auto &deserializer = _deserializers.getDeserializer(parserResult.getType());
+                JsonExt::updateWith(result, parserResult.getKey(), deserializer.deserialize(parserResult.getValue()));
+            }
+            catch (const std::exception &e)
+            {
+                throw SettingParserException{"Error for setting: '" + std::string{setting} + " ' error: " + e.what()};
             }
         }
     };

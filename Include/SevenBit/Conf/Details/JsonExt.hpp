@@ -8,7 +8,7 @@
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
-#include "SevenBit/Conf/Details/Setting.hpp"
+#include "SevenBit/Conf/Details/SettingParserResult.hpp"
 #include "SevenBit/Conf/Json.hpp"
 
 namespace sb::cf::details
@@ -61,10 +61,10 @@ namespace sb::cf::details
 
         static void deepMerge(JsonObject &json, JsonObject override);
 
-        static void updateWithSetting(JsonObject &json, Setting setting);
+        static void updateWith(JsonObject &json, const std::vector<std::string_view> &keys, JsonValue value);
 
         static void checkSegmentSize(const std::vector<std::string_view> &key);
-        
+
         static void checkKey(std::string_view key);
     };
 

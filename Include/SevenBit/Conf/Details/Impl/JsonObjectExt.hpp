@@ -260,9 +260,9 @@ namespace sb::cf::details
         }
     }
 
-    INLINE void JsonExt::updateWithSetting(JsonObject &json, Setting setting)
+    INLINE void JsonExt::updateWith(JsonObject &json, const std::vector<std::string_view> &keys, JsonValue value)
     {
-        deepGetOrOverride(json, setting.getKey()) = std::move(setting.getValue());
+        deepGetOrOverride(json, keys) = std::move(value);
     }
 
     INLINE void JsonExt::checkSegmentSize(const std::vector<std::string_view> &key)

@@ -7,9 +7,9 @@
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
-#include "SevenBit/Conf/Details/IJsonTransformer.hpp"
-#include "SevenBit/Conf/Details/JsonTransformersLookup.hpp"
-#include "SevenBit/Conf/Details/Setting.hpp"
+#include "SevenBit/Conf/Details/IJsonDeserializer.hpp"
+#include "SevenBit/Conf/Details/JsonDeserializers.hpp"
+#include "SevenBit/Conf/Details/SettingParserResult.hpp"
 #include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/Json.hpp"
 #include "SevenBit/Conf/OptionsParserConfig.hpp"
@@ -20,25 +20,22 @@ namespace sb::cf::details
     {
       private:
         SettingParserConfig _config;
-        JsonTransformersLookup _transformers;
 
       public:
-        SettingParser(JsonTransformersLookup transformers, SettingParserConfig cfg);
+        SettingParser(SettingParserConfig cfg = {});
 
-        Setting parse(std::string_view setting) const;
+        SettingParserResult parse(std::string_view setting) const;
 
-        Setting parse(std::string_view key, std::optional<std::string_view> value) const;
+        SettingParserResult parseKey(std::string_view key) const;
 
       private:
-        const IJsonTransformer &getTransformer(std::string_view &key) const;
+        std::string_view SettingParser::checkAndPrepareKey(std::string_view key) const;
 
-        bool tryExtractType(std::string_view &key, std::string_view type) const;
+        std::size_t tryFindDividersAt(std::string_view key, size_t index, std::string_view divider,
+                                      std::string_view alternativeDivider) const;
+        std::size_t tryFindDividerAt(std::string_view key, size_t index, std::string_view divider) const;
 
-        bool tryExtractTypeMarker(std::string_view &key, std::string_view typeMarker) const;
-
-        std::string sanitizeKey(std::string_view key) const;
-
-        std::vector<std::string_view> parseKey(std::string_view key) const;
+        std::string_view extractElement(std::string_view &key, size_t &index, size_t dividerSize) const;
     };
 } // namespace sb::cf::details
 

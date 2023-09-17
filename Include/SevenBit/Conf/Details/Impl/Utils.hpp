@@ -40,6 +40,21 @@ namespace sb::cf::details::utils
                           [](char cha, char chb) { return ignoreCaseEqual(cha, chb); });
     }
 
+    INLINE bool backwardContainsAt(std::string_view str, size_t index, std::string_view search)
+    {
+        if (index + 1 < search.size())
+        {
+            return false;
+        }
+        return str.compare(index + 1 - search.size(), search.size(), search) == 0;
+    }
+
+    INLINE bool ignoreCaseContainsAt(std::string_view str, size_t index, std::string_view search)
+    {
+        auto part = str.substr(index, search.size());
+        return ignoreCaseEqual(part, search);
+    }
+
     INLINE bool startsWith(std::string_view str, std::string_view search)
     {
         return edgeEqual(str.begin(), str.end(), search.begin(), search.end(),
