@@ -25,7 +25,7 @@ namespace sb::cf::details
             std::string_view type;
         };
 
-        SettingKeySplitter(SettingParserConfig cfg);
+        SettingKeySplitter(SettingParserConfig cfg = {});
 
         Result split(std::string_view key) const;
 

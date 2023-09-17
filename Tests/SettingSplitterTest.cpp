@@ -31,6 +31,7 @@ static Params<std::string_view, sb::cf::details::SettingSplitter::Result> Settin
     {"one", {"one"}},
     {"--====", {"--", "==="}},
     {"--option!!type=val", {"--option!!type", "val"}},
+    {"--option!!type=", {"--option!!type", ""}},
     {"--option!!type", {"--option!!type"}},
     {"--option!!=type=val", {"--option!!", "type=val"}},
     {"--option!!:inner!=type=val", {"--option!!:inner!", "type=val"}},

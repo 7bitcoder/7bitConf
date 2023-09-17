@@ -21,7 +21,7 @@ namespace sb::cf::details
         do
         {
             --i;
-            auto canFindTypeMark = keys.empty() && !type.has_value();
+            auto canFindTypeMark = keys.empty() && !type;
             if (canFindTypeMark &&
                 (dividerSize = tryFindDividersAt(key, i, _config.typeMarker, _config.alternativeTypeMarker)))
             {
