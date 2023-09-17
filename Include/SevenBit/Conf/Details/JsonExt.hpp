@@ -8,7 +8,6 @@
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
-#include "SevenBit/Conf/Details/SettingParserResult.hpp"
 #include "SevenBit/Conf/Json.hpp"
 
 namespace sb::cf::details

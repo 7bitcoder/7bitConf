@@ -17,5 +17,7 @@
 #include "SevenBit/Conf/Details/Impl/JsonStreamConfiguration.hpp"
 #include "SevenBit/Conf/Details/Impl/KeyPerFileConfiguration.hpp"
 #include "SevenBit/Conf/Details/Impl/MapConfiguration.hpp"
+#include "SevenBit/Conf/Details/Impl/SettingKeySplitter.hpp"
 #include "SevenBit/Conf/Details/Impl/SettingParser.hpp"
+#include "SevenBit/Conf/Details/Impl/SettingSplitter.hpp"
 #include "SevenBit/Conf/Details/Impl/Utils.hpp"

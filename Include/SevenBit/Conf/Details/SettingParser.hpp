@@ -7,12 +7,13 @@
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
-#include "SevenBit/Conf/Details/IJsonDeserializer.hpp"
+#include "JsonExt.hpp"
 #include "SevenBit/Conf/Details/JsonDeserializers.hpp"
-#include "SevenBit/Conf/Details/SettingParserResult.hpp"
+#include "SevenBit/Conf/Details/SettingKeySplitter.hpp"
+#include "SevenBit/Conf/Details/SettingSplitter.hpp"
 #include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/Json.hpp"
-#include "SevenBit/Conf/OptionsParserConfig.hpp"
+#include "SevenBit/Conf/SettingParserConfig.hpp"
 
 namespace sb::cf::details
 {
@@ -20,22 +21,31 @@ namespace sb::cf::details
     {
       private:
         SettingParserConfig _config;
+        SettingSplitter _settingSplitter;
+        SettingKeySplitter _settingKeySplitter;
+        JsonDeserializers _deserializers;
 
       public:
-        SettingParser(SettingParserConfig cfg = {});
+        SettingParser(SettingParserConfig config = {});
 
-        SettingParserResult parse(std::string_view setting) const;
+        JsonObject parse(std::string_view setting) const;
 
-        SettingParserResult parseKey(std::string_view key) const;
+        void parseInto(std::string_view setting, JsonObject &result) const;
 
-      private:
-        std::string_view SettingParser::checkAndPrepareKey(std::string_view key) const;
+        template <class It> JsonObject parseAll(It begin, It end) const
+        {
+            JsonObject result;
+            parseAllInto(begin, end, result);
+            return result;
+        }
 
-        std::size_t tryFindDividersAt(std::string_view key, size_t index, std::string_view divider,
-                                      std::string_view alternativeDivider) const;
-        std::size_t tryFindDividerAt(std::string_view key, size_t index, std::string_view divider) const;
-
-        std::string_view extractElement(std::string_view &key, size_t &index, size_t dividerSize) const;
+        template <class It> void parseAllInto(It begin, It end, JsonObject &result) const
+        {
+            for (auto it = begin; it != end; ++it)
+            {
+                parseInto(*it, result);
+            }
+        }
     };
 } // namespace sb::cf::details
 

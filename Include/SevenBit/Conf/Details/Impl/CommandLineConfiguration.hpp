@@ -7,7 +7,7 @@ namespace sb::cf
 {
     INLINE CommandLineConfigurationSource::CommandLineConfigurationSource(std::vector<std::string_view> args,
                                                                           SettingParserConfig config)
-        : _args(std::move(args)), _reader(config)
+        : _args(std::move(args)), _parser(config)
     {
     }
 
@@ -35,7 +35,7 @@ namespace sb::cf
 
     INLINE const std::vector<std::string_view> &CommandLineConfigurationSource::getArgs() const { return _args; }
 
-    INLINE const details::SettingReader &CommandLineConfigurationSource::getOptionsReader() const { return _reader; }
+    INLINE const details::SettingParser &CommandLineConfigurationSource::getOptionsParser() const { return _parser; }
 
     INLINE IConfigurationProvider::Ptr CommandLineConfigurationSource::build(IConfigurationBuilder &builder)
     {
@@ -51,7 +51,6 @@ namespace sb::cf
     INLINE void CommandLineConfigurationProvider::load()
     {
         clear();
-        auto &reader = _source->getOptionsReader();
-        set(reader.read(_source->getArgs().begin(), _source->getArgs().end()));
+        set(_source->getOptionsParser().parseAll(_source->getArgs().begin(), _source->getArgs().end()));
     }
 } // namespace sb::cf

@@ -15,7 +15,7 @@ namespace sb::cf
 
     INLINE
     BadConfigFileException::BadConfigFileException(const std::filesystem::path &filePath, const std::string &why)
-        : ConfigException("Cannot read configuration file '" + filePath.generic_string() + "' beacuse: " + why)
+        : ConfigException("Cannot parseAll configuration file '" + filePath.generic_string() + "' beacuse: " + why)
     {
     }
 

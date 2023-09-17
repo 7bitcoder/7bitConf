@@ -7,9 +7,9 @@
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
 #include "SevenBit/Conf/ConfigurationProviderBase.hpp"
-#include "SevenBit/Conf/Details/SettingReader.hpp"
+#include "SevenBit/Conf/Details/SettingParser.hpp"
 #include "SevenBit/Conf/IConfigurationSource.hpp"
-#include "SevenBit/Conf/OptionsParserConfig.hpp"
+#include "SevenBit/Conf/SettingParserConfig.hpp"
 
 namespace sb::cf
 {
@@ -18,7 +18,7 @@ namespace sb::cf
     {
       private:
         std::vector<std::string_view> _args;
-        details::SettingReader _reader;
+        details::SettingParser _parser;
 
         CommandLineConfigurationSource(std::vector<std::string_view> args, SettingParserConfig config);
 
@@ -32,7 +32,7 @@ namespace sb::cf
 
         const std::vector<std::string_view> &getArgs() const;
 
-        const details::SettingReader &getOptionsReader() const;
+        const details::SettingParser &getOptionsParser() const;
 
         IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
     };

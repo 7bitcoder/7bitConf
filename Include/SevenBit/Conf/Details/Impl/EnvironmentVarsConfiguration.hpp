@@ -18,7 +18,7 @@ namespace sb::cf
 {
     INLINE EnvironmentVarsConfigurationSource::EnvironmentVarsConfigurationSource(std::string prefix,
                                                                                   SettingParserConfig parserConfig)
-        : _prefix(std::move(prefix)), _reader(parserConfig)
+        : _prefix(std::move(prefix)), _parser(parserConfig)
     {
     }
 
@@ -31,7 +31,7 @@ namespace sb::cf
 
     INLINE const std::string &EnvironmentVarsConfigurationSource::getPrefix() { return _prefix; }
 
-    INLINE const details::SettingReader &EnvironmentVarsConfigurationSource::getSettingReader() { return _reader; }
+    INLINE const details::SettingParser &EnvironmentVarsConfigurationSource::getSettingParser() { return _parser; }
 
     INLINE IConfigurationProvider::Ptr EnvironmentVarsConfigurationSource::build(IConfigurationBuilder &builder)
     {
@@ -48,7 +48,7 @@ namespace sb::cf
     {
         clear();
         auto envVars = getEnvVars();
-        set(_source->getSettingReader().read(envVars.begin(), envVars.end()));
+        set(_source->getSettingParser().parseAll(envVars.begin(), envVars.end()));
     }
 
     INLINE std::vector<std::string_view> EnvironmentVarsConfigurationProvider::getEnvVars()

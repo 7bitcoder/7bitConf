@@ -20,7 +20,7 @@
 #include "SevenBit/Conf/JsonFileConfiguration.hpp"
 #include "SevenBit/Conf/JsonStreamConfiguration.hpp"
 #include "SevenBit/Conf/KeyPerFileConfiguration.hpp"
-#include "SevenBit/Conf/OptionsParserConfig.hpp"
+#include "SevenBit/Conf/SettingParserConfig.hpp"
 
 namespace sb::cf
 {
