@@ -13,27 +13,19 @@
 
 namespace sb::cf::details
 {
-    class EXPORT SettingKeySplitter
+    class EXPORT SettingTypeSplitter
     {
       private:
-        std::string_view _settingPrefix;
-        std::string_view _keySplitter;
-        std::string_view _typeMarker;
-        std::string_view _alternativeKeySplitter;
-        std::string_view _alternativeTypeMarker;
-        const bool _skipKeySplit;
-        const bool _skipType;
+        std::vector<std::string_view> _typeMarkers;
 
       public:
         struct Result
         {
-            std::vector<std::string_view> keys;
+            std::string_view key;
             std::optional<std::string_view> type;
         };
 
-        SettingKeySplitter(std::string_view settingPrefix, std::string_view keySplitter, std::string_view typeMarker,
-                           std::string_view alternativeKeySplitter, std::string_view alternativeTypeMarker,
-                           bool skipKeySplit, bool skipType);
+        SettingTypeSplitter(std::vector<std::string_view> typeMarkers);
 
         Result split(std::string_view key) const;
 
@@ -47,10 +39,10 @@ namespace sb::cf::details
         std::string_view extractElement(std::string_view &key, size_t &index, size_t dividerSize) const;
     };
 
-    bool operator==(const SettingKeySplitter::Result &lhs, const SettingKeySplitter::Result &rhs);
+    bool operator==(const SettingTypeSplitter::Result &lhs, const SettingTypeSplitter::Result &rhs);
 
 } // namespace sb::cf::details
 
 #ifdef _7BIT_CONF_ADD_IMPL
-#include "SevenBit/Conf/Details/Impl/SettingKeySplitter.hpp"
+#include "SevenBit/Conf/Details/Impl/SettingTypeSplitter.hpp"
 #endif

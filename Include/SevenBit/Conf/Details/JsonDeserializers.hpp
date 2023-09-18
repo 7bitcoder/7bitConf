@@ -4,7 +4,16 @@
 #include <utility>
 #include <vector>
 
+#include "SevenBit/Conf/LibraryConfig.hpp"
+
+#include "SevenBit/Conf/Details/BoolDeserializer.hpp"
+#include "SevenBit/Conf/Details/DoubleDeserializer.hpp"
 #include "SevenBit/Conf/Details/IJsonDeserializer.hpp"
+#include "SevenBit/Conf/Details/IntDeserializer.hpp"
+#include "SevenBit/Conf/Details/JsonDeserializer.hpp"
+#include "SevenBit/Conf/Details/NullDeserializer.hpp"
+#include "SevenBit/Conf/Details/StringDeserializer.hpp"
+#include "SevenBit/Conf/Details/UIntDeserializer.hpp"
 
 namespace sb::cf::details
 {
@@ -20,37 +29,10 @@ namespace sb::cf::details
         NullDeserializer _null;
 
       public:
-        const IJsonDeserializer &getDeserializer(std::string_view type) const
-        {
-            if (utils::ignoreCaseEqual(type, "string"))
-            {
-                return _string;
-            }
-            if (utils::ignoreCaseEqual(type, "bool"))
-            {
-                return _bool;
-            }
-            if (utils::ignoreCaseEqual(type, "int"))
-            {
-                return _int;
-            }
-            if (utils::ignoreCaseEqual(type, "double"))
-            {
-                return _double;
-            }
-            if (utils::ignoreCaseEqual(type, "json"))
-            {
-                return _json;
-            }
-            if (utils::ignoreCaseEqual(type, "uint"))
-            {
-                return _uint;
-            }
-            if (utils::ignoreCaseEqual(type, "null"))
-            {
-                return _null;
-            }
-            return _string;
-        }
+        const IJsonDeserializer &getDeserializer(std::string_view type) const;
     };
 } // namespace sb::cf::details
+
+#ifdef _7BIT_CONF_ADD_IMPL
+#include "SevenBit/Conf/Details/Impl/JsonDeserializers.hpp"
+#endif

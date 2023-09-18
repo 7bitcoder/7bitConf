@@ -10,11 +10,9 @@ namespace sb::cf
 {
     struct SettingParserConfig
     {
-        std::string_view settingPrefix = "--";
-        std::string_view settingSplitter = "=";
-        std::string_view keySplitter = ":";
-        std::string_view typeMarker = "!";
-        std::string_view alternativeKeySplitter = "__";
-        std::string_view alternativeTypeMarker = "___";
+        std::vector<std::string_view> settingPrefixes = {"--"};
+        std::vector<std::string_view> settingSplitters = {"="};
+        std::vector<std::string_view> keySplitters = {":", "__"};
+        std::vector<std::string_view> typeMarkers = {"!", "___"};
     };
 } // namespace sb::cf

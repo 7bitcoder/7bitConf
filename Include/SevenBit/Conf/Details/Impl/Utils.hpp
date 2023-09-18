@@ -40,6 +40,37 @@ namespace sb::cf::details::utils
                           [](char cha, char chb) { return ignoreCaseEqual(cha, chb); });
     }
 
+    INLINE std::optional<std::string_view> containsAt(std::string_view str, size_t index,
+                                                      const std::vector<std::string_view> &searches)
+    {
+        for (auto &search : searches)
+        {
+            if (containsAt(str, index, search))
+            {
+                return search;
+            }
+        }
+        return std::nullopt;
+    }
+
+    INLINE bool containsAt(std::string_view str, size_t index, std::string_view search)
+    {
+        return str.compare(index, search.size(), search) == 0;
+    }
+
+    INLINE std::optional<std::string_view> backwardContainsAt(std::string_view str, size_t index,
+                                                              const std::vector<std::string_view> &searches)
+    {
+        for (auto &search : searches)
+        {
+            if (backwardContainsAt(str, index, search))
+            {
+                return search;
+            }
+        }
+        return std::nullopt;
+    }
+
     INLINE bool backwardContainsAt(std::string_view str, size_t index, std::string_view search)
     {
         if (index + 1 < search.size())
@@ -102,6 +133,50 @@ namespace sb::cf::details::utils
         }
         result.push_back(str.substr(begin));
         return result;
+    }
+
+    INLINE std::vector<std::string_view> split(std::string_view str, const std::vector<std::string_view> &delims,
+                                               size_t max)
+    {
+        std::vector<std::string_view> result;
+        if (max < 2)
+        {
+            return {str};
+        }
+        for (size_t i = 0; result.size() < max - 1 && i < str.size(); ++i)
+        {
+            if (auto foundDelim = containsAt(str, i, delims))
+            {
+                result.emplace_back(str.substr(0, i));
+                str.remove_prefix(foundDelim->size() + result.back().size());
+                i = 0;
+            }
+        }
+        result.emplace_back(str);
+        return result;
+    }
+
+    INLINE std::vector<std::string_view> backwardsSplit(std::string_view str,
+                                                        const std::vector<std::string_view> &delims, size_t max)
+    {
+        std::vector<std::string_view> result;
+        if (max < 2)
+        {
+            return {str};
+        }
+        size_t i = str.size();
+        do
+        {
+            --i;
+            if (auto foundDelim = backwardContainsAt(str, i, delims))
+            {
+                result.emplace_back(str.substr(i + 1));
+                str.remove_suffix(foundDelim->size() + result.back().size());
+                i = str.size();
+            }
+        } while (i && result.size() < max - 1);
+        result.emplace_back(str);
+        return {result.rbegin(), result.rend()};
     }
 
     INLINE std::string joinViews(const std::vector<std::string_view> &strings, const std::string &divider)

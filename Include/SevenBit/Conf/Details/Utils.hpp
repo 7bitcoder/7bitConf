@@ -18,6 +18,14 @@ namespace sb::cf::details::utils
 
     EXPORT bool ignoreCaseEqual(std::string_view str, std::string_view search);
 
+    EXPORT std::optional<std::string_view> containsAt(std::string_view str, size_t index,
+                                                      const std::vector<std::string_view> &searches);
+
+    EXPORT bool containsAt(std::string_view str, size_t index, std::string_view search);
+
+    EXPORT std::optional<std::string_view> backwardContainsAt(std::string_view str, size_t index,
+                                                              const std::vector<std::string_view> &searches);
+
     EXPORT bool backwardContainsAt(std::string_view str, size_t index, std::string_view search);
 
     EXPORT bool ignoreCaseContainsAt(std::string_view str, size_t index, std::string_view search);
@@ -35,6 +43,9 @@ namespace sb::cf::details::utils
     EXPORT std::vector<std::string_view> split(std::string_view str, const std::string_view &delim = "/",
                                                size_t max = std::numeric_limits<size_t>::max());
 
+    EXPORT std::vector<std::string_view> split(std::string_view str, const std::vector<std::string_view> &delims,
+                                               size_t max = std::numeric_limits<size_t>::max());
+    
     EXPORT std::string joinViews(const std::vector<std::string_view> &strings, const std::string &divider);
 
     EXPORT std::string join(const std::vector<std::string> &strings, const std::string &divider);

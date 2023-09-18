@@ -14,6 +14,7 @@ namespace sb::cf::details
     class EXPORT SettingSplitter
     {
       private:
+        std::string_view _settingPrefix;
         std::string_view _settingSplitter;
 
       public:
@@ -23,9 +24,12 @@ namespace sb::cf::details
             std::optional<std::string_view> value;
         };
 
-        SettingSplitter(std::string_view settingSplitter);
+        SettingSplitter(std::string_view settingPrefix, std::string_view settingSplitter);
 
         Result split(std::string_view setting) const;
+
+      private:
+        std::string_view tryRemovePrefix(std::string_view setting) const;
     };
 
     bool operator==(const SettingSplitter::Result &lhs, const SettingSplitter::Result &rhs);

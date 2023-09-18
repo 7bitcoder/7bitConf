@@ -12,9 +12,11 @@ namespace sb::cf::details
 {
     INLINE SettingKeySplitter::SettingKeySplitter(std::string_view settingPrefix, std::string_view keySplitter,
                                                   std::string_view typeMarker, std::string_view alternativeKeySplitter,
-                                                  std::string_view alternativeTypeMarker)
+                                                  std::string_view alternativeTypeMarker, bool skipKeySplit,
+                                                  bool skipType)
         : _settingPrefix(settingPrefix), _keySplitter(keySplitter), _typeMarker(typeMarker),
-          _alternativeKeySplitter(alternativeKeySplitter), _alternativeTypeMarker(alternativeTypeMarker)
+          _alternativeKeySplitter(alternativeKeySplitter), _alternativeTypeMarker(alternativeTypeMarker),
+          _skipKeySplit(skipKeySplit), _skipType(skipType)
     {
     }
 
@@ -27,18 +29,18 @@ namespace sb::cf::details
         do
         {
             --i;
-            auto canFindTypeMark = keys.empty() && !type;
+            auto canFindTypeMark = !_skipType && keys.empty() && !type;
             if (canFindTypeMark && (dividerSize = tryFindDividersAt(key, i, _typeMarker, _alternativeTypeMarker)))
             {
                 type = extractElement(key, i, dividerSize);
             }
-            else if ((dividerSize = tryFindDividersAt(key, i, _keySplitter, _alternativeKeySplitter)))
+            else if (!_skipKeySplit && (dividerSize = tryFindDividersAt(key, i, _keySplitter, _alternativeKeySplitter)))
             {
                 keys.emplace_back(extractElement(key, i, dividerSize));
             }
         } while (i);
         keys.emplace_back(key);
-        return {{keys.rbegin(), keys.rend()}, type ? *type : ""};
+        return {{keys.rbegin(), keys.rend()}, type};
     }
 
     INLINE std::string_view SettingKeySplitter::checkAndPrepareKey(std::string_view key) const
