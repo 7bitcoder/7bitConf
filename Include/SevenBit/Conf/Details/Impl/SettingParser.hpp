@@ -12,7 +12,9 @@
 namespace sb::cf::details
 {
     INLINE SettingParser::SettingParser(SettingParserConfig config)
-        : _config(config), _settingSplitter(config), _settingKeySplitter(config)
+        : _config(config), _settingSplitter(_config.settingSplitter),
+          _settingKeySplitter(_config.settingPrefix, _config.keySplitter, _config.typeMarker,
+                              _config.alternativeKeySplitter, _config.alternativeTypeMarker)
     {
     }
 

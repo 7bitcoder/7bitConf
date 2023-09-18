@@ -10,7 +10,13 @@
 
 namespace sb::cf::details
 {
-    INLINE SettingKeySplitter::SettingKeySplitter(SettingParserConfig cfg) : _config(cfg) {}
+    INLINE SettingKeySplitter::SettingKeySplitter(std::string_view settingPrefix, std::string_view keySplitter,
+                                                  std::string_view typeMarker, std::string_view alternativeKeySplitter,
+                                                  std::string_view alternativeTypeMarker)
+        : _settingPrefix(settingPrefix), _keySplitter(keySplitter), _typeMarker(typeMarker),
+          _alternativeKeySplitter(alternativeKeySplitter), _alternativeTypeMarker(alternativeTypeMarker)
+    {
+    }
 
     INLINE SettingKeySplitter::Result SettingKeySplitter::split(std::string_view key) const
     {
@@ -22,12 +28,11 @@ namespace sb::cf::details
         {
             --i;
             auto canFindTypeMark = keys.empty() && !type;
-            if (canFindTypeMark &&
-                (dividerSize = tryFindDividersAt(key, i, _config.typeMarker, _config.alternativeTypeMarker)))
+            if (canFindTypeMark && (dividerSize = tryFindDividersAt(key, i, _typeMarker, _alternativeTypeMarker)))
             {
                 type = extractElement(key, i, dividerSize);
             }
-            else if ((dividerSize = tryFindDividersAt(key, i, _config.keySplitter, _config.alternativeKeySplitter)))
+            else if ((dividerSize = tryFindDividersAt(key, i, _keySplitter, _alternativeKeySplitter)))
             {
                 keys.emplace_back(extractElement(key, i, dividerSize));
             }
@@ -38,9 +43,9 @@ namespace sb::cf::details
 
     INLINE std::string_view SettingKeySplitter::checkAndPrepareKey(std::string_view key) const
     {
-        if (details::utils::startsWith(key, _config.settingPrefix))
+        if (details::utils::startsWith(key, _settingPrefix))
         {
-            key.remove_prefix(_config.settingPrefix.size());
+            key.remove_prefix(_settingPrefix.size());
         }
         if (key.empty())
         {

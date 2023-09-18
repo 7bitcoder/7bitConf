@@ -14,7 +14,7 @@ namespace sb::cf::details
     class EXPORT SettingSplitter
     {
       private:
-        SettingParserConfig _config;
+        std::string_view _settingSplitter;
 
       public:
         struct Result
@@ -23,7 +23,7 @@ namespace sb::cf::details
             std::optional<std::string_view> value;
         };
 
-        SettingSplitter(SettingParserConfig cfg = {});
+        SettingSplitter(std::string_view settingSplitter);
 
         Result split(std::string_view setting) const;
     };

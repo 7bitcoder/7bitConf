@@ -51,7 +51,27 @@ static Params<std::string_view, sb::cf::details::SettingSplitter::Result> Settin
 PARAMS_TEST(SettingSplitterTest, ShouldSplitSetting, SettingValues)
 {
     const auto &[setting, expected] = GetParam();
-    sb::cf::details::SettingSplitter splitter;
+    sb::cf::details::SettingSplitter splitter{"="};
 
     EXPECT_EQ(splitter.split(setting), expected);
+}
+
+static Params<std::string, std::string, sb::cf::details::SettingSplitter::Result> SimpleSettingValues = {
+    {"key", "value", {"key", "value"}},
+    {"key", "", {"key", ""}},
+    {"--option", "value", {"--option", "value"}},
+    {"--option!type", "", {"--option!type", ""}},
+};
+static Params<std::string> AlternativeSplittersValues = {
+    "=", ">>>", ";;;", "_________", "12", "======================", "||", "\\", "/,", "??", "........", "~``~~`"};
+PARAMS_TEST_COMBINED_2(SettingSplitterTest, ShouldSplitSettingWithAlternativeSpliters, SimpleSettingValues,
+                       AlternativeSplittersValues)
+{
+    const auto &[setting, divider] = GetParam();
+    const auto &[key, value, expected] = setting;
+    const auto &[dividerStr] = divider;
+
+    sb::cf::details::SettingSplitter splitter{dividerStr};
+
+    EXPECT_EQ(splitter.split(key + dividerStr + value), expected);
 }

@@ -63,7 +63,8 @@ PARAMS_TEST_COMBINED_4(SettingKeySplitterTest, ShouldSplitSettings, OptionPrefix
 {
     const auto &[prefix, params, typeMark, separator] = GetParam();
     const auto &[key, type] = params;
-    sb::cf::details::SettingKeySplitter splitter;
+    sb::cf::details::SettingKeySplitter splitter{OptionPrefix[1], KeySeparators[0], TypeMarkers[0], KeySeparators[1],
+                                                 TypeMarkers[1]};
 
     sb::cf::details::SettingKeySplitter::Result expected{key, type};
 
@@ -76,7 +77,8 @@ PARAMS_TEST(SettingKeySplitterTest, ShouldSplitSettingsRandom, SettingsValues)
 {
     const auto &[key, type] = GetParam();
 
-    sb::cf::details::SettingKeySplitter splitter;
+    sb::cf::details::SettingKeySplitter splitter{OptionPrefix[1], KeySeparators[0], TypeMarkers[0], KeySeparators[1],
+                                                 TypeMarkers[1]};
 
     sb::cf::details::SettingKeySplitter::Result expected{key, type};
 
@@ -106,7 +108,9 @@ static Params<std::string_view, sb::cf::details::SettingKeySplitter::Result> Pro
 PARAMS_TEST(SettingKeySplitterTest, ShouldSplitProblematicSettings, ProblematicSettingsValues)
 {
     const auto &[setting, expected] = GetParam();
-    sb::cf::details::SettingKeySplitter splitter;
+
+    sb::cf::details::SettingKeySplitter splitter{OptionPrefix[1], KeySeparators[0], TypeMarkers[0], KeySeparators[1],
+                                                 TypeMarkers[1]};
 
     auto result = splitter.split(setting);
     EXPECT_EQ(result, expected);
@@ -117,7 +121,8 @@ PARAMS_TEST(SettingKeySplitterTest, ShouldFailSplitSettings, FailSettingsValues)
 {
     const auto &[setting] = GetParam();
 
-    sb::cf::details::SettingKeySplitter splitter;
+    sb::cf::details::SettingKeySplitter splitter{OptionPrefix[1], KeySeparators[0], TypeMarkers[0], KeySeparators[1],
+                                                 TypeMarkers[1]};
 
     EXPECT_ANY_THROW(splitter.split(setting));
 }

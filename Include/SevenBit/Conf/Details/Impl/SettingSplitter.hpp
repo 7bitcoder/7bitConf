@@ -10,11 +10,11 @@
 
 namespace sb::cf::details
 {
-    INLINE SettingSplitter::SettingSplitter(SettingParserConfig cfg) : _config(cfg) {}
+    INLINE SettingSplitter::SettingSplitter(std::string_view settingSplitter) : _settingSplitter(settingSplitter) {}
 
     INLINE SettingSplitter::Result SettingSplitter::split(std::string_view setting) const
     {
-        auto splitted = details::utils::split(setting, _config.settingSplitter, 2);
+        auto splitted = details::utils::split(setting, _settingSplitter, 2);
         switch (splitted.size())
         {
         case 1:

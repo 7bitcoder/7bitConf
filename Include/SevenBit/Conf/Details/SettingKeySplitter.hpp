@@ -16,7 +16,11 @@ namespace sb::cf::details
     class EXPORT SettingKeySplitter
     {
       private:
-        SettingParserConfig _config;
+        std::string_view _settingPrefix;
+        std::string_view _keySplitter;
+        std::string_view _typeMarker;
+        std::string_view _alternativeKeySplitter;
+        std::string_view _alternativeTypeMarker;
 
       public:
         struct Result
@@ -25,7 +29,8 @@ namespace sb::cf::details
             std::string_view type;
         };
 
-        SettingKeySplitter(SettingParserConfig cfg = {});
+        SettingKeySplitter(std::string_view settingPrefix, std::string_view keySplitter, std::string_view typeMarker,
+                           std::string_view alternativeKeySplitter, std::string_view alternativeTypeMarker);
 
         Result split(std::string_view key) const;
 
