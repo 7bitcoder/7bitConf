@@ -36,8 +36,8 @@ namespace sb::cf::details::utils
 
     INLINE bool ignoreCaseEqual(std::string_view str, std::string_view search)
     {
-        return std::equal(str.begin(), str.end(), search.begin(), search.end(),
-                          [](char cha, char chb) { return ignoreCaseEqual(cha, chb); });
+        return str.size() == search.size() && std::equal(str.begin(), str.end(), search.begin(), search.end(),
+                                                         [](char cha, char chb) { return ignoreCaseEqual(cha, chb); });
     }
 
     INLINE std::optional<std::string_view> containsAt(std::string_view str, size_t index,
