@@ -9,36 +9,42 @@
 
 namespace sb::cf::details
 {
-    INLINE const IJsonDeserializer &JsonDeserializers::getDeserializer(std::string_view type) const
+    INLINE JsonDeserializers::JsonDeserializers(bool throwOnUnknownType) : _throwOnUnknownType(throwOnUnknownType) {}
+
+    INLINE const IJsonDeserializer *JsonDeserializers::getDeserializer(std::string_view type) const
     {
         if (utils::ignoreCaseEqual(type, "string"))
         {
-            return _string;
+            return &_string;
         }
         if (utils::ignoreCaseEqual(type, "bool"))
         {
-            return _bool;
+            return &_bool;
         }
         if (utils::ignoreCaseEqual(type, "int"))
         {
-            return _int;
+            return &_int;
         }
         if (utils::ignoreCaseEqual(type, "double"))
         {
-            return _double;
+            return &_double;
         }
         if (utils::ignoreCaseEqual(type, "json"))
         {
-            return _json;
+            return &_json;
         }
         if (utils::ignoreCaseEqual(type, "uint"))
         {
-            return _uint;
+            return &_uint;
         }
         if (utils::ignoreCaseEqual(type, "null"))
         {
-            return _null;
+            return &_null;
         }
-        return _string;
+        if (_throwOnUnknownType)
+        {
+            // todo throw
+        }
+        return _
     }
 } // namespace sb::cf::details

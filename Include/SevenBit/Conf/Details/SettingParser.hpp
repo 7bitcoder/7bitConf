@@ -11,17 +11,24 @@
 #include "SevenBit/Conf/Details/JsonDeserializers.hpp"
 #include "SevenBit/Conf/Details/SettingKeySplitter.hpp"
 #include "SevenBit/Conf/Details/SettingSplitter.hpp"
+#include "SevenBit/Conf/Details/SettingTypeSplitter.hpp"
 #include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/Json.hpp"
 #include "SevenBit/Conf/SettingParserConfig.hpp"
 
 namespace sb::cf::details
 {
+
     class EXPORT SettingParser
     {
       private:
-        SettingParserConfig _config;
+        using KeysTypeAndValue =
+            std::tuple<std::vector<std::string_view>, std::optional<std::string_view>, std::optional<std::string_view>>;
+        using KeysAndValue = std::pair<std::vector<std::string_view>, JsonValue>;
+
+        const SettingParserConfig _config;
         SettingSplitter _settingSplitter;
+        SettingTypeSplitter _settingTypeSplitter;
         SettingKeySplitter _settingKeySplitter;
         JsonDeserializers _deserializers;
 
@@ -46,6 +53,13 @@ namespace sb::cf::details
                 parseInto(*it, result);
             }
         }
+
+      private:
+        KeysAndValue getKeysAndValue(std::string_view setting) const;
+
+        KeysTypeAndValue getKeysTypeAndValue(std::string_view setting) const;
+
+        void checkKeys(const std::vector<std::string_view> &keys) const;
     };
 } // namespace sb::cf::details
 

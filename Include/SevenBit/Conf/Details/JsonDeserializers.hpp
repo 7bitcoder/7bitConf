@@ -27,9 +27,12 @@ namespace sb::cf::details
         JsonDeserializer _json;
         UIntDeserializer _uint;
         NullDeserializer _null;
+        bool _throwOnUnknownType = false;
 
       public:
-        const IJsonDeserializer &getDeserializer(std::string_view type) const;
+        JsonDeserializers(bool throwOnUnknownType);
+
+        const IJsonDeserializer *getDeserializer(std::string_view type) const;
     };
 } // namespace sb::cf::details
 

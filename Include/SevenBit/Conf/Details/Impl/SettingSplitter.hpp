@@ -10,14 +10,15 @@
 
 namespace sb::cf::details
 {
-    INLINE SettingSplitter::SettingSplitter(std::string_view settingPrefix, std::string_view settingSplitter)
-        : _settingPrefix(settingPrefix), _settingSplitter(settingSplitter)
+    INLINE SettingSplitter::SettingSplitter(std::vector<std::string_view> settingPrefixes,
+                                            std::vector<std::string_view> settingSplitters)
+        : _settingPrefixes(settingPrefixes), _settingSplitters(settingSplitters)
     {
     }
 
     INLINE SettingSplitter::Result SettingSplitter::split(std::string_view setting) const
     {
-        auto splitted = details::utils::split(tryRemovePrefix(setting), _settingSplitter, 2);
+        auto splitted = details::utils::split(tryRemovePrefix(setting), _settingSplitters, 2);
         switch (splitted.size())
         {
         case 1:
@@ -32,9 +33,13 @@ namespace sb::cf::details
 
     INLINE std::string_view SettingSplitter::tryRemovePrefix(std::string_view setting) const
     {
-        if (details::utils::startsWith(setting, _settingPrefix))
+        for (auto &prefix : _settingPrefixes)
         {
-            setting.remove_prefix(_settingPrefix.size());
+            if (details::utils::startsWith(setting, prefix))
+            {
+                setting.remove_prefix(prefix.size());
+                break;
+            }
         }
         return setting;
     }

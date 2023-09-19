@@ -14,8 +14,8 @@ namespace sb::cf::details
     class EXPORT SettingSplitter
     {
       private:
-        std::string_view _settingPrefix;
-        std::string_view _settingSplitter;
+        const std::vector<std::string_view> _settingPrefixes;
+        const std::vector<std::string_view> _settingSplitters;
 
       public:
         struct Result
@@ -24,7 +24,7 @@ namespace sb::cf::details
             std::optional<std::string_view> value;
         };
 
-        SettingSplitter(std::string_view settingPrefix, std::string_view settingSplitter);
+        SettingSplitter(std::vector<std::string_view> settingPrefixes, std::vector<std::string_view> settingSplitters);
 
         Result split(std::string_view setting) const;
 

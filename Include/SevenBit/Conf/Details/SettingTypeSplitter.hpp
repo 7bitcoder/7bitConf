@@ -16,7 +16,7 @@ namespace sb::cf::details
     class EXPORT SettingTypeSplitter
     {
       private:
-        std::vector<std::string_view> _typeMarkers;
+        const std::vector<std::string_view> _typeMarkers;
 
       public:
         struct Result
@@ -28,15 +28,6 @@ namespace sb::cf::details
         SettingTypeSplitter(std::vector<std::string_view> typeMarkers);
 
         Result split(std::string_view key) const;
-
-      private:
-        std::string_view checkAndPrepareKey(std::string_view key) const;
-
-        std::size_t tryFindDividersAt(std::string_view key, size_t index, std::string_view divider,
-                                      std::string_view alternativeDivider) const;
-        std::size_t tryFindDividerAt(std::string_view key, size_t index, std::string_view divider) const;
-
-        std::string_view extractElement(std::string_view &key, size_t &index, size_t dividerSize) const;
     };
 
     bool operator==(const SettingTypeSplitter::Result &lhs, const SettingTypeSplitter::Result &rhs);

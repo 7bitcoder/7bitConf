@@ -82,8 +82,7 @@ namespace sb::cf::details::utils
 
     INLINE bool ignoreCaseContainsAt(std::string_view str, size_t index, std::string_view search)
     {
-        auto part = str.substr(index, search.size());
-        return ignoreCaseEqual(part, search);
+        return ignoreCaseEqual(str.substr(index, search.size()), search);
     }
 
     INLINE bool startsWith(std::string_view str, std::string_view search)
