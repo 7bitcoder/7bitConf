@@ -8,7 +8,7 @@
 
 #include "SevenBit/Conf/Details/BoolDeserializer.hpp"
 #include "SevenBit/Conf/Details/DoubleDeserializer.hpp"
-#include "SevenBit/Conf/Details/ISettingDeserializer.hpp"
+#include "SevenBit/Conf/Details/IDeserializer.hpp"
 #include "SevenBit/Conf/Details/IntDeserializer.hpp"
 #include "SevenBit/Conf/Details/JsonDeserializer.hpp"
 #include "SevenBit/Conf/Details/NullDeserializer.hpp"
@@ -40,7 +40,7 @@ namespace sb::cf::details
         };
 
         using IgnoreCaseUnorderedMap =
-            std::unordered_map<std::string, std::unique_ptr<ISettingDeserializer>, Hash, IgnoreCaseEqual>;
+            std::unordered_map<std::string, std::unique_ptr<IDeserializer>, Hash, IgnoreCaseEqual>;
 
       private:
         IgnoreCaseUnorderedMap _deserializersMap;
@@ -52,9 +52,9 @@ namespace sb::cf::details
 
         IgnoreCaseUnorderedMap &getDeserializersMap();
 
-        void add(std::string_view type, std::unique_ptr<ISettingDeserializer> deserializer);
+        void add(std::string_view type, std::unique_ptr<IDeserializer> deserializer);
 
-        const ISettingDeserializer *getDeserializer(std::string_view type) const;
+        const IDeserializer *getDeserializer(std::string_view type) const;
     };
 } // namespace sb::cf::details
 

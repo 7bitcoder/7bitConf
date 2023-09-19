@@ -7,12 +7,12 @@
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
-#include "SevenBit/Conf/Details/ISettingDeserializer.hpp"
+#include "SevenBit/Conf/Details/IDeserializer.hpp"
 #include "SevenBit/Conf/Json.hpp"
 
 namespace sb::cf::details
 {
-    struct UIntDeserializer final : public ISettingDeserializer
+    struct UIntDeserializer final : public IDeserializer
     {
         JsonValue deserialize(std::optional<std::string_view> value) const;
     };
