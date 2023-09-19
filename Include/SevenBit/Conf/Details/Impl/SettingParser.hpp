@@ -13,8 +13,8 @@
 namespace sb::cf::details
 {
     INLINE SettingParser::SettingParser(SettingParserConfig config)
-        : _config(std::move(config)), _settingSplitter(_config.settingPrefixes, _config.settingSplitters),
-          _settingKeySplitter(_config.keySplitters), _settingTypeSplitter(_config.typeMarkers)
+        : _config(std::move(config)),
+          _settingSplitter(_config.settingPrefixes, _config.settingSplitters, _config.typeMarkers, _config.keySplitters)
     {
     }
 
@@ -34,13 +34,14 @@ namespace sb::cf::details
         }
         catch (const std::exception &e)
         {
-            throw SettingParserException{"Error for setting: '" + std::string{setting} + " ' error: " + e.what()};
+            throw SettingParserException("Wrong setting format: " + std::string{setting} +
+                                         " it should follow this scheme [--]setting[:nestedSetting]...[!type]=[value]");
         }
     }
 
     SettingParser::KeysAndValue SettingParser::getKeysAndValue(std::string_view setting) const
     {
-        auto [keys, type, value] = getKeysTypeAndValue(setting);
+        auto [keys, type, value] = _settingSplitter.split(setting);
 
         checkKeys(keys);
 
@@ -52,13 +53,6 @@ namespace sb::cf::details
         {
             // todo throw
         }
-    }
-
-    SettingParser::KeysTypeAndValue SettingParser::getKeysTypeAndValue(std::string_view setting) const
-    {
-        auto [key, value] = _settingSplitter.split(setting);
-        auto [rawKey, type] = _settingTypeSplitter.split(key);
-        return {_settingKeySplitter.split(rawKey), type, value};
     }
 
     void SettingParser::checkKeys(const std::vector<std::string_view> &keys) const

@@ -8,10 +8,8 @@
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
 #include "JsonExt.hpp"
-#include "SevenBit/Conf/Details/JsonDeserializers.hpp"
-#include "SevenBit/Conf/Details/SettingKeySplitter.hpp"
+#include "SevenBit/Conf/Details/SettingDeserializers.hpp"
 #include "SevenBit/Conf/Details/SettingSplitter.hpp"
-#include "SevenBit/Conf/Details/SettingTypeSplitter.hpp"
 #include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/Json.hpp"
 #include "SevenBit/Conf/SettingParserConfig.hpp"
@@ -28,9 +26,7 @@ namespace sb::cf::details
 
         const SettingParserConfig _config;
         SettingSplitter _settingSplitter;
-        SettingTypeSplitter _settingTypeSplitter;
-        SettingKeySplitter _settingKeySplitter;
-        JsonDeserializers _deserializers;
+        SettingDeserializers _deserializers;
 
       public:
         SettingParser(SettingParserConfig config = {});

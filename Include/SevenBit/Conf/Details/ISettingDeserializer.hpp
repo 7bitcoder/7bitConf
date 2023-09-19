@@ -11,12 +11,12 @@
 
 namespace sb::cf::details
 {
-    struct IJsonDeserializer
+    struct ISettingDeserializer
     {
-        using Ptr = std::unique_ptr<IJsonDeserializer>;
+        using Ptr = std::unique_ptr<ISettingDeserializer>;
 
         virtual JsonValue deserialize(std::optional<std::string_view> value) const = 0;
 
-        virtual ~IJsonDeserializer() = default;
+        virtual ~ISettingDeserializer() = default;
     };
 } // namespace sb::cf::details

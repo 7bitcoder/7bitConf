@@ -4,47 +4,37 @@
 #include <utility>
 #include <vector>
 
-#include "SevenBit/Conf/Details/JsonDeserializers.hpp"
+#include "SevenBit/Conf/Details/SettingDeserializers.hpp"
 #include "SevenBit/Conf/Details/Utils.hpp"
 
 namespace sb::cf::details
 {
-    INLINE JsonDeserializers::JsonDeserializers(bool throwOnUnknownType) : _throwOnUnknownType(throwOnUnknownType) {}
+    JsonDeserializers::Ptr JsonDeserializers::createDefault()
+    {
+        Ptr deserializers;
+        deserializers->add("string", std::make_unique<StringDeserializer>());
+        deserializers->add("bool", std::make_unique<BoolDeserializer>());
+        deserializers->add("int", std::make_unique<IntDeserializer>());
+        deserializers->add("double", std::make_unique<DoubleDeserializer>());
+        deserializers->add("json", std::make_unique<JsonDeserializer>());
+        deserializers->add("uint", std::make_unique<UIntDeserializer>());
+        deserializers->add("null", std::make_unique<NullDeserializer>());
+        return deserializers;
+    }
+
+    JsonDeserializers::IgnoreCaseUnorderedMap &JsonDeserializers::getDeserializersMap() { return _deserializersMap; }
+
+    void JsonDeserializers::add(std::string_view type, std::unique_ptr<IJsonDeserializer> deserializer)
+    {
+        _deserializersMap[std::string{type}] = std::move(deserializer);
+    }
 
     INLINE const IJsonDeserializer *JsonDeserializers::getDeserializer(std::string_view type) const
     {
-        if (utils::ignoreCaseEqual(type, "string"))
+        if (auto it = _deserializersMap.find(type); it != _deserializersMap.end())
         {
-            return &_string;
+            return it->second.get();
         }
-        if (utils::ignoreCaseEqual(type, "bool"))
-        {
-            return &_bool;
-        }
-        if (utils::ignoreCaseEqual(type, "int"))
-        {
-            return &_int;
-        }
-        if (utils::ignoreCaseEqual(type, "double"))
-        {
-            return &_double;
-        }
-        if (utils::ignoreCaseEqual(type, "json"))
-        {
-            return &_json;
-        }
-        if (utils::ignoreCaseEqual(type, "uint"))
-        {
-            return &_uint;
-        }
-        if (utils::ignoreCaseEqual(type, "null"))
-        {
-            return &_null;
-        }
-        if (_throwOnUnknownType)
-        {
-            // todo throw
-        }
-        return _
+        return nullptr;
     }
 } // namespace sb::cf::details
