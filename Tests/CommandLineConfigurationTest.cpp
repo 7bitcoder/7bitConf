@@ -17,7 +17,7 @@ class CommandLineConfigurationTest : public testing::Test
 
     void TearDown() override {}
 
-    ~CommandLineConfigurationTest() {}
+    ~CommandLineConfigurationTest() override = default;
 
     static void TearDownTestSuite() {}
 };

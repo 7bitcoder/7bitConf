@@ -54,6 +54,7 @@ namespace sb::cf::details
         default:
             throwWrongFormatError("Only one type setting splitter is allowed");
         }
+        return {"", ""};
     }
 
     INLINE std::pair<std::string_view, std::optional<std::string_view>> SettingSplitter::splitType(
@@ -69,6 +70,7 @@ namespace sb::cf::details
         default:
             throwWrongFormatError("Only one type marker is allowed");
         }
+        return {"", ""};
     }
 
     INLINE std::vector<std::string_view> SettingSplitter::splitKey(std::string_view key) const

@@ -8,6 +8,7 @@
 #include "SevenBit/Conf/ConfigurationProviderBase.hpp"
 #include "SevenBit/Conf/Details/SettingParser.hpp"
 #include "SevenBit/Conf/IConfigurationSource.hpp"
+#include "SevenBit/Conf/SettingParserBuilder.hpp"
 
 namespace sb::cf
 {
@@ -25,7 +26,7 @@ namespace sb::cf
         using Ptr = std::unique_ptr<EnvironmentVarsConfigurationSource>;
         using SPtr = std::shared_ptr<EnvironmentVarsConfigurationSource>;
 
-        static SPtr create(std::string prefix, ISettingParser::Ptr parser);
+        static SPtr create(std::string prefix, ISettingParser::Ptr parser = SettingParserBuilder{}.build());
 
         const std::string &getPrefix();
 

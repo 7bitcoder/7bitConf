@@ -9,6 +9,7 @@
 #include "SevenBit/Conf/ConfigurationProviderBase.hpp"
 #include "SevenBit/Conf/Details/SettingParser.hpp"
 #include "SevenBit/Conf/IConfigurationSource.hpp"
+#include "SevenBit/Conf/SettingParserBuilder.hpp"
 #include "SevenBit/Conf/SettingParserConfig.hpp"
 
 namespace sb::cf
@@ -26,9 +27,11 @@ namespace sb::cf
         using Ptr = std::unique_ptr<CommandLineConfigurationSource>;
         using SPtr = std::shared_ptr<CommandLineConfigurationSource>;
 
-        static SPtr create(int argc, const char *const *argv, ISettingParser::Ptr parser);
-        
-        static SPtr create(std::vector<std::string_view> args, ISettingParser::Ptr parser);
+        static SPtr create(int argc, const char *const *argv,
+                           ISettingParser::Ptr parser = SettingParserBuilder{}.build());
+
+        static SPtr create(std::vector<std::string_view> args,
+                           ISettingParser::Ptr parser = SettingParserBuilder{}.build());
 
         const std::vector<std::string_view> &getArgs() const;
 
