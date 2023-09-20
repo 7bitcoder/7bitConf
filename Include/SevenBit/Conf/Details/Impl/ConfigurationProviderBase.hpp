@@ -19,4 +19,9 @@ namespace sb::cf
     {
         details::JsonExt::deepMerge(_configuration, std::move(configuration));
     }
+
+    INLINE void ConfigurationProviderBase::update(const std::vector<std::string_view> &keys, JsonValue value)
+    {
+        details::JsonExt::updateWith(_configuration, keys, std::move(value));
+    }
 } // namespace sb::cf

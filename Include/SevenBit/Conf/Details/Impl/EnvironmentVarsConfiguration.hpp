@@ -17,21 +17,25 @@ extern "C" char **environ;
 namespace sb::cf
 {
     INLINE EnvironmentVarsConfigurationSource::EnvironmentVarsConfigurationSource(std::string prefix,
-                                                                                  SettingParserConfig parserConfig)
-        : _prefix(std::move(prefix)), _parser(parserConfig)
+                                                                                  ISettingParser::Ptr parser)
+        : _prefix(std::move(prefix)), _parser(std::move(parser))
     {
+        if (!_parser)
+        {
+            throw std::invalid_argument("parser cannot be null");
+        }
     }
 
     INLINE EnvironmentVarsConfigurationSource::SPtr EnvironmentVarsConfigurationSource::create(
-        std::string prefix, SettingParserConfig parserCfg)
+        std::string prefix, ISettingParser::Ptr parser)
     {
         return EnvironmentVarsConfigurationSource::SPtr(
-            new EnvironmentVarsConfigurationSource{std::move(prefix), parserCfg});
+            new EnvironmentVarsConfigurationSource{std::move(prefix), std::move(parser)});
     }
 
     INLINE const std::string &EnvironmentVarsConfigurationSource::getPrefix() { return _prefix; }
 
-    INLINE const details::SettingParser &EnvironmentVarsConfigurationSource::getSettingParser() { return _parser; }
+    INLINE const ISettingParser &EnvironmentVarsConfigurationSource::getSettingParser() { return *_parser; }
 
     INLINE IConfigurationProvider::Ptr EnvironmentVarsConfigurationSource::build(IConfigurationBuilder &builder)
     {
@@ -47,8 +51,12 @@ namespace sb::cf
     INLINE void EnvironmentVarsConfigurationProvider::load()
     {
         clear();
-        auto envVars = getEnvVars();
-        set(_source->getSettingParser().parseAll(envVars.begin(), envVars.end()));
+        auto &parser = _source->getSettingParser();
+        for (auto &setting : getEnvVars())
+        {
+            auto [keys, value] = parser.parse(setting);
+            update(keys, value);
+        }
     }
 
     INLINE std::vector<std::string_view> EnvironmentVarsConfigurationProvider::getEnvVars()

@@ -14,7 +14,7 @@ namespace sb::cf
         std::vector<std::string_view> settingSplitters = {"="};
         std::vector<std::string_view> keySplitters = {":", "__"};
         std::vector<std::string_view> typeMarkers = {"!", "___"};
-        std::string_view preasumedType = "string";
+        std::string_view presumedType = "string";
         bool throwOnUnknownType = true;
         bool allowEmptyKeys = false;
     };

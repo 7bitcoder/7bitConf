@@ -6,10 +6,9 @@
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
-#include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/Json.hpp"
 
-namespace sb::cf::details
+namespace sb::cf
 {
     struct IDeserializer
     {
@@ -19,4 +18,4 @@ namespace sb::cf::details
 
         virtual ~IDeserializer() = default;
     };
-} // namespace sb::cf::details
+} // namespace sb::cf

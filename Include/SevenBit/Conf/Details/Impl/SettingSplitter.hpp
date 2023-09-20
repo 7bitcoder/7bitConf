@@ -2,6 +2,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <tao/json/from_string.hpp>
+#include <utility>
 
 #include "SevenBit/Conf/Details/SettingSplitter.hpp"
 #include "SevenBit/Conf/Details/Utils.hpp"
@@ -15,12 +16,12 @@ namespace sb::cf::details
                                             std::vector<std::string_view> settingSplitters,
                                             std::vector<std::string_view> typeMarkers,
                                             std::vector<std::string_view> keySplitters)
-        : _settingPrefixes(settingPrefixes), _settingSplitters(settingSplitters), _typeMarkers(typeMarkers),
-          _keySplitters(keySplitters)
+        : _settingPrefixes(std::move(settingPrefixes)), _settingSplitters(std::move(settingSplitters)),
+          _typeMarkers(std::move(typeMarkers)), _keySplitters(std::move(keySplitters))
     {
     }
 
-    INLINE SettingSplitter::Result SettingSplitter::split(std::string_view setting) const
+    INLINE ISettingSplitter::Result SettingSplitter::split(std::string_view setting) const
     {
         auto [key, value] = splitSetting(tryRemovePrefix(setting));
         auto [rawKey, type] = splitType(key);
@@ -51,8 +52,7 @@ namespace sb::cf::details
         case 2:
             return {splitted[0], splitted[1]};
         default:
-            throw SettingParserException("Wrong setting format: " + std::string{setting} +
-                                         " it should follow this scheme [--]setting[:nestedSetting]...[!type]=[value]");
+            throwWrongFormatError("Only one type setting splitter is allowed");
         }
     }
 
@@ -67,8 +67,7 @@ namespace sb::cf::details
         case 2:
             return {splitted[0], splitted[1]};
         default:
-            throw SettingParserException("Wrong setting format: " + std::string{key} +
-                                         " it should follow this scheme [--]setting[:nestedSetting]...[!type]=[value]");
+            throwWrongFormatError("Only one type marker is allowed");
         }
     }
 
@@ -77,8 +76,9 @@ namespace sb::cf::details
         return details::utils::split(key, _keySplitters);
     }
 
-    INLINE bool operator==(const SettingSplitter::Result &lhs, const SettingSplitter::Result &rhs)
+    INLINE void SettingSplitter::throwWrongFormatError(const std::string &what) const
     {
-        return lhs.keys == rhs.keys && lhs.type == rhs.type && lhs.value == rhs.value;
+        throw std::runtime_error(
+            what + ", wrong setting format it should follow this scheme [--]setting[:nestedSetting]...[!type]=[value]");
     }
 } // namespace sb::cf::details

@@ -23,6 +23,8 @@ namespace sb::cf
         void set(JsonObject configuration);
 
         void update(JsonObject configuration);
+
+        void update(const std::vector<std::string_view> &keys, JsonValue value);
     };
 } // namespace sb::cf
 

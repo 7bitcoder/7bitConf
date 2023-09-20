@@ -2,71 +2,64 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <utility>
 
-#include "SevenBit/Conf/Details/JsonExt.hpp"
+#include "SevenBit/Conf/Details/Deserializers.hpp"
 #include "SevenBit/Conf/Details/SettingParser.hpp"
 #include "SevenBit/Conf/Details/Utils.hpp"
-#include "SevenBit/Conf/Exceptions.hpp"
-#include "SevenBit/Conf/Json.hpp"
+#include "SevenBit/Conf/Details/ValueDeserializers.hpp"
 
 namespace sb::cf::details
 {
-    INLINE SettingParser::SettingParser(SettingParserConfig config)
-        : _config(std::move(config)),
-          _settingSplitter(_config.settingPrefixes, _config.settingSplitters, _config.typeMarkers, _config.keySplitters)
+    INLINE SettingParser::SettingParser(ISettingSplitter::Ptr settingSplitter,
+                                        IValueDeserializers::Ptr valueDeserializers, std::string_view presumedType,
+                                        bool allowEmptyKeys, bool throwOnUnknownType)
+        : _settingSplitter(std::move(settingSplitter)), _valueDeserializers(std::move(valueDeserializers)),
+          _presumedType(presumedType), _allowEmptyKeys(allowEmptyKeys), _throwOnUnknownType(throwOnUnknownType)
     {
     }
 
-    INLINE JsonObject SettingParser::parse(std::string_view setting) const
-    {
-        JsonObject result;
-        parseInto(setting, result);
-        return result;
-    }
-
-    INLINE void SettingParser::parseInto(std::string_view setting, JsonObject &result) const
+    INLINE ISettingParser::Result SettingParser::parse(std::string_view setting) const
     {
         try
         {
-            auto [keys, value] = getKeysAndValue(setting);
-            JsonExt::updateWith(result, keys, std::move(value));
+            return getKeysAndValue(setting);
         }
         catch (const std::exception &e)
         {
-            throw SettingParserException("Wrong setting format: " + std::string{setting} +
-                                         " it should follow this scheme [--]setting[:nestedSetting]...[!type]=[value]");
+            throw SettingParserException("Parsing error for setting '" + std::string{setting} + "' error: " + e.what());
         }
     }
 
-    SettingParser::KeysAndValue SettingParser::getKeysAndValue(std::string_view setting) const
+    INLINE ISettingParser::Result SettingParser::getKeysAndValue(std::string_view setting) const
     {
-        auto [keys, type, value] = _settingSplitter.split(setting);
+        auto [keys, type, value] = _settingSplitter->split(setting);
 
         checkKeys(keys);
+        auto finalType = type ? *type : _presumedType;
 
-        if (auto deserializer = _deserializers.getDeserializer(type ? *type : _config.preasumedType))
+        auto deserializer = _valueDeserializers->getDeserializerFor(finalType);
+        if (!deserializer)
         {
-            return {keys, deserializer->deserialize(value)};
+            if (_throwOnUnknownType)
+            {
+                throw std::runtime_error("Unknown type: " + std::string{finalType});
+            }
+            deserializer = &_valueDeserializers->getDefaultDeserializer();
         }
-        if (_config.throwOnUnknownType)
-        {
-            // todo throw
-        }
+        return {std::move(keys), deserializer->deserialize(value)};
     }
 
-    void SettingParser::checkKeys(const std::vector<std::string_view> &keys) const
+    INLINE void SettingParser::checkKeys(const std::vector<std::string_view> &keys) const
     {
-        if (_config.allowEmptyKeys)
+        if (_allowEmptyKeys)
         {
             return;
         }
-        for (const auto &key : keys)
+        if (keys.empty() || std::any_of(keys.begin(), keys.end(), [](auto key) { return key.empty(); }))
         {
-            if (key.empty())
-            {
-                // todo throw
-            }
+            throw std::runtime_error("Wrong setting format: empty key");
         }
     }
 } // namespace sb::cf::details

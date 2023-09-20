@@ -7,53 +7,36 @@
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
-#include "JsonExt.hpp"
-#include "SevenBit/Conf/Details/SettingDeserializers.hpp"
 #include "SevenBit/Conf/Details/SettingSplitter.hpp"
-#include "SevenBit/Conf/Details/Utils.hpp"
+#include "SevenBit/Conf/ISettingParser.hpp"
+#include "SevenBit/Conf/IValueDeserializers.hpp"
 #include "SevenBit/Conf/Json.hpp"
 #include "SevenBit/Conf/SettingParserConfig.hpp"
 
 namespace sb::cf::details
 {
-
-    class EXPORT SettingParser
+    class EXPORT SettingParser : public ISettingParser
     {
       private:
-        using KeysTypeAndValue =
-            std::tuple<std::vector<std::string_view>, std::optional<std::string_view>, std::optional<std::string_view>>;
-        using KeysAndValue = std::pair<std::vector<std::string_view>, JsonValue>;
+        const ISettingSplitter::Ptr _settingSplitter;
+        const IValueDeserializers::Ptr _valueDeserializers;
 
-        const SettingParserConfig _config;
-        SettingSplitter _settingSplitter;
-        SettingDeserializers _deserializers;
+        const std::string_view _presumedType;
+        const bool _allowEmptyKeys;
+        const bool _throwOnUnknownType;
 
       public:
-        SettingParser(SettingParserConfig config = {});
+        using Ptr = std::unique_ptr<SettingParser>;
 
-        JsonObject parse(std::string_view setting) const;
+        static Ptr createDefault(SettingParserConfig config);
 
-        void parseInto(std::string_view setting, JsonObject &result) const;
+        SettingParser(ISettingSplitter::Ptr settingSplitter, IValueDeserializers::Ptr valueDeserializers,
+                      std::string_view presumedType, bool allowEmptyKeys, bool throwOnUnknownType);
 
-        template <class It> JsonObject parseAll(It begin, It end) const
-        {
-            JsonObject result;
-            parseAllInto(begin, end, result);
-            return result;
-        }
-
-        template <class It> void parseAllInto(It begin, It end, JsonObject &result) const
-        {
-            for (auto it = begin; it != end; ++it)
-            {
-                parseInto(*it, result);
-            }
-        }
+        ISettingParser::Result parse(std::string_view setting) const override;
 
       private:
-        KeysAndValue getKeysAndValue(std::string_view setting) const;
-
-        KeysTypeAndValue getKeysTypeAndValue(std::string_view setting) const;
+        ISettingParser::Result getKeysAndValue(std::string_view setting) const;
 
         void checkKeys(const std::vector<std::string_view> &keys) const;
     };

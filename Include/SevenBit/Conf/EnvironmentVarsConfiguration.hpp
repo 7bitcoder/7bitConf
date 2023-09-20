@@ -17,19 +17,19 @@ namespace sb::cf
     {
       private:
         std::string _prefix;
-        details::SettingParser _parser;
+        ISettingParser::Ptr _parser;
 
-        EnvironmentVarsConfigurationSource(std::string prefix, SettingParserConfig parserConfig);
+        EnvironmentVarsConfigurationSource(std::string prefix, ISettingParser::Ptr parser);
 
       public:
         using Ptr = std::unique_ptr<EnvironmentVarsConfigurationSource>;
         using SPtr = std::shared_ptr<EnvironmentVarsConfigurationSource>;
 
-        static SPtr create(std::string prefix = "", SettingParserConfig parserCfg = {});
+        static SPtr create(std::string prefix, ISettingParser::Ptr parser);
 
         const std::string &getPrefix();
 
-        const details::SettingParser &getSettingParser();
+        const ISettingParser &getSettingParser();
 
         IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
     };
