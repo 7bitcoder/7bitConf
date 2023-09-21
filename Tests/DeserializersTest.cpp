@@ -5,50 +5,26 @@
 // #include <string_view>
 // #include <tuple>
 //
-// #include "SevenBit/Conf/Details/SettingKeySplitter.hpp"
 // #include "SevenBit/Conf/Details/Utils.hpp"
+// #include "SevenBit/Conf/Details/ValueDeserializers.hpp"
 // #include "SevenBit/Conf/Exceptions.hpp"
 // #include "Utilities/ParamsTest.hpp"
 //
-// class SettingKeySplitterTest : public testing::Test
+// class DeserializersTest : public testing::Test
 //{
 //   protected:
 //     static void TearUpTestSuite() {}
 //
-//     SettingKeySplitterTest() {}
+//     DeserializersTest() {}
 //
 //     void SetUp() override {}
 //
 //     void TearDown() override {}
 //
-//     ~SettingKeySplitterTest() {}
+//     ~DeserializersTest() {}
 //
 //     static void TearDownTestSuite() {}
 // };
-//
-// std::string randomJoin(const std::string &a, const std::string &b, const std::vector<std::string> &delims)
-//{
-//     static std::random_device _device; // non-deterministic generator
-//     static std::mt19937 _generator(_device());
-//
-//     auto index = _generator() % (delims.size() - 1);
-//     const auto &delim = delims[index];
-//     return a + delim + b;
-// }
-//
-// std::string randomJoin(const std::vector<std::string_view> &toJoin, const std::vector<std::string> &delims)
-//{
-//     std::string result = std::string{toJoin[0]};
-//     for (size_t i = 1; i < toJoin.size(); i++)
-//     {
-//         result = randomJoin(result, std::string{toJoin[i]}, delims);
-//     }
-//     return result;
-// }
-//
-// static OneParams<std::string> TypeMarkers = {"!", "___"};
-// static OneParams<std::string> OptionPrefix = {"", "--"};
-// static OneParams<std::string> KeySeparators = {":", "__"};
 //
 // static Params<std::vector<std::string_view>, std::string> SettingsValues = {
 //     // String
