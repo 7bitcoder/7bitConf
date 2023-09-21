@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <exception>
 #include <limits>
+#include <optional>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -14,43 +15,33 @@
 
 namespace sb::cf::details::utils
 {
-    EXPORT bool ignoreCaseEqual(char cha, char chb);
+    EXPORT bool isNumberString(std::string_view str);
 
     EXPORT bool ignoreCaseEqual(std::string_view str, std::string_view search);
+
+    EXPORT bool containsAt(std::string_view str, size_t index, std::string_view search);
 
     EXPORT std::optional<std::string_view> containsAt(std::string_view str, size_t index,
                                                       const std::vector<std::string_view> &searches);
 
-    EXPORT bool containsAt(std::string_view str, size_t index, std::string_view search);
+    EXPORT bool containsAtFromEnd(std::string_view str, size_t index, std::string_view search);
 
-    EXPORT std::optional<std::string_view> backwardContainsAt(std::string_view str, size_t index,
-                                                              const std::vector<std::string_view> &searches);
-
-    EXPORT bool backwardContainsAt(std::string_view str, size_t index, std::string_view search);
-
-    EXPORT bool ignoreCaseContainsAt(std::string_view str, size_t index, std::string_view search);
+    EXPORT std::optional<std::string_view> containsAtFromEnd(std::string_view str, size_t index,
+                                                             const std::vector<std::string_view> &searches);
 
     EXPORT bool startsWith(std::string_view str, std::string_view search);
 
-    EXPORT bool ignoreCaseStartsWith(std::string_view str, std::string_view search);
+    EXPORT std::vector<std::string_view> split(std::string_view str, std::string_view divider);
 
-    EXPORT bool endsWith(std::string_view str, std::string_view search);
+    EXPORT std::vector<std::string_view> split(std::string_view str, const std::vector<std::string_view> &dividers);
 
-    EXPORT bool ignoreCaseEndsWith(std::string_view str, std::string_view search);
+    EXPORT std::optional<std::array<std::string_view, 2>> tryBreak(std::string_view str,
+                                                                   const std::vector<std::string_view> &dividers);
 
-    EXPORT std::size_t replaceAll(std::string &inout, std::string_view what, std::string_view with);
+    EXPORT std::optional<std::array<std::string_view, 2>> tryBreakFromEnd(
+        std::string_view str, const std::vector<std::string_view> &dividers);
 
-    EXPORT std::vector<std::string_view> split(std::string_view str, const std::string_view &delim = "/",
-                                               size_t max = std::numeric_limits<size_t>::max());
-
-    EXPORT std::vector<std::string_view> split(std::string_view str, const std::vector<std::string_view> &delims,
-                                               size_t max = std::numeric_limits<size_t>::max());
-    
     EXPORT std::string joinViews(const std::vector<std::string_view> &strings, const std::string &divider);
-
-    EXPORT std::string join(const std::vector<std::string> &strings, const std::string &divider);
-
-    EXPORT bool isNumberString(std::string_view str);
 
     template <class TNumber> std::pair<bool, TNumber> tryStringTo(std::string_view str, bool full = true)
     {

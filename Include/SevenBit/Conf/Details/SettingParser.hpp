@@ -28,8 +28,6 @@ namespace sb::cf::details
       public:
         using Ptr = std::unique_ptr<SettingParser>;
 
-        static Ptr createDefault(SettingParserConfig config);
-
         SettingParser(ISettingSplitter::Ptr settingSplitter, IValueDeserializers::Ptr valueDeserializers,
                       std::string_view presumedType, bool allowEmptyKeys, bool throwOnUnknownType);
 

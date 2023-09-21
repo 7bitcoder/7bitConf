@@ -44,43 +44,25 @@ namespace sb::cf::details
     INLINE std::pair<std::string_view, std::optional<std::string_view>> SettingSplitter::splitSetting(
         std::string_view setting) const
     {
-        auto splitted = details::utils::split(setting, _settingSplitters, 2);
-        switch (splitted.size())
+        if (auto breakResult = details::utils::tryBreak(setting, _settingSplitters))
         {
-        case 1:
-            return {splitted[0], std::nullopt};
-        case 2:
-            return {splitted[0], splitted[1]};
-        default:
-            throwWrongFormatError("Only one type setting splitter is allowed");
+            return {breakResult->at(0), breakResult->at(1)};
         }
-        return {"", ""};
+        return {setting, std::nullopt};
     }
 
     INLINE std::pair<std::string_view, std::optional<std::string_view>> SettingSplitter::splitType(
         std::string_view key) const
     {
-        auto splitted = details::utils::backwardsSplit(key, _typeMarkers, 2);
-        switch (splitted.size())
+        if (auto breakResult = details::utils::tryBreakFromEnd(key, _typeMarkers))
         {
-        case 1:
-            return {splitted[0], std::nullopt};
-        case 2:
-            return {splitted[0], splitted[1]};
-        default:
-            throwWrongFormatError("Only one type marker is allowed");
+            return {breakResult->at(0), breakResult->at(1)};
         }
-        return {"", ""};
+        return {key, std::nullopt};
     }
 
     INLINE std::vector<std::string_view> SettingSplitter::splitKey(std::string_view key) const
     {
         return details::utils::split(key, _keySplitters);
-    }
-
-    INLINE void SettingSplitter::throwWrongFormatError(const std::string &what) const
-    {
-        throw std::runtime_error(
-            what + ", wrong setting format it should follow this scheme [--]setting[:nestedSetting]...[!type]=[value]");
     }
 } // namespace sb::cf::details

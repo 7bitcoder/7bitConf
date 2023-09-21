@@ -1,43 +1,33 @@
 #pragma once
+
 #include <algorithm>
 #include <cctype>
+#include <optional>
 
 #include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"
 
 namespace sb::cf::details::utils
 {
-    template <class TIterator, class TFunc>
-    bool edgeEqual(TIterator it, TIterator end, TIterator searchIt, TIterator searchEnd, TFunc cmp)
-    {
-        for (; it != end && searchIt != searchEnd; ++it, ++searchIt)
-        {
-            if (!cmp(*it, *searchIt))
-            {
-                return false;
-            }
-        }
-        return searchIt == searchEnd;
-    }
-
     INLINE bool isNumberString(std::string_view str)
     {
-        for (auto ch : str)
-        {
-            if (!std::isdigit(ch))
-            {
-                return false;
-            }
-        }
-        return !str.empty();
+        return !str.empty() && std::all_of(str.begin(), str.end(), [](char ch) { return std::isdigit(ch); });
     }
-
-    INLINE bool ignoreCaseEqual(char cha, char chb) { return std::tolower(cha) == std::tolower(chb); }
 
     INLINE bool ignoreCaseEqual(std::string_view str, std::string_view search)
     {
-        return str.size() == search.size() && std::equal(str.begin(), str.end(), search.begin(), search.end(),
-                                                         [](char cha, char chb) { return ignoreCaseEqual(cha, chb); });
+        return str.size() == search.size() &&
+               std::equal(str.begin(), str.end(), search.begin(), search.end(),
+                          [](char cha, char chb) { return std::tolower(cha) == std::tolower(chb); });
+    }
+
+    INLINE bool containsAt(std::string_view str, size_t index, std::string_view search)
+    {
+        if (index >= str.size() || search.empty())
+        {
+            return false;
+        }
+        return str.compare(index, search.size(), search) == 0;
     }
 
     INLINE std::optional<std::string_view> containsAt(std::string_view str, size_t index,
@@ -53,17 +43,21 @@ namespace sb::cf::details::utils
         return std::nullopt;
     }
 
-    INLINE bool containsAt(std::string_view str, size_t index, std::string_view search)
+    INLINE bool containsAtFromEnd(std::string_view str, size_t index, std::string_view search)
     {
-        return str.compare(index, search.size(), search) == 0;
+        if (index + 1 < search.size())
+        {
+            return false;
+        }
+        return containsAt(str, index + 1 - search.size(), search);
     }
 
-    INLINE std::optional<std::string_view> backwardContainsAt(std::string_view str, size_t index,
-                                                              const std::vector<std::string_view> &searches)
+    INLINE std::optional<std::string_view> containsAtFromEnd(std::string_view str, size_t index,
+                                                             const std::vector<std::string_view> &searches)
     {
         for (auto &search : searches)
         {
-            if (backwardContainsAt(str, index, search))
+            if (containsAtFromEnd(str, index, search))
             {
                 return search;
             }
@@ -71,62 +65,24 @@ namespace sb::cf::details::utils
         return std::nullopt;
     }
 
-    INLINE bool backwardContainsAt(std::string_view str, size_t index, std::string_view search)
-    {
-        if (index + 1 < search.size())
-        {
-            return false;
-        }
-        return str.compare(index + 1 - search.size(), search.size(), search) == 0;
-    }
-
-    INLINE bool ignoreCaseContainsAt(std::string_view str, size_t index, std::string_view search)
-    {
-        return ignoreCaseEqual(str.substr(index, search.size()), search);
-    }
-
     INLINE bool startsWith(std::string_view str, std::string_view search)
     {
-        return edgeEqual(str.begin(), str.end(), search.begin(), search.end(),
-                         [](char cha, char chb) { return cha == chb; });
-    }
-
-    INLINE bool ignoreCaseStartsWith(std::string_view str, std::string_view search)
-    {
-        return edgeEqual(str.begin(), str.end(), search.begin(), search.end(),
-                         [](char cha, char chb) { return ignoreCaseEqual(cha, chb); });
-    }
-
-    INLINE bool endsWith(std::string_view str, std::string_view search)
-    {
-        return edgeEqual(str.rbegin(), str.rend(), search.rbegin(), search.rend(),
-                         [](char cha, char chb) { return cha == chb; });
-    }
-
-    INLINE bool ignoreCaseEndsWith(std::string_view str, std::string_view search)
-    {
-        return edgeEqual(str.rbegin(), str.rend(), search.rbegin(), search.rend(),
-                         [](char cha, char chb) { return ignoreCaseEqual(cha, chb); });
-    }
-
-    INLINE std::size_t replaceAll(std::string &inout, std::string_view what, std::string_view with)
-    {
-        std::size_t count = 0;
-        for (std::string::size_type pos = 0; std::string::npos != (pos = inout.find(what.data(), pos, what.size()));
-             pos += with.size(), ++count)
+        auto searchIt = search.begin();
+        for (auto it = str.begin(); it != str.end() && searchIt != search.end(); ++it, ++searchIt)
         {
-            inout.replace(pos, what.size(), with);
+            if (*it != *searchIt)
+            {
+                return false;
+            }
         }
-        return count;
+        return searchIt == search.end();
     }
 
-    INLINE std::vector<std::string_view> split(std::string_view str, const std::string_view &delim, size_t max)
+    INLINE std::vector<std::string_view> split(std::string_view str, std::string_view divider)
     {
         std::vector<std::string_view> result;
-
         std::string::size_type begin = 0, pos = 0;
-        for (size_t cnt = 1; cnt < max && std::string_view::npos != (pos = str.find_first_of(delim, pos));
-             begin = (pos += delim.size()), ++cnt)
+        for (; std::string_view::npos != (pos = str.find_first_of(divider, pos)); begin = (pos += divider.size()))
         {
             result.push_back(str.substr(begin, pos - begin));
         }
@@ -134,48 +90,46 @@ namespace sb::cf::details::utils
         return result;
     }
 
-    INLINE std::vector<std::string_view> split(std::string_view str, const std::vector<std::string_view> &delims,
-                                               size_t max)
+    INLINE std::vector<std::string_view> split(std::string_view str, const std::vector<std::string_view> &dividers)
     {
         std::vector<std::string_view> result;
-        if (max < 2)
+        for (int i = 0; i < str.size(); ++i)
         {
-            return {str};
-        }
-        for (size_t i = 0; result.size() < max - 1 && i < str.size(); ++i)
-        {
-            if (auto foundDelim = containsAt(str, i, delims))
+            if (auto foundDelim = containsAt(str, i, dividers))
             {
                 result.emplace_back(str.substr(0, i));
                 str.remove_prefix(foundDelim->size() + result.back().size());
-                i = 0;
+                i = -1;
             }
         }
         result.emplace_back(str);
         return result;
     }
 
-    INLINE std::vector<std::string_view> backwardsSplit(std::string_view str,
-                                                        const std::vector<std::string_view> &delims, size_t max)
+    INLINE std::optional<std::array<std::string_view, 2>> tryBreak(std::string_view str,
+                                                                   const std::vector<std::string_view> &dividers)
     {
-        std::vector<std::string_view> result;
-        if (max < 2)
+        for (size_t i = 0; i < str.size(); ++i)
         {
-            return {str};
-        }
-        size_t i = str.size();
-        do
-        {
-            --i;
-            if (auto foundDelim = backwardContainsAt(str, i, delims))
+            if (auto foundDelim = containsAt(str, i, dividers))
             {
-                result.emplace_back(str.substr(i + 1));
-                str.remove_suffix(foundDelim->size() + result.back().size());
-                i = str.size();
+                return std::array<std::string_view, 2>{str.substr(0, i), str.substr(i + foundDelim->size())};
             }
-        } while (i && result.size() < max - 1);
-        result.emplace_back(str);
-        return {result.rbegin(), result.rend()};
+        }
+        return std::nullopt;
+    }
+
+    INLINE std::optional<std::array<std::string_view, 2>> tryBreakFromEnd(std::string_view str,
+                                                                          const std::vector<std::string_view> &dividers)
+    {
+        for (int i = static_cast<int>(str.size()) - 1; i >= 0; --i)
+        {
+            if (auto foundDelim = containsAtFromEnd(str, i, dividers))
+            {
+                return std::array<std::string_view, 2>{str.substr(0, i + 1 - foundDelim->size()), str.substr(i + 1)};
+            }
+        }
+        return std::nullopt;
     }
 
     INLINE std::string joinViews(const std::vector<std::string_view> &strings, const std::string &divider)
@@ -188,21 +142,6 @@ namespace sb::cf::details::utils
         for (size_t i = 0; i < strings.size() - 1; ++i)
         {
             res += std::string{strings[i]} + divider;
-        }
-        res += strings.back();
-        return res;
-    }
-
-    INLINE std::string join(const std::vector<std::string> &strings, const std::string &divider)
-    {
-        std::string res;
-        if (strings.empty())
-        {
-            return res;
-        }
-        for (size_t i = 0; i < strings.size() - 1; ++i)
-        {
-            res += strings[i] + divider;
         }
         res += strings.back();
         return res;

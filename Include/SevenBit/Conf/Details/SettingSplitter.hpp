@@ -34,8 +34,6 @@ namespace sb::cf::details
         std::pair<std::string_view, std::optional<std::string_view>> splitType(std::string_view key) const;
 
         std::vector<std::string_view> splitKey(std::string_view key) const;
-
-        void throwWrongFormatError(const std::string &what) const;
     };
 
 } // namespace sb::cf::details
