@@ -12,8 +12,7 @@ elseif (_7BIT_CONF_STATIC_LIB)
             Source.cpp ${_7BIT_CONF_ALL_HEADERS}
     )
 elseif (_7BIT_CONF_HEADER_ONLY_LIB)
-    add_library(7bitConf INTERFACE
-            ../Include/SevenBit/Conf/IValueDeserializersMap.hpp)
+    add_library(7bitConf INTERFACE)
 endif ()
 
 if (_7BIT_CONF_HEADER_ONLY_LIB)
