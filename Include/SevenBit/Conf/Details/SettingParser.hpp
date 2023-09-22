@@ -9,7 +9,7 @@
 
 #include "SevenBit/Conf/Details/SettingSplitter.hpp"
 #include "SevenBit/Conf/ISettingParser.hpp"
-#include "SevenBit/Conf/IValueDeserializers.hpp"
+#include "SevenBit/Conf/IValueDeserializersMap.hpp"
 #include "SevenBit/Conf/Json.hpp"
 #include "SevenBit/Conf/SettingParserConfig.hpp"
 
@@ -19,22 +19,22 @@ namespace sb::cf::details
     {
       private:
         const ISettingSplitter::Ptr _settingSplitter;
-        const IValueDeserializers::Ptr _valueDeserializers;
+        const IValueDeserializersMap::Ptr _valueDeserializersMap;
 
-        const std::string_view _presumedType;
+        const std::string_view _defaultType;
         const bool _allowEmptyKeys;
         const bool _throwOnUnknownType;
 
       public:
         using Ptr = std::unique_ptr<SettingParser>;
 
-        SettingParser(ISettingSplitter::Ptr settingSplitter, IValueDeserializers::Ptr valueDeserializers,
-                      std::string_view presumedType, bool allowEmptyKeys, bool throwOnUnknownType);
+        SettingParser(ISettingSplitter::Ptr settingSplitter, IValueDeserializersMap::Ptr valueDeserializersMap,
+                      std::string_view defaultType, bool allowEmptyKeys, bool throwOnUnknownType);
 
         ISettingParser::Result parse(std::string_view setting) const override;
 
       private:
-        ISettingParser::Result getKeysAndValue(std::string_view setting) const;
+        const IDeserializer &getDeserializerFor(std::string_view type) const;
 
         void checkKeys(const std::vector<std::string_view> &keys) const;
     };

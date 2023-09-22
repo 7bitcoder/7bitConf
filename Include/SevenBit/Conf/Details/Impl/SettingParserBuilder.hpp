@@ -8,7 +8,7 @@
 #include "SevenBit/Conf/Details/Deserializers.hpp"
 #include "SevenBit/Conf/Details/SettingParser.hpp"
 #include "SevenBit/Conf/Details/SettingSplitter.hpp"
-#include "SevenBit/Conf/Details/ValueDeserializers.hpp"
+#include "SevenBit/Conf/Details/ValueDeserializersMap.hpp"
 #include "SevenBit/Conf/SettingParserBuilder.hpp"
 
 namespace sb::cf
@@ -19,17 +19,17 @@ namespace sb::cf
         return *this;
     }
 
-    INLINE SettingParserBuilder &SettingParserBuilder::useValueDeserializers(
-        IValueDeserializers::Ptr valueDeserializers)
+    INLINE SettingParserBuilder &SettingParserBuilder::useValueDeserializersMap(
+        IValueDeserializersMap::Ptr valueDeserializersMap)
     {
-        _valueDeserializers = std::move(valueDeserializers);
+        _valueDeserializersMap = std::move(valueDeserializersMap);
         return *this;
     }
 
-    INLINE SettingParserBuilder &SettingParserBuilder::useDeserializerFor(std::string type,
-                                                                          IDeserializer::Ptr deserializer)
+    INLINE SettingParserBuilder &SettingParserBuilder::useValueDeserializer(std::string_view type,
+                                                                            IDeserializer::Ptr valueDeserializer)
     {
-        _deserializersMap.emplace_back(std::move(type), std::move(deserializer));
+        _deserializersMap.emplace_back(type, std::move(valueDeserializer));
         return *this;
     }
 
@@ -39,54 +39,60 @@ namespace sb::cf
         return *this;
     }
 
+    INLINE SettingParserBuilder &SettingParserBuilder::useDefaultValueDeserializers()
+    {
+        useValueDeserializer("string", std::make_unique<details::StringDeserializer>());
+        useValueDeserializer("bool", std::make_unique<details::BoolDeserializer>());
+        useValueDeserializer("int", std::make_unique<details::IntDeserializer>());
+        useValueDeserializer("double", std::make_unique<details::DoubleDeserializer>());
+        useValueDeserializer("uint", std::make_unique<details::UIntDeserializer>());
+        useValueDeserializer("json", std::make_unique<details::JsonDeserializer>());
+        useValueDeserializer("null", std::make_unique<details::NullDeserializer>());
+        return *this;
+    }
+
     INLINE ISettingParser::Ptr SettingParserBuilder::build()
     {
         auto &config = getConfig();
-        return std::make_unique<details::SettingParser>(getSplitter(), getValueDeserializers(), config.presumedType,
+        return std::make_unique<details::SettingParser>(getSplitter(), getValueDeserializersMap(), config.defaultType,
                                                         config.allowEmptyKeys, config.throwOnUnknownType);
     }
 
     INLINE ISettingSplitter::Ptr SettingParserBuilder::getSplitter()
     {
-        if (_splitter)
+        if (!_splitter)
         {
-            return std::move(_splitter);
+            auto &config = getConfig();
+            useSplitter(std::make_unique<details::SettingSplitter>(
+                std::move(config.settingPrefixes), std::move(config.settingSplitters), std::move(config.typeMarkers),
+                std::move(config.keySplitters)));
         }
-        auto &config = getConfig();
-        return std::make_unique<details::SettingSplitter>(
-            std::move(config.settingPrefixes), std::move(config.settingSplitters), std::move(config.typeMarkers),
-            std::move(config.keySplitters));
+        return std::move(_splitter);
     }
 
-    INLINE IValueDeserializers::Ptr SettingParserBuilder::getValueDeserializers()
+    INLINE IValueDeserializersMap::Ptr SettingParserBuilder::getValueDeserializersMap()
     {
-        if (_valueDeserializers)
+        if (!_valueDeserializersMap)
         {
-            return std::move(_valueDeserializers);
+            if (_deserializersMap.empty())
+            {
+                useDefaultValueDeserializers();
+            }
+            auto valueDeserializers = std::make_unique<details::ValueDeserializersMap>();
+            for (auto &[type, deserializer] : _deserializersMap)
+            {
+                valueDeserializers->add(std::move(type), std::move(deserializer));
+            }
+            useValueDeserializersMap(std::move(valueDeserializers));
         }
-        if (_deserializersMap.empty())
-        {
-            _deserializersMap.emplace_back("string", std::make_unique<details::StringDeserializer>());
-            _deserializersMap.emplace_back("bool", std::make_unique<details::BoolDeserializer>());
-            _deserializersMap.emplace_back("int", std::make_unique<details::IntDeserializer>());
-            _deserializersMap.emplace_back("double", std::make_unique<details::DoubleDeserializer>());
-            _deserializersMap.emplace_back("uint", std::make_unique<details::UIntDeserializer>());
-            _deserializersMap.emplace_back("json", std::make_unique<details::JsonDeserializer>());
-            _deserializersMap.emplace_back("null", std::make_unique<details::NullDeserializer>());
-        }
-        auto valueDeserializers = std::make_unique<details::ValueDeserializers>();
-        for (auto &[type, deserializer] : _deserializersMap)
-        {
-            valueDeserializers->add(std::move(type), std::move(deserializer));
-        }
-        return valueDeserializers;
+        return std::move(_valueDeserializersMap);
     }
 
     INLINE SettingParserConfig &SettingParserBuilder::getConfig()
     {
         if (!_config)
         {
-            _config = SettingParserConfig{};
+            useConfig({});
         }
         return *_config;
     }

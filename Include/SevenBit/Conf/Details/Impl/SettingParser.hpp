@@ -8,15 +8,15 @@
 #include "SevenBit/Conf/Details/Deserializers.hpp"
 #include "SevenBit/Conf/Details/SettingParser.hpp"
 #include "SevenBit/Conf/Details/Utils.hpp"
-#include "SevenBit/Conf/Details/ValueDeserializers.hpp"
+#include "SevenBit/Conf/Details/ValueDeserializersMap.hpp"
 
 namespace sb::cf::details
 {
     INLINE SettingParser::SettingParser(ISettingSplitter::Ptr settingSplitter,
-                                        IValueDeserializers::Ptr valueDeserializers, std::string_view presumedType,
+                                        IValueDeserializersMap::Ptr valueDeserializersMap, std::string_view defaultType,
                                         bool allowEmptyKeys, bool throwOnUnknownType)
-        : _settingSplitter(std::move(settingSplitter)), _valueDeserializers(std::move(valueDeserializers)),
-          _presumedType(presumedType), _allowEmptyKeys(allowEmptyKeys), _throwOnUnknownType(throwOnUnknownType)
+        : _settingSplitter(std::move(settingSplitter)), _valueDeserializersMap(std::move(valueDeserializersMap)),
+          _defaultType(defaultType), _allowEmptyKeys(allowEmptyKeys), _throwOnUnknownType(throwOnUnknownType)
     {
     }
 
@@ -24,7 +24,11 @@ namespace sb::cf::details
     {
         try
         {
-            return getKeysAndValue(setting);
+            auto [keys, type, value] = _settingSplitter->split(setting);
+
+            checkKeys(keys);
+
+            return {std::move(keys), getDeserializerFor(type ? *type : _defaultType).deserialize(value)};
         }
         catch (const std::exception &e)
         {
@@ -32,23 +36,22 @@ namespace sb::cf::details
         }
     }
 
-    INLINE ISettingParser::Result SettingParser::getKeysAndValue(std::string_view setting) const
+    INLINE const IDeserializer &SettingParser::getDeserializerFor(std::string_view type) const
     {
-        auto [keys, type, value] = _settingSplitter->split(setting);
-
-        checkKeys(keys);
-        auto finalType = type ? *type : _presumedType;
-
-        auto deserializer = _valueDeserializers->getDeserializerFor(finalType);
+        auto deserializer = _valueDeserializersMap->getDeserializerFor(type);
         if (!deserializer)
         {
             if (_throwOnUnknownType)
             {
-                throw std::runtime_error("Unknown type: " + std::string{finalType});
+                throw std::runtime_error("Unknown setting type: " + std::string{type});
             }
-            deserializer = &_valueDeserializers->getDefaultDeserializer();
+            deserializer = _valueDeserializersMap->getDeserializerFor(_defaultType);
+            if (!deserializer)
+            {
+                throw std::runtime_error("Unknown default setting type: " + std::string{_defaultType});
+            }
         }
-        return {std::move(keys), deserializer->deserialize(value)};
+        return *deserializer;
     }
 
     INLINE void SettingParser::checkKeys(const std::vector<std::string_view> &keys) const

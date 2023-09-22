@@ -10,34 +10,38 @@
 #include "SevenBit/Conf/IDeserializer.hpp"
 #include "SevenBit/Conf/ISettingParser.hpp"
 #include "SevenBit/Conf/ISettingSplitter.hpp"
-#include "SevenBit/Conf/IValueDeserializers.hpp"
+#include "SevenBit/Conf/IValueDeserializersMap.hpp"
 #include "SevenBit/Conf/SettingParserConfig.hpp"
 
 namespace sb::cf
 {
 
-    class SettingParserBuilder
+    class EXPORT SettingParserBuilder
     {
       private:
         ISettingSplitter::Ptr _splitter;
-        IValueDeserializers::Ptr _valueDeserializers;
-        std::vector<std::pair<std::string, IDeserializer::Ptr>> _deserializersMap;
+        IValueDeserializersMap::Ptr _valueDeserializersMap;
+        std::vector<std::pair<std::string_view, IDeserializer::Ptr>> _deserializersMap;
         std::optional<SettingParserConfig> _config;
 
       public:
         SettingParserBuilder &useSplitter(ISettingSplitter::Ptr splitter);
 
-        SettingParserBuilder &useValueDeserializers(IValueDeserializers::Ptr valueDeserializers);
+        SettingParserBuilder &useValueDeserializersMap(IValueDeserializersMap::Ptr valueDeserializersMap);
 
-        SettingParserBuilder &useDeserializerFor(std::string type, IDeserializer::Ptr deserializer);
+        SettingParserBuilder &useValueDeserializer(std::string_view type, IDeserializer::Ptr valueDeserializer);
 
         SettingParserBuilder &useConfig(SettingParserConfig config);
+
+        SettingParserBuilder &useDefaultValueDeserializers();
 
         ISettingParser::Ptr build();
 
       private:
         ISettingSplitter::Ptr getSplitter();
-        IValueDeserializers::Ptr getValueDeserializers();
+
+        IValueDeserializersMap::Ptr getValueDeserializersMap();
+
         SettingParserConfig &getConfig();
     };
 

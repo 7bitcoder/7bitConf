@@ -13,7 +13,7 @@ elseif (_7BIT_CONF_STATIC_LIB)
     )
 elseif (_7BIT_CONF_HEADER_ONLY_LIB)
     add_library(7bitConf INTERFACE
-            ../Include/SevenBit/Conf/IValueDeserializers.hpp)
+            ../Include/SevenBit/Conf/IValueDeserializersMap.hpp)
 endif ()
 
 if (_7BIT_CONF_HEADER_ONLY_LIB)

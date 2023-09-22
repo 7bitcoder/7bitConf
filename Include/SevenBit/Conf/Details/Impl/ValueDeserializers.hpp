@@ -5,17 +5,17 @@
 #include <vector>
 
 #include "SevenBit/Conf/Details/Utils.hpp"
-#include "SevenBit/Conf/Details/ValueDeserializers.hpp"
+#include "SevenBit/Conf/Details/ValueDeserializersMap.hpp"
 
 namespace sb::cf::details
 {
-    INLINE std::vector<std::pair<std::string, std::unique_ptr<IDeserializer>>> &ValueDeserializers::
+    INLINE std::vector<std::pair<std::string, std::unique_ptr<IDeserializer>>> &ValueDeserializersMap::
         getDeserializersLookup()
     {
         return _deserializersLookup;
     }
 
-    INLINE void ValueDeserializers::add(std::string_view type, std::unique_ptr<IDeserializer> deserializer)
+    INLINE void ValueDeserializersMap::add(std::string_view type, std::unique_ptr<IDeserializer> deserializer)
     {
         if (!deserializer)
         {
@@ -24,7 +24,7 @@ namespace sb::cf::details
         _deserializersLookup.emplace_back(std::string{type}, std::move(deserializer));
     }
 
-    INLINE const IDeserializer *ValueDeserializers::getDeserializerFor(std::string_view typeStr) const
+    INLINE const IDeserializer *ValueDeserializersMap::getDeserializerFor(std::string_view typeStr) const
     {
         for (auto &[type, deserializer] : _deserializersLookup)
         {
@@ -34,14 +34,5 @@ namespace sb::cf::details
             }
         }
         return nullptr;
-    }
-
-    INLINE const IDeserializer &ValueDeserializers::getDefaultDeserializer() const
-    {
-        if (_deserializersLookup.empty())
-        {
-            throw std::runtime_error("No default deserializer registered");
-        }
-        return *_deserializersLookup.front().second;
     }
 } // namespace sb::cf::details
