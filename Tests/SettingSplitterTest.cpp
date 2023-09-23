@@ -30,6 +30,7 @@ static Params<std::string_view, sb::cf::details::SettingSplitter::Result> SplitS
     {"--====", {{""}, std::nullopt, "==="}},
     {"--option!!type=val", {{"option!"}, "type", "val"}},
     {"--option!type=value", {{"option"}, "type", "value"}},
+    {"//option___type;value", {{"option"}, "type", "value"}},
     {"--option=value", {{"option"}, std::nullopt, "value"}},
     {"--option=", {{"option"}, std::nullopt, ""}},
     {"--option!!type=", {{"option!"}, "type", ""}},
@@ -53,7 +54,44 @@ static Params<std::string_view, sb::cf::details::SettingSplitter::Result> SplitS
 PARAMS_TEST(SettingSplitterTest, ShouldSplitSetting, SplitSettingData)
 {
     const auto &[setting, expected] = GetParam();
-    sb::cf::details::SettingSplitter splitter{{"--"}, {"="}, {"!", "___"}, {":", "__"}};
+    sb::cf::details::SettingSplitter splitter{{"--", "//"}, {"=", ";"}, {"!", "___"}, {":", "__"}};
 
     EXPECT_EQ(splitter.split(setting), expected);
+}
+
+static OneParams<std::string> SettingSplittersData = {"=", ">", "===", "<<<<", "////"};
+
+static OneParams<std::string> SettingPrefixesData = {":", ";", "%%$", "***", "++"};
+
+static OneParams<std::string> KeySplittersData = {":", ";", "__", "{}", "\\"};
+
+static OneParams<std::string> TypeMarkersData = {"!", "@", ":", "[]", "{}"};
+
+static Params<std::vector<std::string_view>, std::string, std::string> SplitSettingSimpleData = {
+    {{"key1", "key2", "key3"}, "string", "value"},
+    {{"key1"}, "string", "value"},
+    {{""}, "", ""},
+    {{""}, "type", ""},
+    {{"key"}, "", ""},
+    {{""}, "", "value"},
+};
+PARAMS_TEST_COMBINED_5(SettingSplitterTest, ShouldSplitWithDifferentSplitters, SettingPrefixesData,
+                       SettingSplittersData, TypeMarkersData, KeySplittersData, SplitSettingSimpleData)
+{
+    const auto &[prefix, settingSplitter, typeMarker, keySplitter, setting] = GetParam();
+    const auto &[keys, type, value] = setting;
+
+    sb::cf::details::SettingSplitter splitter{{prefix}, {settingSplitter}, {typeMarker}, {keySplitter}};
+    std::string key;
+    for (auto it = keys.begin(); it != keys.end(); ++it)
+    {
+        if (it != keys.begin())
+        {
+            key += keySplitter;
+        }
+        key += *it;
+    }
+
+    auto fullSetting = prefix + key + typeMarker + type + settingSplitter + value;
+    EXPECT_EQ(splitter.split(fullSetting), (sb::cf::ISettingSplitter::Result{keys, type, value}));
 }

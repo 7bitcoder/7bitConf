@@ -81,7 +81,7 @@ namespace sb::cf
             auto valueDeserializers = std::make_unique<details::ValueDeserializersMap>();
             for (auto &[type, deserializer] : _deserializersMap)
             {
-                valueDeserializers->add(std::move(type), std::move(deserializer));
+                valueDeserializers->add(type, std::move(deserializer));
             }
             useValueDeserializersMap(std::move(valueDeserializers));
         }

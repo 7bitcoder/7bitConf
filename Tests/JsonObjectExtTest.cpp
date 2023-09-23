@@ -24,10 +24,32 @@ class JsonObjectExtTest : public testing::Test
     static void TearDownTestSuite() {}
 };
 
-Params<std::string_view, bool, sb::cf::JsonValue> FindInnerData{
+Params<std::string_view, bool, sb::cf::JsonValue> FindData{
+    {"str", true, "hello"},
+    {"number", true, 123},
+    {"array", true, sb::cf::JsonArray{{{"key", "value"}}}},
+    {"inner", true, -123},
+    {"nonExisting", false, tao::json::null},
+};
+PARAMS_TEST(JsonObjectExtTest, ShouldFing, FindData)
+{
+    sb::cf::JsonValue json = {
+        {"str", "hello"}, {"number", 123}, {"array", sb::cf::JsonArray{{{"key", "value"}}}}, {"inner", -123}};
+
+    auto &[keys, expectedFound, expectedValue] = GetParam();
+    auto valuePtr = sb::cf::details::JsonExt::find(json, keys);
+    EXPECT_EQ(!!valuePtr, expectedFound);
+    if (valuePtr)
+    {
+        EXPECT_EQ(*valuePtr, expectedValue);
+    }
+}
+
+Params<std::string_view, bool, sb::cf::JsonValue> DeepFindData{
     {"inner:inner:str", true, "hello2"},
     {"inner:number", true, 1231},
     {"array:0:key", true, "value"},
+    {"array:1:key", true, 12},
     {"array:2:key", false, tao::json::null},
     {"array:0.123:key", false, tao::json::null},
     {"array:0 123:key", false, tao::json::null},
@@ -40,19 +62,19 @@ Params<std::string_view, bool, sb::cf::JsonValue> FindInnerData{
     {"inner::inner:str", false, tao::json::null},
 
 };
-PARAMS_TEST(JsonObjectExtTest, ShouldFindInner, FindInnerData)
+PARAMS_TEST(JsonObjectExtTest, ShouldDeepFing, DeepFindData)
 {
-    sb::cf::JsonObject json = {{"str", "hello"},
-                               {"number", 123},
-                               {"array", sb::cf::JsonArray{{{"key", "value"}}}},
-                               {"inner",
-                                {{"str", "hello1"},
-                                 {"number", 1231},
-                                 {"inner",
-                                  {
-                                      {"str", "hello2"},
-                                      {"number", 1232},
-                                  }}}}};
+    sb::cf::JsonValue json = {{"str", "hello"},
+                              {"number", 123},
+                              {"array", sb::cf::JsonArray{{{"key", "value"}}, {{"key", 12}}}},
+                              {"inner",
+                               {{"str", "hello1"},
+                                {"number", 1231},
+                                {"inner",
+                                 {
+                                     {"str", "hello2"},
+                                     {"number", 1232},
+                                 }}}}};
 
     auto &[keys, expectedFound, expectedValue] = GetParam();
     auto valuePtr = sb::cf::details::JsonExt::deepFind(json, keys);

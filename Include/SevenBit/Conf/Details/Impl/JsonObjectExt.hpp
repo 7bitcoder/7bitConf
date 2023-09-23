@@ -242,6 +242,11 @@ namespace sb::cf::details
 
     INLINE void JsonExt::deepMerge(JsonArray &json, JsonArray override)
     {
+        if (json.empty())
+        {
+            json = std::move(override);
+            return;
+        }
         for (size_t i = 0; i < override.size(); ++i)
         {
             if (i >= json.size())
@@ -254,6 +259,11 @@ namespace sb::cf::details
 
     INLINE void JsonExt::deepMerge(JsonObject &json, JsonObject override)
     {
+        if (json.empty())
+        {
+            json = std::move(override);
+            return;
+        }
         for (auto &[key, value] : override)
         {
             deepMerge(json[key], std::move(value));
