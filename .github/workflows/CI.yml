@@ -35,5 +35,4 @@ jobs:
           library-type: ${{ matrix.libraryType }}
 
       - name: Test
-        working-directory: ${{ env.BUILD_DIR }}/build
         run: ctest --preset conan-release --output-on-failure
