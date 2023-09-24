@@ -38,4 +38,4 @@ jobs:
 
       - name: Test
         working-directory: ${{ env.BUILD_DIR }}
-        run: ctest -C ${{env.BUILD_TYPE}} -V -j 10
+        run: ctest -C ${{env.BUILD_TYPE}} --output-on-failure
