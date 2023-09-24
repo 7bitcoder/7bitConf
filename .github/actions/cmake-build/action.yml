@@ -14,9 +14,9 @@ runs:
   using: composite
   steps:
     - name: Configure CMake
-      run: cmake --preset conan-release -D_7BIT_CONF_LIBRARY_TYPE=${{ inputs.library-type }} ${{ inputs.args }}
+      run: cmake --preset conan-default -D_7BIT_CONF_LIBRARY_TYPE=${{ inputs.library-type }} ${{ inputs.args }}
       shell: pwsh
 
     - name: Build
-      run: cmake --build --preset conan-release
+      run: cmake --build --preset conan-default
       shell: pwsh
