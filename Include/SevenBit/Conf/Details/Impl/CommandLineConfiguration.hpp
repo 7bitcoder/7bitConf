@@ -4,6 +4,7 @@
 
 #include "SevenBit/Conf/CommandLineConfiguration.hpp"
 #include "SevenBit/Conf/Details/SettingParser.hpp"
+#include "SevenBit/Conf/Exceptions.hpp"
 #include "SevenBit/Conf/LibraryConfig.hpp"
 #include "SevenBit/Conf/SettingParserBuilder.hpp"
 
@@ -15,7 +16,7 @@ namespace sb::cf
     {
         if (!_parser)
         {
-            throw std::invalid_argument("Parser cannot be null");
+            throw NullPointnerException("Parser cannot be null");
         }
     }
 

@@ -5,6 +5,7 @@
 
 #include "SevenBit/Conf/Details/JsonExt.hpp"
 #include "SevenBit/Conf/EnvironmentVarsConfiguration.hpp"
+#include "SevenBit/Conf/Exceptions.hpp"
 
 #ifdef _WIN32
 extern "C" __declspec(dllimport) char **_environ;
@@ -22,7 +23,7 @@ namespace sb::cf
     {
         if (!_parser)
         {
-            throw std::invalid_argument("parser cannot be null");
+            throw NullPointnerException("Parser cannot be null");
         }
     }
 

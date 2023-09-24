@@ -33,6 +33,16 @@ namespace sb::cf::details
 
         ISettingParser::Result parse(std::string_view setting) const override;
 
+        const ISettingSplitter &getSettingSplitter() const;
+
+        const IValueDeserializersMap &getValueDeserializersMap() const;
+
+        std::string_view getDefaultType() const;
+
+        bool getAllowEmptyKeys() const;
+
+        bool getThrowOnUnknownType() const;
+
       private:
         const IDeserializer &getDeserializerFor(std::string_view type) const;
 

@@ -33,7 +33,7 @@ namespace sb::cf
         auto json = tao::json::basic_from_stream<JsonTraits>(_source->getStream());
         if (!json.is_object())
         {
-            throw BadStreamException("file does not contain json object");
+            throw BadStreamException("File does not contain json object");
         }
         return json.get_object();
     };

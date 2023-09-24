@@ -63,8 +63,6 @@ namespace sb::cf::details
         static void updateWith(JsonObject &json, const std::vector<std::string_view> &keys, JsonValue value);
 
         static void checkSegmentSize(const std::vector<std::string_view> &key);
-
-        static void checkKey(std::string_view key);
     };
 
 } // namespace sb::cf::details

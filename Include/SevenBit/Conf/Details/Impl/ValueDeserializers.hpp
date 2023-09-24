@@ -6,6 +6,7 @@
 
 #include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/Details/ValueDeserializersMap.hpp"
+#include "SevenBit/Conf/Exceptions.hpp"
 
 namespace sb::cf::details
 {
@@ -19,7 +20,7 @@ namespace sb::cf::details
     {
         if (!deserializer)
         {
-            throw std::invalid_argument("Deserializer cannot be null");
+            throw NullPointnerException("Deserializer cannot be null");
         }
         _deserializersLookup.emplace_back(std::string{type}, std::move(deserializer));
     }

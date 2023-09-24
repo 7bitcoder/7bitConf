@@ -46,7 +46,7 @@ namespace sb::cf
         IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
 
       private:
-        bool canIgnore(std::filesystem::path filePath) const;
+        bool canIgnore(const std::filesystem::path &filePath) const;
     };
 } // namespace sb::cf
 

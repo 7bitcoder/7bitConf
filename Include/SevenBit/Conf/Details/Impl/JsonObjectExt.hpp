@@ -215,14 +215,14 @@ namespace sb::cf::details
         }
         if (!current) // should not happen
         {
-            throw NullPointnerException("object is null");
+            throw NullPointnerException("Object is null");
         }
         return *current;
     }
 
     INLINE void JsonExt::deepMerge(JsonValue &json, JsonValue override)
     {
-        if (override.is_uninitialized()) // nullptr is mark for skip
+        if (override.is_uninitialized()) // undefined is mark for skip
         {
             return;
         }
@@ -280,14 +280,6 @@ namespace sb::cf::details
         if (key.empty())
         {
             throw ConfigException("Bad configuration key parameter, there should be at least one segment");
-        }
-    }
-
-    INLINE void JsonExt::checkKey(std::string_view key)
-    {
-        if (key.empty())
-        {
-            throw ConfigException("Key parameter cannot be empty");
         }
     }
 } // namespace sb::cf::details

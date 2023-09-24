@@ -82,16 +82,37 @@ PARAMS_TEST_COMBINED_5(SettingSplitterTest, ShouldSplitWithDifferentSplitters, S
     const auto &[keys, type, value] = setting;
 
     sb::cf::details::SettingSplitter splitter{{prefix}, {settingSplitter}, {typeMarker}, {keySplitter}};
-    std::string key;
-    for (auto it = keys.begin(); it != keys.end(); ++it)
-    {
-        if (it != keys.begin())
-        {
-            key += keySplitter;
-        }
-        key += *it;
-    }
 
+    auto key = sb::cf::details::utils::joinViews(keys, keySplitter);
     auto fullSetting = prefix + key + typeMarker + type + settingSplitter + value;
     EXPECT_EQ(splitter.split(fullSetting), (sb::cf::ISettingSplitter::Result{keys, type, value}));
+}
+
+static Params<std::vector<std::string_view>, std::vector<std::string_view>, std::vector<std::string_view>,
+              std::vector<std::string_view>, sb::cf::ISettingSplitter::Result>
+    EmptySplittersData = {
+        {{}, {"=", ";"}, {"!", "___"}, {":", "__"}, {{"--key", "deep"}, "int", "value"}},
+        {{"--", "//"}, {}, {"!", "___"}, {":", "__"}, {{"key", "deep"}, "int=value"}},
+        {{"--", "//"}, {"=", ";"}, {}, {":", "__"}, {{"key", "deep!int"}, std::nullopt, "value"}},
+        {{"--", "//"}, {"=", ";"}, {"!", "___"}, {}, {{"key:deep"}, "int", "value"}},
+        {{}, {}, {"!", "___"}, {":", "__"}, {{"--key", "deep"}, "int=value"}},
+        {{}, {"=", ";"}, {}, {":", "__"}, {{"--key", "deep!int"}, std::nullopt, "value"}},
+        {{}, {"=", ";"}, {"!", "___"}, {}, {{"--key:deep"}, "int", "value"}},
+        {{"--", "//"}, {}, {}, {":", "__"}, {{"key", "deep!int=value"}}},
+        {{"--", "//"}, {}, {"!", "___"}, {}, {{"key:deep"}, "int=value"}},
+        {{"--", "//"}, {"=", ";"}, {}, {}, {{"key:deep!int"}, std::nullopt, "value"}},
+        {{}, {}, {}, {":", "__"}, {{"--key", "deep!int=value"}}},
+        {{}, {}, {"!", "___"}, {}, {{"--key:deep"}, "int=value"}},
+        {{}, {"=", ";"}, {}, {}, {{"--key:deep!int"}, std::nullopt, "value"}},
+        {{"--", "//"}, {}, {}, {}, {{"key:deep!int=value"}}},
+        {{}, {}, {}, {}, {{"--key:deep!int=value"}}},
+
+};
+PARAMS_TEST(SettingSplitterTest, ShouldSplitWithEmptySplitters, EmptySplittersData)
+{
+    const auto &[prefixes, settingSplitters, typeMarkers, keySplitters, expected] = GetParam();
+
+    sb::cf::details::SettingSplitter splitter{prefixes, settingSplitters, typeMarkers, keySplitters};
+
+    EXPECT_EQ(splitter.split("--key:deep!int=value"), expected);
 }
