@@ -12,7 +12,7 @@ inputs:
   toolchain:
     description: "Toolchain file"
     required: false
-    default: build/Release/generators/conan_toolchain.cmake
+    default: conan_toolchain.cmake
   library-type:
     description: "Library type"
     required: false
