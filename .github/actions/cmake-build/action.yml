@@ -1,5 +1,6 @@
 name: Run CMake
 description: "Runs CMake"
+
 inputs:
   args:
     description: "Other arguments"
@@ -9,15 +10,18 @@ inputs:
     description: "Library type"
     required: false
     default: Static
+  preset:
+    description: "Cmake preset name"
+    required: true
 
 runs:
   using: composite
   steps:
     - name: Configure CMake
-      run: cmake --preset ${{ steps.conan.outputs.PRESET }} -D_7BIT_CONF_LIBRARY_TYPE=${{ inputs.library-type }} ${{ inputs.args }}
+      run: cmake --preset ${{ inputs.preset }} -D_7BIT_CONF_LIBRARY_TYPE=${{ inputs.library-type }} ${{ inputs.args }}
       shell: pwsh
 
     - name: Build
-      run: cmake --build --preset ${{ steps.conan.outputs.PRESET }}
+      run: cmake --build --preset ${{ inputs.preset }}
       shell: pwsh
 
