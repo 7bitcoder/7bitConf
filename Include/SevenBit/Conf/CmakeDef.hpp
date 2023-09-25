@@ -5,11 +5,11 @@
 #endif
 
 #ifndef _7BIT_CONF_STATIC_LIB
-#define _7BIT_CONF_STATIC_LIB
+/* #undef _7BIT_CONF_STATIC_LIB */
 #endif
 
 #ifndef _7BIT_CONF_HEADER_ONLY_LIB
-/* #undef _7BIT_CONF_HEADER_ONLY_LIB */
+#define _7BIT_CONF_HEADER_ONLY_LIB 
 #endif
 
 

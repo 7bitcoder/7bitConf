@@ -7,6 +7,7 @@
 #include <optional>
 #include <string>
 #include <string_view>
+#include <utility>
 #include <vector>
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
@@ -35,10 +36,10 @@ namespace sb::cf::details::utils
 
     EXPORT std::vector<std::string_view> split(std::string_view str, const std::vector<std::string_view> &dividers);
 
-    EXPORT std::optional<std::array<std::string_view, 2>> tryBreak(std::string_view str,
-                                                                   const std::vector<std::string_view> &dividers);
+    EXPORT std::pair<std::string_view, std::optional<std::string_view>> tryBreak(
+        std::string_view str, const std::vector<std::string_view> &dividers);
 
-    EXPORT std::optional<std::array<std::string_view, 2>> tryBreakFromEnd(
+    EXPORT std::pair<std::string_view, std::optional<std::string_view>> tryBreakFromEnd(
         std::string_view str, const std::vector<std::string_view> &dividers);
 
     EXPORT std::string joinViews(const std::vector<std::string_view> &strings, const std::string &divider);

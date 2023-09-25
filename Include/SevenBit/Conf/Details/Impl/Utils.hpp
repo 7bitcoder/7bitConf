@@ -106,30 +106,30 @@ namespace sb::cf::details::utils
         return result;
     }
 
-    INLINE std::optional<std::array<std::string_view, 2>> tryBreak(std::string_view str,
-                                                                   const std::vector<std::string_view> &dividers)
+    INLINE std::pair<std::string_view, std::optional<std::string_view>> tryBreak(
+        std::string_view str, const std::vector<std::string_view> &dividers)
     {
         for (size_t i = 0; i < str.size(); ++i)
         {
             if (auto foundDelim = containsAt(str, i, dividers))
             {
-                return std::array<std::string_view, 2>{str.substr(0, i), str.substr(i + foundDelim->size())};
+                return {str.substr(0, i), str.substr(i + foundDelim->size())};
             }
         }
-        return std::nullopt;
+        return {str, std::nullopt};
     }
 
-    INLINE std::optional<std::array<std::string_view, 2>> tryBreakFromEnd(std::string_view str,
-                                                                          const std::vector<std::string_view> &dividers)
+    INLINE std::pair<std::string_view, std::optional<std::string_view>> tryBreakFromEnd(
+        std::string_view str, const std::vector<std::string_view> &dividers)
     {
         for (int i = static_cast<int>(str.size()) - 1; i >= 0; --i)
         {
             if (auto foundDelim = containsAtFromEnd(str, i, dividers))
             {
-                return std::array<std::string_view, 2>{str.substr(0, i + 1 - foundDelim->size()), str.substr(i + 1)};
+                return {str.substr(0, i + 1 - foundDelim->size()), str.substr(i + 1)};
             }
         }
-        return std::nullopt;
+        return {str, std::nullopt};
     }
 
     INLINE std::string joinViews(const std::vector<std::string_view> &strings, const std::string &divider)
