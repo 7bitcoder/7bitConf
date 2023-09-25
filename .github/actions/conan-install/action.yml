@@ -41,7 +41,7 @@ runs:
     - name: Set Preset
       id: set-preset
       run: |
-      "PRESET=${{ env.preset }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+        "PRESET=${{ env.preset }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
       shell: pwsh
 
 
