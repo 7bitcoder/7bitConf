@@ -23,7 +23,7 @@ runs:
             "Windows":{
                 "initPreset": "conan-default"
             },
-            "*":{
+            ".*":{
                 "initPreset": "conan-release"
             }
           }
