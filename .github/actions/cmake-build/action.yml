@@ -10,18 +10,29 @@ inputs:
     description: "Library type"
     required: false
     default: Static
-  preset:
-    description: "Cmake preset name"
-    required: true
 
 runs:
   using: composite
   steps:
+    - name: Set Proper Conan Profile
+      uses: kanga333/variable-mapper@v0.3.0
+      with:
+        key: "${{ runner.os }}"
+        map: |
+          {
+            "Windows":{
+                "initPreset": "conan-default"
+            },
+            "*":{
+                "initPreset": "conan-release"
+            },
+          }
+
     - name: Configure CMake
-      run: cmake --preset ${{ inputs.preset }} -D_7BIT_CONF_LIBRARY_TYPE=${{ inputs.library-type }} ${{ inputs.args }}
+      run: cmake --preset ${{ env.initPreset }} -D_7BIT_CONF_LIBRARY_TYPE=${{ inputs.library-type }} ${{ inputs.args }}
       shell: pwsh
 
     - name: Build
-      run: cmake --build --preset ${{ inputs.preset }}
+      run: cmake --build --preset conan-release
       shell: pwsh
 

@@ -4,10 +4,7 @@ inputs:
   install-dir:
     description: "Installation directory"
     required: true
-outputs:
-  preset:
-    description: "Cmake preset name"
-    value: ${{ steps.set-preset.outputs.preset }}
+
 runs:
   using: composite
   steps:
@@ -22,15 +19,12 @@ runs:
           {
             "Linux":{
                 "use_conan_profile":"linux-gcc-x86_64",
-                "preset": "conan-release"
             },
             "macOS":{
                 "use_conan_profile":"mac-appple-clang-x86_64",
-                "preset": "conan-release"
             },
             "Windows":{
                 "use_conan_profile":"windows-msvc-x86_64",
-                "preset": "conan-release"
             }
           }
     - name: Configure Conan
@@ -39,12 +33,6 @@ runs:
 
     - name: Install Conan Packages in ${{ inputs.install-dir }}
       run: conan install . --output-folder=${{ inputs.install-dir }} --build=missing -pr=${{ env.use_conan_profile }} -pr:b=${{ env.use_conan_profile }}
-      shell: pwsh
-
-    - name: Set Preset
-      id: set-preset
-      run: |
-        "preset=${{ env.preset }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
       shell: pwsh
 
 
