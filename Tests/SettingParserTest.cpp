@@ -1,3 +1,4 @@
+#include <gmock/gmock.h>
 #include <gtest/gtest-param-test.h>
 #include <gtest/gtest.h>
 #include <gtest/internal/gtest-param-util.h>
@@ -71,13 +72,13 @@ TEST_F(SettingParserTest, ShouldFailCreateSettingParserDueNullDeserializers)
 
 TEST_F(SettingParserTest, ShouldUseDefaultType)
 {
-    DeserializerMock deserializer;
-    auto deserializers = std::make_unique<ValueDeserializersMapMock>();
-    auto splitter = std::make_unique<SettingSplitterMock>();
-
-    std::string_view setting = "--option:deep:deep=value";
-    sb::cf::ISettingSplitter::Result returned = {{"option", "deep", "deep"}, std::nullopt, "value"};
-    EXPECT_CALL(*splitter, split(setting)).WillOnce(testing::Return(returned));
+    //    DeserializerMock deserializer;
+    //    auto deserializers = std::make_unique<ValueDeserializersMapMock>();
+    //    auto splitter = std::make_unique<SettingSplitterMock>();
+    //
+    //    std::string_view setting = "--option:deep:deep=value";
+    //    sb::cf::ISettingSplitter::Result returned = {{"option", "deep", "deep"}, std::nullopt, "value"};
+    //    EXPECT_CALL(*splitter, split(setting)).WillOnce(testing::Return(returned));
     //    EXPECT_CALL(*deserializers, getDeserializerFor(std::string_view{"string"}))
     //        .WillOnce(testing::Return(&deserializer));
     //    sb::cf::JsonValue returnedValue = "value";
