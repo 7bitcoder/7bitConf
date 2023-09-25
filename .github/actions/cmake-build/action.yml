@@ -18,5 +18,5 @@ runs:
       shell: pwsh
 
     - name: Build
-      run: cmake --build --preset conan-default
+      run: cmake --build --preset ${{ steps.set-preset.outputs.PRESET }}
       shell: pwsh

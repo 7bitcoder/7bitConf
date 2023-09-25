@@ -18,13 +18,16 @@ runs:
         map: |
           {
             "Linux":{
-                "use_conan_profile":"linux-gcc-x86_64"
+                "use_conan_profile":"linux-gcc-x86_64",
+                "preset": "conan-release"
             },
             "macOS":{
-                "use_conan_profile":"mac-appple-clang-x86_64"
+                "use_conan_profile":"mac-appple-clang-x86_64",
+                "preset": "conan-release"
             },
             "Windows":{
-                "use_conan_profile":"windows-msvc-x86_64"
+                "use_conan_profile":"windows-msvc-x86_64",
+                "preset": "conan-default"
             }
           }
     - name: Configure Conan
@@ -34,3 +37,9 @@ runs:
     - name: Install Conan Packages in ${{ inputs.install-dir }}
       run: conan install . --output-folder=${{ inputs.install-dir }} --build=missing -pr=${{ env.use_conan_profile }} -pr:b=${{ env.use_conan_profile }}
       shell: pwsh
+
+    - name: Set Preset
+      id: set-preset
+      run: | "PRESET=${{ env.preset }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+      shell: pwsh
+
