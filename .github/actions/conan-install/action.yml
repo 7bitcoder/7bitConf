@@ -18,13 +18,13 @@ runs:
         map: |
           {
             "Linux":{
-                "use_conan_profile":"linux-gcc-x86_64",
+                "use_conan_profile":"linux-gcc-x86_64"
             },
             "macOS":{
-                "use_conan_profile":"mac-appple-clang-x86_64",
+                "use_conan_profile":"mac-appple-clang-x86_64"
             },
             "Windows":{
-                "use_conan_profile":"windows-msvc-x86_64",
+                "use_conan_profile":"windows-msvc-x86_64"
             }
           }
     - name: Configure Conan

@@ -25,7 +25,7 @@ runs:
             },
             "*":{
                 "initPreset": "conan-release"
-            },
+            }
           }
 
     - name: Configure CMake
