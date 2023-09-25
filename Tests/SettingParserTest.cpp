@@ -39,10 +39,10 @@ TEST_F(SettingParserTest, ShouldParseSetting)
 
     std::string_view setting = "--option:deep:deep!int=123";
     sb::cf::ISettingSplitter::Result returned = {{"option", "deep", "deep"}, "int", "123"};
-    EXPECT_CALL(*splitter, split(setting)).WillOnce(testing::Return(returned));
-    EXPECT_CALL(*deserializers, getDeserializerFor(*returned.type)).WillOnce(testing::Return(&deserializer));
+    EXPECT_CALL(*splitter, split).WillOnce(testing::Return(returned));
+    EXPECT_CALL(*deserializers, getDeserializerFor).WillOnce(testing::Return(&deserializer));
     sb::cf::JsonValue returnedValue = 123;
-    EXPECT_CALL(deserializer, deserialize(returned.value)).WillOnce(testing::Return(returnedValue));
+    EXPECT_CALL(deserializer, deserialize).WillOnce(testing::Return(returnedValue));
 
     sb::cf::details::SettingParser parser{std::move(splitter), std::move(deserializers), "string", false, true};
 
@@ -72,22 +72,21 @@ TEST_F(SettingParserTest, ShouldFailCreateSettingParserDueNullDeserializers)
 
 TEST_F(SettingParserTest, ShouldUseDefaultType)
 {
-    //    DeserializerMock deserializer;
-    //    auto deserializers = std::make_unique<ValueDeserializersMapMock>();
-    //    auto splitter = std::make_unique<SettingSplitterMock>();
-    //
-    //    std::string_view setting = "--option:deep:deep=value";
-    //    sb::cf::ISettingSplitter::Result returned = {{"option", "deep", "deep"}, std::nullopt, "value"};
-    //    EXPECT_CALL(*splitter, split(setting)).WillOnce(testing::Return(returned));
-    //    EXPECT_CALL(*deserializers, getDeserializerFor(std::string_view{"string"}))
-    //        .WillOnce(testing::Return(&deserializer));
-    //    sb::cf::JsonValue returnedValue = "value";
-    //    EXPECT_CALL(deserializer, deserialize(returned.value)).WillOnce(testing::Return(returnedValue));
-    //
-    //    sb::cf::details::SettingParser parser{std::move(splitter), std::move(deserializers), "string", false, true};
-    //
-    //    EXPECT_EQ(parser.parse(setting), (sb::cf::ISettingParser::Result{{"option", "deep", "deep"}, "value"}));
-    //    EXPECT_EQ(parser.getDefaultType(), std::string_view{"string"});
+    DeserializerMock deserializer;
+    auto deserializers = std::make_unique<ValueDeserializersMapMock>();
+    auto splitter = std::make_unique<SettingSplitterMock>();
+
+    std::string_view setting = "--option:deep:deep=value";
+    sb::cf::ISettingSplitter::Result returned = {{"option", "deep", "deep"}, std::nullopt, "value"};
+    EXPECT_CALL(*splitter, split).WillOnce(testing::Return(returned));
+    EXPECT_CALL(*deserializers, getDeserializerFor).WillOnce(testing::Return(&deserializer));
+    sb::cf::JsonValue returnedValue = "value";
+    EXPECT_CALL(deserializer, deserialize).WillOnce(testing::Return(returnedValue));
+
+    sb::cf::details::SettingParser parser{std::move(splitter), std::move(deserializers), "string", false, true};
+
+    EXPECT_EQ(parser.parse(setting), (sb::cf::ISettingParser::Result{{"option", "deep", "deep"}, "value"}));
+    EXPECT_EQ(parser.getDefaultType(), std::string_view{"string"});
 }
 
 TEST_F(SettingParserTest, ShouldNotFailCreateSettingParserDueEmptyKey)
@@ -98,10 +97,10 @@ TEST_F(SettingParserTest, ShouldNotFailCreateSettingParserDueEmptyKey)
 
     std::string_view setting = "--!string=value";
     sb::cf::ISettingSplitter::Result returned = {{""}, "string", "value"};
-    EXPECT_CALL(*splitter, split(setting)).WillOnce(testing::Return(returned));
-    EXPECT_CALL(*deserializers, getDeserializerFor(*returned.type)).WillOnce(testing::Return(&deserializer));
+    EXPECT_CALL(*splitter, split).WillOnce(testing::Return(returned));
+    EXPECT_CALL(*deserializers, getDeserializerFor).WillOnce(testing::Return(&deserializer));
     sb::cf::JsonValue returnedValue = "value";
-    EXPECT_CALL(deserializer, deserialize(returned.value)).WillOnce(testing::Return(returnedValue));
+    EXPECT_CALL(deserializer, deserialize).WillOnce(testing::Return(returnedValue));
 
     sb::cf::details::SettingParser parser{std::move(splitter), std::move(deserializers), "string", true, true};
 
@@ -119,7 +118,7 @@ TEST_F(SettingParserTest, ShouldFailCreateSettingParserDueEmptyKey)
 
     std::string_view setting = "--!string=value";
     sb::cf::ISettingSplitter::Result returned = {{""}, "string", "value"};
-    EXPECT_CALL(*splitter, split(setting)).WillOnce(testing::Return(returned));
+    EXPECT_CALL(*splitter, split).WillOnce(testing::Return(returned));
 
     sb::cf::details::SettingParser parser{std::move(splitter), std::move(deserializers), "string", false, true};
 
@@ -137,13 +136,12 @@ TEST_F(SettingParserTest, ShouldUseDefaultTypeForUnknownType)
 
     std::string_view setting = "--option:deep:deep!unknown=value";
     sb::cf::ISettingSplitter::Result returned = {{"option", "deep", "deep"}, "unknown", "value"};
-    EXPECT_CALL(*splitter, split(setting)).WillOnce(testing::Return(returned));
-    EXPECT_CALL(*deserializers, getDeserializerFor(*returned.type)).WillOnce(testing::Return(nullptr));
-
-    EXPECT_CALL(*deserializers, getDeserializerFor(std::string_view{"string"}))
+    EXPECT_CALL(*splitter, split).WillOnce(testing::Return(returned));
+    EXPECT_CALL(*deserializers, getDeserializerFor)
+        .WillOnce(testing::Return(nullptr))
         .WillOnce(testing::Return(&deserializer));
     sb::cf::JsonValue returnedValue = "value";
-    EXPECT_CALL(deserializer, deserialize(returned.value)).WillOnce(testing::Return(returnedValue));
+    EXPECT_CALL(deserializer, deserialize).WillOnce(testing::Return(returnedValue));
 
     sb::cf::details::SettingParser parser{std::move(splitter), std::move(deserializers), "string", true, false};
 
@@ -161,8 +159,8 @@ TEST_F(SettingParserTest, ShouldFailDueToForUnknownType)
 
     std::string_view setting = "--option:deep:deep!unknown=value";
     sb::cf::ISettingSplitter::Result returned = {{"option", "deep", "deep"}, "unknown", "value"};
-    EXPECT_CALL(*splitter, split(setting)).WillOnce(testing::Return(returned));
-    EXPECT_CALL(*deserializers, getDeserializerFor(*returned.type)).WillOnce(testing::Return(nullptr));
+    EXPECT_CALL(*splitter, split).WillOnce(testing::Return(returned));
+    EXPECT_CALL(*deserializers, getDeserializerFor).WillOnce(testing::Return(nullptr));
 
     sb::cf::details::SettingParser parser{std::move(splitter), std::move(deserializers), "string", true, true};
 
@@ -180,10 +178,8 @@ TEST_F(SettingParserTest, ShouldFailDueToForUnknownDefaultType)
 
     std::string_view setting = "--option:deep:deep!unknown=value";
     sb::cf::ISettingSplitter::Result returned = {{"option", "deep", "deep"}, "unknown", "value"};
-    EXPECT_CALL(*splitter, split(setting)).WillOnce(testing::Return(returned));
-    EXPECT_CALL(*deserializers, getDeserializerFor(*returned.type)).WillOnce(testing::Return(nullptr));
-
-    EXPECT_CALL(*deserializers, getDeserializerFor(std::string_view{"string"})).WillOnce(testing::Return(nullptr));
+    EXPECT_CALL(*splitter, split).WillOnce(testing::Return(returned));
+    EXPECT_CALL(*deserializers, getDeserializerFor).WillRepeatedly(testing::Return(nullptr));
     sb::cf::JsonValue returnedValue = "value";
 
     sb::cf::details::SettingParser parser{std::move(splitter), std::move(deserializers), "string", true, false};

@@ -5,19 +5,19 @@
 #endif
 
 #ifndef _7BIT_CONF_STATIC_LIB
-/* #undef _7BIT_CONF_STATIC_LIB */
+#define _7BIT_CONF_STATIC_LIB
 #endif
 
 #ifndef _7BIT_CONF_HEADER_ONLY_LIB
-#define _7BIT_CONF_HEADER_ONLY_LIB 
+/* #undef _7BIT_CONF_HEADER_ONLY_LIB */
 #endif
 
 
 #define _7BIT_CONF_VERSION_MAJOR 1
-/* #undef _7BIT_CONF_VERSION_MINOR */
+#define _7BIT_CONF_VERSION_MINOR 1
 /* #undef _7BIT_CONF_VERSION_PATCH */
 
-#define _7BIT_CONF_VERSION "1.0.0"
+#define _7BIT_CONF_VERSION "1.1.0"
 
 #ifndef _7BIT_CONF_VERSION_MAJOR
 #define _7BIT_CONF_VERSION_MAJOR 0
