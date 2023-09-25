@@ -36,10 +36,10 @@ namespace sb::cf::details::utils
 
     EXPORT std::vector<std::string_view> split(std::string_view str, const std::vector<std::string_view> &dividers);
 
-    EXPORT std::pair<std::string_view, std::optional<std::string_view>> tryBreak(
+    EXPORT std::optional<std::pair<std::string_view, std::string_view>> tryBreak(
         std::string_view str, const std::vector<std::string_view> &dividers);
 
-    EXPORT std::pair<std::string_view, std::optional<std::string_view>> tryBreakFromEnd(
+    EXPORT std::optional<std::pair<std::string_view, std::string_view>> tryBreakFromEnd(
         std::string_view str, const std::vector<std::string_view> &dividers);
 
     EXPORT std::string joinViews(const std::vector<std::string_view> &strings, const std::string &divider);

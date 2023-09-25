@@ -189,20 +189,20 @@ PARAMS_TEST(UtilsTest, ShouldSplitStringMulti, SplitStrMultiData)
     EXPECT_EQ(sb::cf::details::utils::split(string, delims), expected);
 }
 
-Params<std::string, std::vector<std::string_view>, std::pair<std::string_view, std::optional<std::string_view>>>
+Params<std::string, std::vector<std::string_view>, std::optional<std::pair<std::string_view, std::string_view>>>
     BreakStrData{
-        {"", {""}, {"", std::nullopt}},
-        {"", {}, {"", std::nullopt}},
-        {"hello", {}, {"hello", std::nullopt}},
-        {"key=value", {"="}, {"key", "value"}},
-        {"key====value", {"===="}, {"key", "value"}},
-        {"=keyvalue", {"="}, {"", "keyvalue"}},
-        {"keyvalue=", {"="}, {"keyvalue", ""}},
-        {"key=value", {"-"}, {"key=value", std::nullopt}},
-        {"abcd", {""}, {"abcd", std::nullopt}},
-        {"first=sec:for:5:6", {"/"}, {"first=sec:for:5:6", std::nullopt}},
-        {"first:sec:for:5:6", {":"}, {"first", "sec:for:5:6"}},
-        {"first__sec__for__5__6__", {"__"}, {"first", "sec__for__5__6__"}},
+        {"", {""}, std::nullopt},
+        {"", {}, std::nullopt},
+        {"hello", {}, std::nullopt},
+        {"key=value", {"="}, std::pair<std::string_view, std::string_view>{"key", "value"}},
+        {"key====value", {"===="}, std::pair<std::string_view, std::string_view>{"key", "value"}},
+        {"=keyvalue", {"="}, std::pair<std::string_view, std::string_view>{"", "keyvalue"}},
+        {"keyvalue=", {"="}, std::pair<std::string_view, std::string_view>{"keyvalue", ""}},
+        {"key=value", {"-"}, std::nullopt},
+        {"abcd", {""}, std::nullopt},
+        {"first=sec:for:5:6", {"/"}, std::nullopt},
+        {"first:sec:for:5:6", {":"}, std::pair<std::string_view, std::string_view>{"first", "sec:for:5:6"}},
+        {"first__sec__for__5__6__", {"__"}, std::pair<std::string_view, std::string_view>{"first", "sec__for__5__6__"}},
     };
 PARAMS_TEST(UtilsTest, ShouldBreakString, BreakStrData)
 {
@@ -210,20 +210,20 @@ PARAMS_TEST(UtilsTest, ShouldBreakString, BreakStrData)
     EXPECT_EQ(sb::cf::details::utils::tryBreak(string, delim), expected);
 }
 
-Params<std::string, std::vector<std::string_view>, std::pair<std::string_view, std::optional<std::string_view>>>
+Params<std::string, std::vector<std::string_view>, std::optional<std::pair<std::string_view, std::string_view>>>
     BreakFromEndStrData{
-        {"", {""}, {"", std::nullopt}},
-        {"", {}, {"", std::nullopt}},
-        {"hello", {}, {"hello", std::nullopt}},
-        {"key=value", {"="}, {"key", "value"}},
-        {"key====value", {"===="}, {"key", "value"}},
-        {"=keyvalue", {"="}, {"", "keyvalue"}},
-        {"keyvalue=", {"="}, {"keyvalue", ""}},
-        {"key=value", {"-"}, {"key=value", std::nullopt}},
-        {"abcd", {""}, {"abcd", std::nullopt}},
-        {"first=sec:for:5:6", {"/"}, {"first=sec:for:5:6", std::nullopt}},
-        {"first:sec:for:5:6", {":"}, {"first:sec:for:5", "6"}},
-        {"first__sec__for__5__6", {"__"}, {"first__sec__for__5", "6"}},
+        {"", {""}, std::nullopt},
+        {"", {}, std::nullopt},
+        {"hello", {}, std::nullopt},
+        {"key=value", {"="}, std::pair<std::string_view, std::string_view>{"key", "value"}},
+        {"key====value", {"===="}, std::pair<std::string_view, std::string_view>{"key", "value"}},
+        {"=keyvalue", {"="}, std::pair<std::string_view, std::string_view>{"", "keyvalue"}},
+        {"keyvalue=", {"="}, std::pair<std::string_view, std::string_view>{"keyvalue", ""}},
+        {"key=value", {"-"}, std::nullopt},
+        {"abcd", {""}, std::nullopt},
+        {"first=sec:for:5:6", {"/"}, std::nullopt},
+        {"first:sec:for:5:6", {":"}, std::pair<std::string_view, std::string_view>{"first:sec:for:5", "6"}},
+        {"first__sec__for__5__6", {"__"}, std::pair<std::string_view, std::string_view>{"first__sec__for__5", "6"}},
     };
 PARAMS_TEST(UtilsTest, ShouldBreakFromEndString, BreakFromEndStrData)
 {

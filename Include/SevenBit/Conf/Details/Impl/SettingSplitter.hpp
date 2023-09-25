@@ -44,13 +44,21 @@ namespace sb::cf::details
     INLINE std::pair<std::string_view, std::optional<std::string_view>> SettingSplitter::splitSetting(
         std::string_view setting) const
     {
-        return details::utils::tryBreak(setting, _settingSplitters);
+        if (auto breakResult = details::utils::tryBreak(setting, _settingSplitters))
+        {
+            return {breakResult->first, breakResult->second};
+        }
+        return {setting, std::nullopt};
     }
 
     INLINE std::pair<std::string_view, std::optional<std::string_view>> SettingSplitter::splitType(
         std::string_view key) const
     {
-        return details::utils::tryBreakFromEnd(key, _typeMarkers);
+        if (auto breakResult = details::utils::tryBreakFromEnd(key, _typeMarkers))
+        {
+            return {breakResult->first, breakResult->second};
+        }
+        return {key, std::nullopt};
     }
 
     INLINE std::vector<std::string_view> SettingSplitter::splitKey(std::string_view key) const
