@@ -30,7 +30,7 @@ runs:
             },
             "Windows":{
                 "use_conan_profile":"windows-msvc-x86_64",
-                "preset": "conan-default"
+                "preset": "conan-release"
             }
           }
     - name: Configure Conan
