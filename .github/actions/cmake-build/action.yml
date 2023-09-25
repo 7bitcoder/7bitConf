@@ -14,10 +14,10 @@ runs:
   using: composite
   steps:
     - name: Configure CMake
-      run: cmake --preset conan-default -D_7BIT_CONF_LIBRARY_TYPE=${{ inputs.library-type }} ${{ inputs.args }}
+      run: cmake --preset ${{ steps.conan.outputs.PRESET }} -D_7BIT_CONF_LIBRARY_TYPE=${{ inputs.library-type }} ${{ inputs.args }}
       shell: pwsh
 
     - name: Build
-      run: cmake --build --preset ${{ steps.set-preset.outputs.PRESET }}
+      run: cmake --build --preset ${{ steps.conan.outputs.PRESET }}
       shell: pwsh
 

@@ -25,6 +25,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Install Conan Packages
+        id: conan
         uses: ./.github/actions/conan-install
         with:
           install-dir: ${{ env.BUILD_DIR }}
@@ -35,5 +36,5 @@ jobs:
           library-type: ${{ matrix.libraryType }}
 
       - name: Test
-        run: ctest --preset ${{ steps.set-preset.outputs.PRESET }} --output-on-failure
+        run: ctest --preset ${{ steps.conan.outputs.PRESET }} --output-on-failure
 
