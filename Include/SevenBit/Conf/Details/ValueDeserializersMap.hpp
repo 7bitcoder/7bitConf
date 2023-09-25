@@ -17,9 +17,13 @@ namespace sb::cf::details
         std::vector<std::pair<std::string, std::unique_ptr<IDeserializer>>> _deserializersLookup;
 
       public:
+        ValueDeserializersMap() = default;
+
         ValueDeserializersMap(const ValueDeserializersMap &) = delete;
-        
+        ValueDeserializersMap(ValueDeserializersMap &&) = default;
+
         ValueDeserializersMap &operator=(const ValueDeserializersMap &) = delete;
+        ValueDeserializersMap &operator=(ValueDeserializersMap &&) = default;
 
         using Ptr = std::unique_ptr<ValueDeserializersMap>;
 

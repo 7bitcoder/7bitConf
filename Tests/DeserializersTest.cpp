@@ -35,7 +35,7 @@ sb::cf::details::ValueDeserializersMap makeDefaultDeserializersMap()
     deserializers.add("uint", std::make_unique<sb::cf::details::UIntDeserializer>());
     deserializers.add("json", std::make_unique<sb::cf::details::JsonDeserializer>());
     deserializers.add("null", std::make_unique<sb::cf::details::NullDeserializer>());
-    return deserializers;
+    return std::move(deserializers);
 }
 
 static Params<std::string_view, std::optional<std::string_view>, sb::cf::JsonValue> DeserializeData = {
