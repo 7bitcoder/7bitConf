@@ -36,3 +36,4 @@ jobs:
 
       - name: Test
         run: ctest --preset ${{ steps.set-preset.outputs.PRESET }} --output-on-failure
+
