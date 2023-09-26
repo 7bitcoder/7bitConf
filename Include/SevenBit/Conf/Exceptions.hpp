@@ -14,17 +14,17 @@ namespace sb::cf
      */
     struct EXPORT ConfigException : public std::runtime_error
     {
-        ConfigException(const std::string &error);
+        explicit ConfigException(const std::string &error);
     };
 
     struct EXPORT NullPointerException : public ConfigException
     {
-        NullPointerException(const std::string &why);
+        explicit NullPointerException(const std::string &why);
     };
 
     struct EXPORT ConfigFileNotFoundException : public ConfigException
     {
-        ConfigFileNotFoundException(const std::filesystem::path &filePath);
+        explicit ConfigFileNotFoundException(const std::filesystem::path &filePath);
     };
 
     struct EXPORT BadConfigFileException : public ConfigException
@@ -34,12 +34,12 @@ namespace sb::cf
 
     struct EXPORT BadStreamException : public ConfigException
     {
-        BadStreamException(const std::string &why);
+        explicit BadStreamException(const std::string &why);
     };
 
     struct EXPORT SettingParserException : public ConfigException
     {
-        SettingParserException(const std::string &why);
+        explicit SettingParserException(const std::string &why);
     };
 } // namespace sb::cf
 
