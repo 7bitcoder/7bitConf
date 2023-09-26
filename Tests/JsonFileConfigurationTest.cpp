@@ -1,5 +1,4 @@
 #include <gtest/gtest.h>
-#include <iostream>
 
 #include "Mocks/ConfigurationBuilderMock.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"

@@ -1,10 +1,9 @@
 #pragma once
 
 #include <string_view>
+#include <vector>
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
-
-#include "SevenBit/Conf/Json.hpp"
 
 namespace sb::cf
 {

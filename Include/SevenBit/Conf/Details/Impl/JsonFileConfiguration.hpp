@@ -1,11 +1,10 @@
 #pragma once
 
 #include <filesystem>
-#include <memory>
+#include <tao/json/from_file.hpp>
 
 #include "SevenBit/Conf/Exceptions.hpp"
 #include "SevenBit/Conf/JsonFileConfiguration.hpp"
-#include <tao/json/from_file.hpp>
 
 namespace sb::cf
 {

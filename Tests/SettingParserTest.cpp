@@ -1,19 +1,12 @@
 #include <gmock/gmock.h>
-#include <gtest/gtest-param-test.h>
 #include <gtest/gtest.h>
-#include <gtest/internal/gtest-param-util.h>
-#include <iostream>
 #include <string_view>
-#include <tuple>
 
 #include "Mocks/DeserializerMock.hpp"
 #include "Mocks/SettingSplitterMock.hpp"
 #include "Mocks/ValueDeserializersMapMock.hpp"
 #include "SevenBit/Conf/Details/SettingParser.hpp"
-#include "SevenBit/Conf/Details/Utils.hpp"
-#include "SevenBit/Conf/Json.hpp"
-#include "SevenBit/Conf/SettingParserBuilder.hpp"
-#include "Utilities/ParamsTest.hpp"
+#include "SevenBit/Conf/Exceptions.hpp"
 
 class SettingParserTest : public testing::Test
 {

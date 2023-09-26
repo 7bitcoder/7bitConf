@@ -1,7 +1,5 @@
 #pragma once
 
-#include <memory>
-
 #include "SevenBit/Conf/JsonConfiguration.hpp"
 
 namespace sb::cf

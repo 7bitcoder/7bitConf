@@ -6,7 +6,6 @@
 #include <tuple>
 
 #include "SevenBit/Conf/Details/Deserializers.hpp"
-#include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/Details/ValueDeserializersMap.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"
 #include "Utilities/ParamsTest.hpp"

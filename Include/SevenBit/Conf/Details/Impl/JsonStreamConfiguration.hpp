@@ -1,9 +1,9 @@
 #pragma once
 
-#include "SevenBit/Conf/Exceptions.hpp"
-#include "SevenBit/Conf/Json.hpp"
-#include "SevenBit/Conf/JsonStreamConfiguration.hpp"
 #include <tao/json/from_stream.hpp>
+
+#include "SevenBit/Conf/Exceptions.hpp"
+#include "SevenBit/Conf/JsonStreamConfiguration.hpp"
 
 namespace sb::cf
 {
@@ -36,5 +36,5 @@ namespace sb::cf
             throw BadStreamException("File does not contain json object");
         }
         return json.get_object();
-    };
+    }
 } // namespace sb::cf

@@ -1,26 +1,21 @@
 #pragma once
 
-#include <string_view>
-#include <utility>
-#include <vector>
-
 #include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/Details/ValueDeserializersMap.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"
 
 namespace sb::cf::details
 {
-    INLINE std::vector<std::pair<std::string, std::unique_ptr<IDeserializer>>> &ValueDeserializersMap::
-        getDeserializersLookup()
+    INLINE std::vector<std::pair<std::string, IDeserializer::Ptr>> &ValueDeserializersMap::getDeserializersLookup()
     {
         return _deserializersLookup;
     }
 
-    INLINE void ValueDeserializersMap::add(std::string_view type, std::unique_ptr<IDeserializer> deserializer)
+    INLINE void ValueDeserializersMap::add(std::string_view type, IDeserializer::Ptr deserializer)
     {
         if (!deserializer)
         {
-            throw NullPointnerException("Deserializer cannot be null");
+            throw NullPointerException("Deserializer cannot be null");
         }
         _deserializersLookup.emplace_back(std::string{type}, std::move(deserializer));
     }

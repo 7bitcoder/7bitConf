@@ -6,7 +6,7 @@ namespace sb::cf
 {
     INLINE ConfigException::ConfigException(const std::string &error) : std::runtime_error(error) {}
 
-    INLINE NullPointnerException::NullPointnerException(const std::string &why) : ConfigException{why} {}
+    INLINE NullPointerException::NullPointerException(const std::string &why) : ConfigException{why} {}
 
     INLINE ConfigFileNotFoundException::ConfigFileNotFoundException(const std::filesystem::path &filePath)
         : ConfigException("Configuration file '" + filePath.generic_string() + "' does not exist")
@@ -15,7 +15,7 @@ namespace sb::cf
 
     INLINE
     BadConfigFileException::BadConfigFileException(const std::filesystem::path &filePath, const std::string &why)
-        : ConfigException("Cannot parseAll configuration file '" + filePath.generic_string() + "' beacuse: " + why)
+        : ConfigException("Cannot parseAll configuration file '" + filePath.generic_string() + "' because: " + why)
     {
     }
 

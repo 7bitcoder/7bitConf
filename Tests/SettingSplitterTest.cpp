@@ -1,13 +1,8 @@
-#include <gtest/gtest-param-test.h>
 #include <gtest/gtest.h>
-#include <gtest/internal/gtest-param-util.h>
-#include <random>
 #include <string_view>
-#include <tuple>
 
 #include "SevenBit/Conf/Details/SettingSplitter.hpp"
 #include "SevenBit/Conf/Details/Utils.hpp"
-#include "SevenBit/Conf/Exceptions.hpp"
 #include "Utilities/ParamsTest.hpp"
 
 class SettingSplitterTest : public testing::Test

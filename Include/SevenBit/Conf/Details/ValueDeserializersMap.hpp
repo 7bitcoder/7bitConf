@@ -1,7 +1,7 @@
 #pragma once
 
+#include <string>
 #include <string_view>
-#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -14,9 +14,11 @@ namespace sb::cf::details
     class EXPORT ValueDeserializersMap : public IValueDeserializersMap
     {
       private:
-        std::vector<std::pair<std::string, std::unique_ptr<IDeserializer>>> _deserializersLookup;
+        std::vector<std::pair<std::string, IDeserializer::Ptr>> _deserializersLookup;
 
       public:
+        using Ptr = std::unique_ptr<ValueDeserializersMap>;
+
         ValueDeserializersMap() = default;
 
         ValueDeserializersMap(const ValueDeserializersMap &) = delete;
@@ -25,11 +27,9 @@ namespace sb::cf::details
         ValueDeserializersMap &operator=(const ValueDeserializersMap &) = delete;
         ValueDeserializersMap &operator=(ValueDeserializersMap &&) = default;
 
-        using Ptr = std::unique_ptr<ValueDeserializersMap>;
+        std::vector<std::pair<std::string, IDeserializer::Ptr>> &getDeserializersLookup();
 
-        std::vector<std::pair<std::string, std::unique_ptr<IDeserializer>>> &getDeserializersLookup();
-
-        void add(std::string_view type, std::unique_ptr<IDeserializer> deserializer);
+        void add(std::string_view type, IDeserializer::Ptr deserializer);
 
         const IDeserializer *getDeserializerFor(std::string_view type) const override;
     };

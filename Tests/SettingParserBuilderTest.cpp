@@ -1,15 +1,13 @@
 #include <gtest/gtest.h>
-#include <iostream>
 #include <string_view>
-#include <tuple>
 
 #include "Mocks/DeserializerMock.hpp"
 #include "Mocks/SettingSplitterMock.hpp"
 #include "Mocks/ValueDeserializersMapMock.hpp"
 #include "SevenBit/Conf/Details/SettingParser.hpp"
+#include "SevenBit/Conf/Details/SettingSplitter.hpp"
 #include "SevenBit/Conf/Details/ValueDeserializersMap.hpp"
 #include "SevenBit/Conf/SettingParserBuilder.hpp"
-#include "Utilities/ParamsTest.hpp"
 
 class SettingParserBuilderTest : public testing::Test
 {

@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <cctype>
-#include <optional>
 
 #include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"

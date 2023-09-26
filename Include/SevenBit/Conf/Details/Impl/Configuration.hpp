@@ -1,12 +1,12 @@
 #pragma once
 
+#include <string>
 #include <tao/json/to_string.hpp>
 
 #include "SevenBit/Conf/Configuration.hpp"
 #include "SevenBit/Conf/Details/JsonExt.hpp"
 #include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"
-#include "SevenBit/Conf/Json.hpp"
 
 namespace sb::cf
 {
@@ -67,7 +67,7 @@ namespace sb::cf
         {
             return *value;
         }
-        return throwNullPointnerException(key);
+        return throwNullPointerException(key);
     }
 
     INLINE const JsonValue &Configuration::deepAt(std::string_view key) const
@@ -76,7 +76,7 @@ namespace sb::cf
         {
             return *value;
         }
-        return throwNullPointnerException(key);
+        return throwNullPointerException(key);
     }
 
     INLINE JsonValue &Configuration::deepAt(const std::vector<std::string_view> &key)
@@ -85,7 +85,7 @@ namespace sb::cf
         {
             return *value;
         }
-        return throwNullPointnerException(key);
+        return throwNullPointerException(key);
     }
 
     INLINE const JsonValue &Configuration::deepAt(const std::vector<std::string_view> &key) const
@@ -94,25 +94,25 @@ namespace sb::cf
         {
             return *value;
         }
-        return throwNullPointnerException(key);
+        return throwNullPointerException(key);
     }
 
     INLINE JsonValue &Configuration::operator[](std::string_view key)
     {
         return details::JsonExt::deepGetOrOverride(rootAsObject(), key);
-    };
+    }
 
-    INLINE const JsonValue &Configuration::operator[](std::string_view key) const { return deepAt(key); };
+    INLINE const JsonValue &Configuration::operator[](std::string_view key) const { return deepAt(key); }
 
     INLINE JsonValue &Configuration::operator[](const std::vector<std::string_view> &key)
     {
         return details::JsonExt::deepGetOrOverride(rootAsObject(), key);
-    };
+    }
 
     INLINE const JsonValue &Configuration::operator[](const std::vector<std::string_view> &key) const
     {
         return deepAt(key);
-    };
+    }
 
     INLINE void Configuration::reload()
     {
@@ -120,8 +120,11 @@ namespace sb::cf
         configRoot.clear();
         for (auto &provider : _providers)
         {
-            provider->load();
-            details::JsonExt::deepMerge(configRoot, std::move(provider->getConfiguration()));
+            if (provider)
+            {
+                provider->load();
+                details::JsonExt::deepMerge(configRoot, std::move(provider->getConfiguration()));
+            }
         }
     }
 
@@ -129,13 +132,13 @@ namespace sb::cf
 
     INLINE std::vector<IConfigurationProvider::Ptr> &Configuration::getProviders() { return _providers; }
 
-    INLINE JsonValue &Configuration::throwNullPointnerException(const std::vector<std::string_view> &key) const
+    INLINE JsonValue &Configuration::throwNullPointerException(const std::vector<std::string_view> &key) const
     {
-        throw NullPointnerException{"Value was not found for key: " + details::utils::joinViews(key, ":")};
+        throw NullPointerException{"Value was not found for key: " + details::utils::joinViews(key, ":")};
     }
 
-    INLINE JsonValue &Configuration::throwNullPointnerException(std::string_view key) const
+    INLINE JsonValue &Configuration::throwNullPointerException(std::string_view key) const
     {
-        throw NullPointnerException{"Value was not found for key: " + std::string{key}};
+        throw NullPointerException{"Value was not found for key: " + std::string{key}};
     }
 } // namespace sb::cf

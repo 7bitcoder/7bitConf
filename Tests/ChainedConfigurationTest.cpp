@@ -1,10 +1,9 @@
 #include <gtest/gtest.h>
-#include <iostream>
 #include <memory>
-#include <string>
 
 #include "Mocks/ConfigurationBuilderMock.hpp"
 #include "SevenBit/Conf/ChainedConfiguration.hpp"
+#include "SevenBit/Conf/Exceptions.hpp"
 #include "SevenBit/Conf/JsonConfiguration.hpp"
 #include "SevenBit/Conf/JsonFileConfiguration.hpp"
 
@@ -25,6 +24,19 @@ class ChainedConfigurationTest : public testing::Test
 
     static void TearDownTestSuite() {}
 };
+
+TEST_F(ChainedConfigurationTest, ShouldFailCreationDueToNullSource)
+{
+    EXPECT_THROW(sb::cf::ChainedConfigurationSource::create({nullptr}), sb::cf::NullPointerException);
+}
+
+TEST_F(ChainedConfigurationTest, ShouldFailAddDueToNullSource)
+{
+    auto source =
+        sb::cf::ChainedConfigurationSource::create({sb::cf::JsonFileConfigurationSource::create("appsettings.json")});
+
+    EXPECT_THROW(source->add(nullptr), sb::cf::NullPointerException);
+}
 
 TEST_F(ChainedConfigurationTest, ShouldLoadSimpleChainedConfig)
 {

@@ -4,6 +4,7 @@
 
 #include "SevenBit/Conf/ConfigurationProviderBase.hpp"
 #include "SevenBit/Conf/Details/JsonExt.hpp"
+#include "SevenBit/Conf/Exceptions.hpp"
 
 namespace sb::cf
 {
@@ -23,5 +24,15 @@ namespace sb::cf
     INLINE void ConfigurationProviderBase::update(const std::vector<std::string_view> &keys, JsonValue value)
     {
         details::JsonExt::updateWith(_configuration, keys, std::move(value));
+    }
+
+    INLINE void ConfigurationProviderBase::throwNullSourceException() const
+    {
+        throw NullPointerException{"Source cannot be null"};
+    }
+
+    INLINE void ConfigurationProviderBase::throwNullProviderException() const
+    {
+        throw NullPointerException{"Provider cannot be null"};
     }
 } // namespace sb::cf

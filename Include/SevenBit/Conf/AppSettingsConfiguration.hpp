@@ -3,7 +3,6 @@
 #include <memory>
 #include <string>
 
-#include "SevenBit/Conf/ChainedConfiguration.hpp"
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
 #include "SevenBit/Conf/IConfigurationSource.hpp"
@@ -19,7 +18,7 @@ namespace sb::cf
         using Ptr = std::unique_ptr<AppSettingsConfigurationSource>;
         using SPtr = std::shared_ptr<AppSettingsConfigurationSource>;
 
-        AppSettingsConfigurationSource(std::string environmentName);
+        explicit AppSettingsConfigurationSource(std::string environmentName);
 
         static Ptr create(std::string environmentName = "");
 

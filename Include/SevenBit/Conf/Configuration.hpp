@@ -5,11 +5,11 @@
 #include <string_view>
 #include <vector>
 
-#include "SevenBit/Conf/Json.hpp"
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
 #include "SevenBit/Conf/IConfiguration.hpp"
 #include "SevenBit/Conf/IConfigurationProvider.hpp"
+#include "SevenBit/Conf/Json.hpp"
 
 namespace sb::cf
 {
@@ -73,24 +73,40 @@ namespace sb::cf
 
         JsonValue &operator[](std::string_view key);
 
-        const JsonValue &operator[](std::string_view key) const;
+        const JsonValue &operator[](std::string_view key) const override;
 
         JsonValue &operator[](const std::vector<std::string_view> &key);
 
-        const JsonValue &operator[](const std::vector<std::string_view> &key) const;
+        const JsonValue &operator[](const std::vector<std::string_view> &key) const override;
 
         auto begin() { return rootAsObject().begin(); }
 
         auto end() { return rootAsObject().end(); }
 
-        auto rbBegin() { return rootAsObject().rbegin(); }
+        auto rbegin() { return rootAsObject().rbegin(); }
 
         auto rend() { return rootAsObject().rend(); }
 
-      private:
-        JsonValue &throwNullPointnerException(const std::vector<std::string_view> &key) const;
+        auto begin() const { return rootAsObject().begin(); }
 
-        JsonValue &throwNullPointnerException(std::string_view key) const;
+        auto end() const { return rootAsObject().end(); }
+
+        auto rbegin() const { return rootAsObject().rbegin(); }
+
+        auto rend() const { return rootAsObject().rend(); }
+
+        auto cbegin() const { return rootAsObject().cbegin(); }
+
+        auto cend() const { return rootAsObject().cend(); }
+
+        auto crbegin() const { return rootAsObject().crbegin(); }
+
+        auto crend() const { return rootAsObject().crend(); }
+
+      private:
+        JsonValue &throwNullPointerException(const std::vector<std::string_view> &key) const;
+
+        JsonValue &throwNullPointerException(std::string_view key) const;
     };
 } // namespace sb::cf
 

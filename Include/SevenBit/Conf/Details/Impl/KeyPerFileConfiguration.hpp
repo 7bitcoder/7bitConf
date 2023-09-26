@@ -1,7 +1,5 @@
 #pragma once
 
-#include <memory>
-
 #include "SevenBit/Conf/ChainedConfiguration.hpp"
 #include "SevenBit/Conf/Details/JsonExt.hpp"
 #include "SevenBit/Conf/Details/Utils.hpp"

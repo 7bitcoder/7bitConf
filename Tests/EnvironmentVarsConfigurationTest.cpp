@@ -1,9 +1,8 @@
-#include "SevenBit/Conf/EnvironmentVarsConfiguration.hpp"
-#include "Mocks/ConfigurationBuilderMock.hpp"
-#include "SevenBit/Conf/Json.hpp"
 #include <cstdlib>
 #include <gtest/gtest.h>
-#include <iostream>
+
+#include "Mocks/ConfigurationBuilderMock.hpp"
+#include "SevenBit/Conf/EnvironmentVarsConfiguration.hpp"
 
 #ifdef _WIN32
 #define _7BIT_CONF_PUT_ENV _putenv

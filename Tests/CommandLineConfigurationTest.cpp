@@ -1,8 +1,8 @@
-#include "SevenBit/Conf/CommandLineConfiguration.hpp"
-#include "Mocks/ConfigurationBuilderMock.hpp"
-#include "SevenBit/Conf/Json.hpp"
 #include <gtest/gtest.h>
 #include <iostream>
+
+#include "Mocks/ConfigurationBuilderMock.hpp"
+#include "SevenBit/Conf/CommandLineConfiguration.hpp"
 
 class CommandLineConfigurationTest : public testing::Test
 {

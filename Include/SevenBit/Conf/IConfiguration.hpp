@@ -1,4 +1,5 @@
 #pragma once
+
 #include <memory>
 #include <string>
 #include <string_view>
@@ -27,7 +28,7 @@ namespace sb::cf
 
         virtual const JsonValue *deepFind(const std::vector<std::string_view> &key) const = 0;
 
-        const JsonValue &operator[](std::string_view key) const { return deepAt(key); };
+        virtual const JsonValue &operator[](std::string_view key) const { return deepAt(key); };
 
         virtual const JsonValue &at(const std::string &key) const = 0;
 
@@ -35,23 +36,23 @@ namespace sb::cf
 
         virtual const JsonValue &deepAt(const std::vector<std::string_view> &key) const = 0;
 
-        const JsonValue &operator[](const std::vector<std::string_view> &key) const { return deepAt(key); };
+        virtual const JsonValue &operator[](const std::vector<std::string_view> &key) const { return deepAt(key); };
 
-        JsonObject::const_iterator cbegin() const { return rootAsObject().cbegin(); }
+        auto cbegin() const { return rootAsObject().cbegin(); }
 
-        JsonObject::const_iterator cEnd() const { return rootAsObject().cend(); }
+        auto cend() const { return rootAsObject().cend(); }
 
-        JsonObject::const_reverse_iterator crbegin() const { return rootAsObject().crbegin(); }
+        auto crbegin() const { return rootAsObject().crbegin(); }
 
-        JsonObject::const_reverse_iterator crend() const { return rootAsObject().crend(); }
+        auto crend() const { return rootAsObject().crend(); }
 
-        JsonObject::const_iterator begin() const { return rootAsObject().begin(); }
+        auto begin() const { return rootAsObject().begin(); }
 
-        JsonObject::const_iterator end() const { return rootAsObject().end(); }
+        auto end() const { return rootAsObject().end(); }
 
-        JsonObject::const_reverse_iterator rbegin() const { return rootAsObject().rbegin(); }
+        auto rbegin() const { return rootAsObject().rbegin(); }
 
-        JsonObject::const_reverse_iterator rend() const { return rootAsObject().rend(); }
+        auto rend() const { return rootAsObject().rend(); }
 
         virtual ~IConfiguration() = default;
     };

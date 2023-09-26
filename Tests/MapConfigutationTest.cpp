@@ -1,9 +1,9 @@
-#include "Mocks/ConfigurationBuilderMock.hpp"
-#include "SevenBit/Conf/Json.hpp"
-#include "SevenBit/Conf/JsonConfiguration.hpp"
-#include "SevenBit/Conf/MapConfiguration.hpp"
 #include <gtest/gtest.h>
 #include <iostream>
+
+#include "Mocks/ConfigurationBuilderMock.hpp"
+#include "SevenBit/Conf/JsonConfiguration.hpp"
+#include "SevenBit/Conf/MapConfiguration.hpp"
 
 class MapConfigutationTest : public testing::Test
 {

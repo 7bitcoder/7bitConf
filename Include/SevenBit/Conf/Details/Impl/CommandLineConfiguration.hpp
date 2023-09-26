@@ -1,12 +1,7 @@
 #pragma once
 
-#include <utility>
-
 #include "SevenBit/Conf/CommandLineConfiguration.hpp"
-#include "SevenBit/Conf/Details/SettingParser.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"
-#include "SevenBit/Conf/LibraryConfig.hpp"
-#include "SevenBit/Conf/SettingParserBuilder.hpp"
 
 namespace sb::cf
 {
@@ -16,7 +11,7 @@ namespace sb::cf
     {
         if (!_parser)
         {
-            throw NullPointnerException("Parser cannot be null");
+            throw NullPointerException("Parser cannot be null");
         }
     }
 
@@ -65,7 +60,7 @@ namespace sb::cf
         for (auto &setting : _source->getArgs())
         {
             auto [keys, value] = parser.parse(setting);
-            update(keys, value);
+            update(keys, std::move(value));
         }
     }
 } // namespace sb::cf

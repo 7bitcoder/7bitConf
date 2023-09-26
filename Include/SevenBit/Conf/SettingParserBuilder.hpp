@@ -7,7 +7,6 @@
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
-#include "SevenBit/Conf/IDeserializer.hpp"
 #include "SevenBit/Conf/ISettingParser.hpp"
 #include "SevenBit/Conf/ISettingSplitter.hpp"
 #include "SevenBit/Conf/IValueDeserializersMap.hpp"

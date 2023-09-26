@@ -1,10 +1,9 @@
+#include <gtest/gtest.h>
+#include <string_view>
+
 #include "SevenBit/Conf/Details/JsonExt.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"
-#include "SevenBit/Conf/Json.hpp"
 #include "Utilities/ParamsTest.hpp"
-#include <gtest/gtest.h>
-#include <iostream>
-#include <string_view>
 
 using namespace sb::cf::json;
 

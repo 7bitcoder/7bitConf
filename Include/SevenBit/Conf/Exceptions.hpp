@@ -17,9 +17,9 @@ namespace sb::cf
         ConfigException(const std::string &error);
     };
 
-    struct EXPORT NullPointnerException : public ConfigException
+    struct EXPORT NullPointerException : public ConfigException
     {
-        NullPointnerException(const std::string &why);
+        NullPointerException(const std::string &why);
     };
 
     struct EXPORT ConfigFileNotFoundException : public ConfigException

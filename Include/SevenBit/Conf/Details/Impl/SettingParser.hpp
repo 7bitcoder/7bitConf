@@ -1,14 +1,8 @@
 #pragma once
 
-#include <cstddef>
-#include <cstdint>
-#include <memory>
-#include <utility>
+#include <algorithm>
 
-#include "SevenBit/Conf/Details/Deserializers.hpp"
 #include "SevenBit/Conf/Details/SettingParser.hpp"
-#include "SevenBit/Conf/Details/Utils.hpp"
-#include "SevenBit/Conf/Details/ValueDeserializersMap.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"
 
 namespace sb::cf::details
@@ -21,11 +15,11 @@ namespace sb::cf::details
     {
         if (!_settingSplitter)
         {
-            throw NullPointnerException("Setting splitter cannot be null");
+            throw NullPointerException("Setting splitter cannot be null");
         }
         if (!_valueDeserializersMap)
         {
-            throw NullPointnerException("Value deserializer map cannot be null");
+            throw NullPointerException("Value deserializer map cannot be null");
         }
     }
 

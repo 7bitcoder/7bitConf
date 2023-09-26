@@ -35,7 +35,6 @@ namespace sb::cf::details
 
         std::vector<std::string_view> splitKey(std::string_view key) const;
     };
-
 } // namespace sb::cf::details
 
 #ifdef _7BIT_CONF_ADD_IMPL

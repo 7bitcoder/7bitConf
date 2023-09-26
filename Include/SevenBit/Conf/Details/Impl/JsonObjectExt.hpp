@@ -1,8 +1,6 @@
 #pragma once
-#include <algorithm>
-#include <cstddef>
+
 #include <string>
-#include <tao/json/type.hpp>
 
 #include "SevenBit/Conf/Details/JsonExt.hpp"
 #include "SevenBit/Conf/Details/Utils.hpp"
@@ -215,7 +213,7 @@ namespace sb::cf::details
         }
         if (!current) // should not happen
         {
-            throw NullPointnerException("Object is null");
+            throw NullPointerException("Object is null");
         }
         return *current;
     }

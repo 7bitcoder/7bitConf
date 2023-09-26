@@ -1,8 +1,7 @@
-#include "SevenBit/Conf/JsonConfiguration.hpp"
-#include "Mocks/ConfigurationBuilderMock.hpp"
-#include "SevenBit/Conf/Json.hpp"
 #include <gtest/gtest.h>
-#include <iostream>
+
+#include "Mocks/ConfigurationBuilderMock.hpp"
+#include "SevenBit/Conf/JsonConfiguration.hpp"
 
 class JsonConfigurationTest : public testing::Test
 {

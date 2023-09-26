@@ -2,7 +2,6 @@
 
 #include <functional>
 #include <memory>
-#include <vector>
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 

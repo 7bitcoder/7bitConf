@@ -6,7 +6,6 @@
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
-#include "SevenBit/Conf/IConfiguration.hpp"
 #include "SevenBit/Conf/IConfigurationBuilder.hpp"
 
 namespace sb::cf

@@ -1,9 +1,7 @@
 #pragma once
 
 #include <cstdlib>
-#include <memory>
 
-#include "SevenBit/Conf/Details/JsonExt.hpp"
 #include "SevenBit/Conf/EnvironmentVarsConfiguration.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"
 
@@ -23,7 +21,7 @@ namespace sb::cf
     {
         if (!_parser)
         {
-            throw NullPointnerException("Parser cannot be null");
+            throw NullPointerException("Parser cannot be null");
         }
     }
 
@@ -56,7 +54,7 @@ namespace sb::cf
         for (auto &setting : getEnvVars())
         {
             auto [keys, value] = parser.parse(setting);
-            update(keys, value);
+            update(keys, std::move(value));
         }
     }
 

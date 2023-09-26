@@ -1,8 +1,9 @@
 
-#include "SevenBit/Conf/Json.hpp"
 #include <gtest/gtest.h>
 #include <string>
 #include <tuple>
+
+#include "SevenBit/Conf/Json.hpp"
 
 template <class... T> using Param = std::tuple<T...>;
 template <class... T> using Params = std::vector<Param<T...>>;
