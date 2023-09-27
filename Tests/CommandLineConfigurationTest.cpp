@@ -3,6 +3,7 @@
 
 #include "Mocks/ConfigurationBuilderMock.hpp"
 #include "SevenBit/Conf/CommandLineConfiguration.hpp"
+#include "SevenBit/Conf/Exceptions.hpp"
 
 class CommandLineConfigurationTest : public testing::Test
 {
