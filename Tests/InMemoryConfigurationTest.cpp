@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "Mocks/ConfigurationBuilderMock.hpp"
+#include "SevenBit/Conf/Exceptions.hpp"
 #include "SevenBit/Conf/InMemoryConfiguration.hpp"
 
 class InMemoryConfigurationTest : public testing::Test
@@ -19,6 +20,11 @@ class InMemoryConfigurationTest : public testing::Test
 
     static void TearDownTestSuite() {}
 };
+
+TEST_F(InMemoryConfigurationTest, ShouldFailProviderCreationDueToNullSource)
+{
+    EXPECT_THROW(sb::cf::InMemoryConfigurationProvider(nullptr), sb::cf::NullPointerException);
+}
 
 TEST_F(InMemoryConfigurationTest, ShouldLoadSimpleSettingConfiguration)
 {

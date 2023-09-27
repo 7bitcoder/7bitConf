@@ -40,7 +40,7 @@ namespace sb::cf::details
 
         [[nodiscard]] std::map<std::string, IDeserializer::Ptr, CaseInsensitiveLess> &getDeserializersMap();
 
-        void add(std::string_view type, IDeserializer::Ptr deserializer);
+        void set(std::string_view type, IDeserializer::Ptr deserializer);
 
         [[nodiscard]] const IDeserializer *getDeserializerFor(std::string_view type) const override;
     };

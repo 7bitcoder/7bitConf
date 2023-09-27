@@ -29,6 +29,26 @@ PARAMS_TEST(UtilsTest, ShouldCheckNumberStrings, CheckNumberStringsData)
     EXPECT_EQ(sb::cf::details::utils::isNumberString(string), expected);
 }
 
+Params<std::string_view, std::string_view, bool> IgnoreCaseLessData{
+    {"", "", false},
+    {"I", "i", false},
+    {"i", "I", false},
+    {"123@#", "123@#", false},
+    {"abcdef", "ABCDEF", false},
+    {"abcDEF", "abcdef", false},
+    {"abcDEF", "ABCdef", false},
+    {"abcDEF12##", "abCdef12##", false},
+    {"", "abcded", true},
+    {"BA", "ab", false},
+    {"ab", "ab\n", true},
+    {"1222", "12", false},
+};
+PARAMS_TEST(UtilsTest, ShouldIgnoreCaseLessCompareStrings, IgnoreCaseLessData)
+{
+    auto &[string, search, expected] = GetParam();
+    EXPECT_EQ(sb::cf::details::utils::ignoreCaseLess(string, search), expected);
+}
+
 Params<std::string_view, std::string_view, bool> IgnoreCaseEqualsData{
     {"", "", true},
     {"I", "i", true},
@@ -246,6 +266,13 @@ PARAMS_TEST(UtilsTest, ShouldJoinStrings, JoinStrData)
 {
     auto &[strings, delim, expected] = GetParam();
     EXPECT_EQ(sb::cf::details::utils::joinViews(strings, delim), expected);
+}
+
+TEST_F(UtilsTest, ShouldAssertPtr)
+{
+    int i = 1;
+    EXPECT_NO_THROW(sb::cf::details::utils::assertPtr(&i));
+    EXPECT_THROW(sb::cf::details::utils::assertPtr<int>(nullptr), sb::cf::NullPointerException);
 }
 
 Params<std::string_view, bool, std::pair<bool, int>> ConvertToNumberIntData{

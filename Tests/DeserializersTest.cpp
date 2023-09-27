@@ -7,7 +7,6 @@
 
 #include "SevenBit/Conf/Details/Deserializers.hpp"
 #include "SevenBit/Conf/Details/ValueDeserializersMap.hpp"
-#include "SevenBit/Conf/Exceptions.hpp"
 #include "Utilities/ParamsTest.hpp"
 
 class DeserializersTest : public testing::Test
@@ -27,13 +26,13 @@ class DeserializersTest : public testing::Test
 sb::cf::details::ValueDeserializersMap makeDefaultDeserializersMap()
 {
     sb::cf::details::ValueDeserializersMap deserializers;
-    deserializers.add("string", std::make_unique<sb::cf::details::StringDeserializer>());
-    deserializers.add("bool", std::make_unique<sb::cf::details::BoolDeserializer>());
-    deserializers.add("int", std::make_unique<sb::cf::details::IntDeserializer>());
-    deserializers.add("double", std::make_unique<sb::cf::details::DoubleDeserializer>());
-    deserializers.add("uint", std::make_unique<sb::cf::details::UIntDeserializer>());
-    deserializers.add("json", std::make_unique<sb::cf::details::JsonDeserializer>());
-    deserializers.add("null", std::make_unique<sb::cf::details::NullDeserializer>());
+    deserializers.set("string", std::make_unique<sb::cf::details::StringDeserializer>());
+    deserializers.set("bool", std::make_unique<sb::cf::details::BoolDeserializer>());
+    deserializers.set("int", std::make_unique<sb::cf::details::IntDeserializer>());
+    deserializers.set("double", std::make_unique<sb::cf::details::DoubleDeserializer>());
+    deserializers.set("uint", std::make_unique<sb::cf::details::UIntDeserializer>());
+    deserializers.set("json", std::make_unique<sb::cf::details::JsonDeserializer>());
+    deserializers.set("null", std::make_unique<sb::cf::details::NullDeserializer>());
     return std::move(deserializers);
 }
 
@@ -167,7 +166,11 @@ TEST_F(DeserializersTest, ShouldNotFoundDeserializer)
 {
     auto deserializers = makeDefaultDeserializersMap();
 
+    deserializers.set("unknown2", nullptr);
+
+    EXPECT_EQ(deserializers.getDeserializersMap().size(), 8);
     EXPECT_FALSE(deserializers.getDeserializerFor("unknown"));
+    EXPECT_FALSE(deserializers.getDeserializerFor("unknown2"));
 }
 
 static Params<std::string_view, std::optional<std::string_view>> FailDeserializeValues = {

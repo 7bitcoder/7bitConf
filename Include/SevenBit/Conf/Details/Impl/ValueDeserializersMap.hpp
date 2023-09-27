@@ -12,7 +12,7 @@ namespace sb::cf::details
         return _deserializersLookup;
     }
 
-    INLINE void ValueDeserializersMap::add(std::string_view type, IDeserializer::Ptr deserializer)
+    INLINE void ValueDeserializersMap::set(std::string_view type, IDeserializer::Ptr deserializer)
     {
         _deserializersLookup[std::string{type}] = std::move(deserializer);
     }

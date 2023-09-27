@@ -48,6 +48,7 @@ namespace sb::cf
         CommandLineConfigurationSource::SPtr source)
         : _source(std::move(source))
     {
+        details::utils::assertPtr(_source);
     }
 
     INLINE void CommandLineConfigurationProvider::load()

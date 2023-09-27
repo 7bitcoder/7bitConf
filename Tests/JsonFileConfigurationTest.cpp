@@ -20,6 +20,11 @@ class JsonFileConfigurationTest : public testing::Test
     static void TearDownTestSuite() {}
 };
 
+TEST_F(JsonFileConfigurationTest, ShouldFailProviderCreationDueToNullSource)
+{
+    EXPECT_THROW(sb::cf::JsonFileConfigurationProvider(nullptr), sb::cf::NullPointerException);
+}
+
 TEST_F(JsonFileConfigurationTest, ShouldLoadSimpleJsonConfigFile)
 {
     auto provider = sb::cf::JsonFileConfigurationSource::create("appsettings.json")->build(mock);

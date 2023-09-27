@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "Mocks/ConfigurationBuilderMock.hpp"
+#include "SevenBit/Conf/Exceptions.hpp"
 #include "SevenBit/Conf/JsonConfiguration.hpp"
 #include "SevenBit/Conf/MapConfiguration.hpp"
 
@@ -20,6 +21,11 @@ class MapConfigutationTest : public testing::Test
 
     static void TearDownTestSuite() {}
 };
+
+TEST_F(MapConfigutationTest, ShouldFailProviderCreationDueToNullSource)
+{
+    EXPECT_THROW(sb::cf::MapConfigurationProvider(nullptr, nullptr), sb::cf::NullPointerException);
+}
 
 TEST_F(MapConfigutationTest, ShouldMapSimpleConfiguration)
 {
