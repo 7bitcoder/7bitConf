@@ -57,7 +57,7 @@ TEST_F(CommandLineConfigurationTest, ShouldLoadConfFromArgs)
 TEST_F(CommandLineConfigurationTest, ShouldLoadEmptyConfFromArgs)
 {
     const char *argv[] = {
-        "progtam/path",
+        "exec/path",
     };
     int size = sizeof(argv) / sizeof(char *);
     auto provider = sb::cf::CommandLineConfigurationSource::create(size, argv)->build(mock);

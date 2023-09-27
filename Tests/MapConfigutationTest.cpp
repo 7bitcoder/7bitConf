@@ -6,14 +6,14 @@
 #include "SevenBit/Conf/JsonConfiguration.hpp"
 #include "SevenBit/Conf/MapConfiguration.hpp"
 
-class MapConfigutationTest : public testing::Test
+class MapConfigurationTest : public testing::Test
 {
   protected:
     ConfigurationBuilderMock mock;
 
     static void TearUpTestSuite() {}
 
-    MapConfigutationTest() {}
+    MapConfigurationTest() {}
 
     void SetUp() override {}
 
@@ -22,12 +22,12 @@ class MapConfigutationTest : public testing::Test
     static void TearDownTestSuite() {}
 };
 
-TEST_F(MapConfigutationTest, ShouldFailProviderCreationDueToNullSource)
+TEST_F(MapConfigurationTest, ShouldFailProviderCreationDueToNullSource)
 {
     EXPECT_THROW(sb::cf::MapConfigurationProvider(nullptr, nullptr), sb::cf::NullPointerException);
 }
 
-TEST_F(MapConfigutationTest, ShouldMapSimpleConfiguration)
+TEST_F(MapConfigurationTest, ShouldMapSimpleConfiguration)
 {
     auto provider = sb::cf::MapConfigurationSource::create(sb::cf::JsonConfigurationSource::create({{"yes", 12345}}),
                                                            [](sb::cf::JsonObject ob) {
