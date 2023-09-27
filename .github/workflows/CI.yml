@@ -36,5 +36,5 @@ jobs:
           library-type: ${{ matrix.libraryType }}
 
       - name: Test
-        run: ctest --preset conan-release
+        run: ctest -j 10 --preset conan-release
 
