@@ -16,9 +16,9 @@ namespace sb::cf
         JsonObject _configuration;
 
       public:
-        const JsonObject &getConfiguration() const override;
+        [[nodiscard]] const JsonObject &getConfiguration() const override;
 
-        JsonObject &getConfiguration() override;
+        [[nodiscard]] JsonObject &getConfiguration() override;
 
       protected:
         void clear();
@@ -28,10 +28,6 @@ namespace sb::cf
         void update(JsonObject configuration);
 
         void update(const std::vector<std::string_view> &keys, JsonValue value);
-
-        void throwNullSourceException() const;
-
-        void throwNullProviderException() const;
     };
 } // namespace sb::cf
 

@@ -37,8 +37,6 @@ class EnvironmentVarsConfigurationTest : public testing::Test
 
     void TearDown() override {}
 
-    ~EnvironmentVarsConfigurationTest() {}
-
     static void TearDownTestSuite() {}
 };
 

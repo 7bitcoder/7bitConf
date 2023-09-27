@@ -14,8 +14,6 @@ class ConfigurationTest : public testing::Test
 
     void TearDown() override {}
 
-    ~ConfigurationTest() {}
-
     static void TearDownTestSuite() {}
 };
 

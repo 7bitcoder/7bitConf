@@ -17,8 +17,6 @@ class AppSettingsConfiguration : public testing::Test
 
     void TearDown() override {}
 
-    ~AppSettingsConfiguration() {}
-
     static void TearDownTestSuite() {}
 };
 

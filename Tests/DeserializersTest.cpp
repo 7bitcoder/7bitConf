@@ -230,12 +230,5 @@ PARAMS_TEST(DeserializersTest, ShouldFailDeserialize, FailDeserializeValues)
     auto deserializer = deserializers.getDeserializerFor(type);
 
     EXPECT_TRUE(deserializer);
-    EXPECT_ANY_THROW(deserializer->deserialize(value));
-}
-
-TEST_F(DeserializersTest, ShouldFailCreatingDeserializesMap)
-{
-    sb::cf::details::ValueDeserializersMap deserializers;
-
-    EXPECT_THROW(deserializers.add("string", nullptr), sb::cf::ConfigException);
+    EXPECT_ANY_THROW(auto result = deserializer->deserialize(value));
 }

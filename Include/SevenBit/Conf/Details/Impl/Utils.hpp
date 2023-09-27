@@ -13,6 +13,12 @@ namespace sb::cf::details::utils
         return !str.empty() && std::all_of(str.begin(), str.end(), [](char ch) { return std::isdigit(ch); });
     }
 
+    INLINE bool ignoreCaseLess(std::string_view str, std::string_view search)
+    {
+        return std::lexicographical_compare(str.begin(), str.end(), search.begin(), search.end(),
+                                            [](char cha, char chb) { return std::tolower(cha) < std::tolower(chb); });
+    }
+
     INLINE bool ignoreCaseEqual(std::string_view str, std::string_view search)
     {
         return str.size() == search.size() &&

@@ -20,9 +20,9 @@ namespace sb::cf
 
         explicit AppSettingsConfigurationSource(std::string environmentName);
 
-        static Ptr create(std::string environmentName = "");
+        [[nodiscard]] static Ptr create(std::string environmentName = "");
 
-        const std::string &getEnvironmentName() const;
+        [[nodiscard]] const std::string &getEnvironmentName() const;
 
         IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
     };

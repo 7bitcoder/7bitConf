@@ -211,10 +211,6 @@ namespace sb::cf::details
         {
             current = &getOrOverride(*current, keys[i]);
         }
-        if (!current) // should not happen
-        {
-            throw NullPointerException("Object is null");
-        }
         return *current;
     }
 

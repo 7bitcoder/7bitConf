@@ -33,13 +33,13 @@ namespace sb::cf
 
         virtual IConfigurationBuilder &add(IConfigurationSource::SPtr) = 0;
 
-        virtual std::unordered_map<std::string, IObject::SPtr> &getProperties() = 0;
+        [[nodiscard]] virtual std::unordered_map<std::string, IObject::SPtr> &getProperties() = 0;
 
-        virtual const std::unordered_map<std::string, IObject::SPtr> &getProperties() const = 0;
+        [[nodiscard]] virtual const std::unordered_map<std::string, IObject::SPtr> &getProperties() const = 0;
 
-        virtual std::vector<IConfigurationSource::SPtr> &getSources() = 0;
+        [[nodiscard]] virtual std::vector<IConfigurationSource::SPtr> &getSources() = 0;
 
-        virtual const std::vector<IConfigurationSource::SPtr> &getSources() const = 0;
+        [[nodiscard]] virtual const std::vector<IConfigurationSource::SPtr> &getSources() const = 0;
 
         virtual IConfiguration::Ptr build() = 0;
 

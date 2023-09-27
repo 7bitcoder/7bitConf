@@ -24,13 +24,13 @@ namespace sb::cf
         using Ptr = std::unique_ptr<InMemoryConfigurationSource>;
         using SPtr = std::shared_ptr<InMemoryConfigurationSource>;
 
-        static SPtr create(std::vector<std::pair<std::string_view, JsonValue>> settings);
+        [[nodiscard]] static SPtr create(std::vector<std::pair<std::string_view, JsonValue>> settings);
 
         IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
 
-        auto begin() { return _settings.begin(); }
+        [[nodiscard]] auto begin() { return _settings.begin(); }
 
-        auto end() { return _settings.end(); }
+        [[nodiscard]] auto end() { return _settings.end(); }
     };
 
     class EXPORT InMemoryConfigurationProvider : public ConfigurationProviderBase
@@ -39,7 +39,7 @@ namespace sb::cf
         InMemoryConfigurationSource::SPtr _source;
 
       public:
-        InMemoryConfigurationProvider(InMemoryConfigurationSource::SPtr source);
+        explicit InMemoryConfigurationProvider(InMemoryConfigurationSource::SPtr source);
 
         void load() override;
     };

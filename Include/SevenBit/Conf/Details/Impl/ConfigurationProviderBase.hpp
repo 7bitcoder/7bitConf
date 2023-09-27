@@ -25,14 +25,4 @@ namespace sb::cf
     {
         details::JsonExt::updateWith(_configuration, keys, std::move(value));
     }
-
-    INLINE void ConfigurationProviderBase::throwNullSourceException() const
-    {
-        throw NullPointerException{"Source cannot be null"};
-    }
-
-    INLINE void ConfigurationProviderBase::throwNullProviderException() const
-    {
-        throw NullPointerException{"Provider cannot be null"};
-    }
 } // namespace sb::cf

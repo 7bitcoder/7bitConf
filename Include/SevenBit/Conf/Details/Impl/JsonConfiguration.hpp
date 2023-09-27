@@ -1,5 +1,6 @@
 #pragma once
 
+#include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/JsonConfiguration.hpp"
 
 namespace sb::cf
@@ -24,6 +25,7 @@ namespace sb::cf
     INLINE JsonConfigurationProvider::JsonConfigurationProvider(JsonConfigurationSource::SPtr source)
         : _source(std::move(source))
     {
+        details::utils::assertPtr(_source);
     }
 
     INLINE void JsonConfigurationProvider::load() { set(_source->getJson()); }

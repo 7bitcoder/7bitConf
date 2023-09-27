@@ -20,8 +20,6 @@ class SettingParserBuilderTest : public testing::Test
 
     void TearDown() override {}
 
-    ~SettingParserBuilderTest() {}
-
     static void TearDownTestSuite() {}
 };
 

@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "SevenBit/Conf/ChainedConfiguration.hpp"
+#include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"
 
 namespace sb::cf
@@ -10,10 +11,9 @@ namespace sb::cf
     INLINE ChainedConfigurationSource::ChainedConfigurationSource(std::vector<IConfigurationSource::SPtr> sources)
         : _sources(std::move(sources))
     {
-        if (!_sources.empty() &&
-            std::any_of(_sources.begin(), _sources.end(), [](const auto &source) { return !source; }))
+        for (auto &source : _sources)
         {
-            throwSourceNullException();
+            details::utils::assertPtr(source);
         }
     }
 
@@ -25,16 +25,8 @@ namespace sb::cf
 
     INLINE void ChainedConfigurationSource::add(IConfigurationSource::SPtr source)
     {
-        if (!source)
-        {
-            throwSourceNullException();
-        }
+        details::utils::assertPtr(source);
         _sources.push_back(std::move(source));
-    }
-
-    INLINE void ChainedConfigurationSource::throwSourceNullException() const
-    {
-        throw NullPointerException{"Source cannot be null"};
     }
 
     INLINE IConfigurationProvider::Ptr ChainedConfigurationSource::build(IConfigurationBuilder &builder)
@@ -43,10 +35,8 @@ namespace sb::cf
         providers.reserve(_sources.size());
         for (auto &source : _sources)
         {
-            if (source)
-            {
-                providers.emplace_back(source->build(builder));
-            }
+            details::utils::assertPtr(source);
+            providers.emplace_back(source->build(builder));
         }
         return std::make_unique<ChainedConfigurationProvider>(std::move(providers));
     }
@@ -55,6 +45,10 @@ namespace sb::cf
         std::vector<IConfigurationProvider::Ptr> providers)
         : _providers(std::move(providers))
     {
+        for (auto &provider : _providers)
+        {
+            details::utils::assertPtr(provider);
+        }
     }
 
     INLINE void ChainedConfigurationProvider::load()
@@ -62,6 +56,7 @@ namespace sb::cf
         clear();
         for (auto &provider : _providers)
         {
+            details::utils::assertPtr(provider);
             provider->load();
             update(std::move(provider->getConfiguration()));
         }

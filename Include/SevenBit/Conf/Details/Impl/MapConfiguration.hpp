@@ -1,5 +1,6 @@
 #pragma once
 
+#include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/MapConfiguration.hpp"
 
 namespace sb::cf
@@ -8,6 +9,7 @@ namespace sb::cf
                                                           std::function<JsonObject(JsonObject)> mapFcn)
         : _source(std::move(source)), _mapFcn(std::move(mapFcn))
     {
+        details::utils::assertPtr(_source);
     }
 
     INLINE MapConfigurationSource::SPtr MapConfigurationSource::create(IConfigurationSource::SPtr source,
@@ -27,10 +29,14 @@ namespace sb::cf
                                                               IConfigurationProvider::Ptr innerProvider)
         : _source(std::move(source)), _innerProvider(std::move(innerProvider))
     {
+        details::utils::assertPtr(_source);
+        details::utils::assertPtr(_innerProvider);
     }
 
     INLINE void MapConfigurationProvider::load()
     {
+        details::utils::assertPtr(_source);
+        details::utils::assertPtr(_innerProvider);
         _innerProvider->load();
         set(_source->getMapFcn()(std::move(_innerProvider->getConfiguration())));
     }

@@ -18,8 +18,6 @@ class MapConfigutationTest : public testing::Test
 
     void TearDown() override {}
 
-    ~MapConfigutationTest() {}
-
     static void TearDownTestSuite() {}
 };
 

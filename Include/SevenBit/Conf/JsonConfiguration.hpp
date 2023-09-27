@@ -15,15 +15,15 @@ namespace sb::cf
       private:
         JsonObject _configuration;
 
-        JsonConfigurationSource(JsonObject configuration);
+        explicit JsonConfigurationSource(JsonObject configuration);
 
       public:
         using Ptr = std::unique_ptr<JsonConfigurationSource>;
         using SPtr = std::shared_ptr<JsonConfigurationSource>;
 
-        static SPtr create(JsonObject configuration);
+        [[nodiscard]] static SPtr create(JsonObject configuration);
 
-        const JsonObject &getJson() const;
+        [[nodiscard]] const JsonObject &getJson() const;
 
         IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
     };
@@ -34,7 +34,7 @@ namespace sb::cf
         JsonConfigurationSource::SPtr _source;
 
       public:
-        JsonConfigurationProvider(JsonConfigurationSource::SPtr source);
+        explicit JsonConfigurationProvider(JsonConfigurationSource::SPtr source);
 
         void load() override;
     };

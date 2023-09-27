@@ -16,8 +16,6 @@ class JsonConfigurationTest : public testing::Test
 
     void TearDown() override {}
 
-    ~JsonConfigurationTest() {}
-
     static void TearDownTestSuite() {}
 };
 

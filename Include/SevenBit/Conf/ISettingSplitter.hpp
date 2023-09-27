@@ -21,7 +21,7 @@ namespace sb::cf
             std::optional<std::string_view> value;
         };
 
-        virtual Result split(std::string_view setting) const = 0;
+        [[nodiscard]] virtual Result split(std::string_view setting) const = 0;
 
         virtual ~ISettingSplitter() = default;
     };

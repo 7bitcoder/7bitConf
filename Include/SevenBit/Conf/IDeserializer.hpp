@@ -14,7 +14,7 @@ namespace sb::cf
     {
         using Ptr = std::unique_ptr<IDeserializer>;
 
-        virtual JsonValue deserialize(std::optional<std::string_view> value) const = 0;
+        [[nodiscard]] virtual JsonValue deserialize(std::optional<std::string_view> value) const = 0;
 
         virtual ~IDeserializer() = default;
     };

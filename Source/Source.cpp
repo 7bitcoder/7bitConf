@@ -22,4 +22,4 @@
 #include "SevenBit/Conf/Details/Impl/SettingParserBuilder.hpp"
 #include "SevenBit/Conf/Details/Impl/SettingSplitter.hpp"
 #include "SevenBit/Conf/Details/Impl/Utils.hpp"
-#include "SevenBit/Conf/Details/Impl/ValueDeserializers.hpp"
+#include "SevenBit/Conf/Details/Impl/ValueDeserializersMap.hpp"

@@ -29,20 +29,20 @@ namespace sb::cf::details
         SettingParser(ISettingSplitter::Ptr settingSplitter, IValueDeserializersMap::Ptr valueDeserializersMap,
                       std::string_view defaultType, bool allowEmptyKeys, bool throwOnUnknownType);
 
-        ISettingParser::Result parse(std::string_view setting) const override;
+        [[nodiscard]] ISettingParser::Result parse(std::string_view setting) const override;
 
-        const ISettingSplitter &getSettingSplitter() const;
+        [[nodiscard]] const ISettingSplitter &getSettingSplitter() const;
 
-        const IValueDeserializersMap &getValueDeserializersMap() const;
+        [[nodiscard]] const IValueDeserializersMap &getValueDeserializersMap() const;
 
-        std::string_view getDefaultType() const;
+        [[nodiscard]] std::string_view getDefaultType() const;
 
-        bool getAllowEmptyKeys() const;
+        [[nodiscard]] bool getAllowEmptyKeys() const;
 
-        bool getThrowOnUnknownType() const;
+        [[nodiscard]] bool getThrowOnUnknownType() const;
 
       private:
-        const IDeserializer &getDeserializerFor(std::string_view type) const;
+        [[nodiscard]] const IDeserializer &getDeserializerFor(std::string_view type) const;
 
         void checkKeys(const std::vector<std::string_view> &keys) const;
     };

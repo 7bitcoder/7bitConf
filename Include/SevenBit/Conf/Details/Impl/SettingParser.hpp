@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include "SevenBit/Conf/Details/SettingParser.hpp"
+#include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"
 
 namespace sb::cf::details
@@ -13,14 +14,8 @@ namespace sb::cf::details
         : _settingSplitter(std::move(settingSplitter)), _valueDeserializersMap(std::move(valueDeserializersMap)),
           _defaultType(defaultType), _allowEmptyKeys(allowEmptyKeys), _throwOnUnknownType(throwOnUnknownType)
     {
-        if (!_settingSplitter)
-        {
-            throw NullPointerException("Setting splitter cannot be null");
-        }
-        if (!_valueDeserializersMap)
-        {
-            throw NullPointerException("Value deserializer map cannot be null");
-        }
+        details::utils::assertPtr(_settingSplitter);
+        details::utils::assertPtr(_valueDeserializersMap);
     }
 
     INLINE ISettingParser::Result SettingParser::parse(std::string_view setting) const

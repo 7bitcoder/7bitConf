@@ -17,8 +17,6 @@ class KeyPerFileConfigurationTest : public testing::Test
 
     void TearDown() override {}
 
-    ~KeyPerFileConfigurationTest() {}
-
     static void TearDownTestSuite() {}
 };
 

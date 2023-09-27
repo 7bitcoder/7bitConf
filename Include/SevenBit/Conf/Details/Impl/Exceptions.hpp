@@ -8,6 +8,8 @@ namespace sb::cf
 
     INLINE NullPointerException::NullPointerException(const std::string &why) : ConfigException{why} {}
 
+    INLINE ValueNotFoundException::ValueNotFoundException(const std::string &why) : ConfigException{why} {}
+
     INLINE ConfigFileNotFoundException::ConfigFileNotFoundException(const std::filesystem::path &filePath)
         : ConfigException("Configuration file '" + filePath.generic_string() + "' does not exist")
     {

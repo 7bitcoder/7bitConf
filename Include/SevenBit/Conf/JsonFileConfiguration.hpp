@@ -23,11 +23,11 @@ namespace sb::cf
         using Ptr = std::unique_ptr<JsonFileConfigurationSource>;
         using SPtr = std::shared_ptr<JsonFileConfigurationSource>;
 
-        static SPtr create(std::filesystem::path filePath, bool isOptional = false);
+        [[nodiscard]] static SPtr create(std::filesystem::path filePath, bool isOptional = false);
 
-        const std::filesystem::path &getFilePath() const;
+        [[nodiscard]] const std::filesystem::path &getFilePath() const;
 
-        bool getIsOptional() const;
+        [[nodiscard]] bool getIsOptional() const;
 
         IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
     };
@@ -38,12 +38,12 @@ namespace sb::cf
         JsonFileConfigurationSource::SPtr _source;
 
       public:
-        JsonFileConfigurationProvider(JsonFileConfigurationSource::SPtr source);
+        explicit JsonFileConfigurationProvider(JsonFileConfigurationSource::SPtr source);
 
         void load() override;
 
       private:
-        JsonObject getJsonFromFile();
+        [[nodiscard]] JsonObject getJsonFromFile();
     };
 } // namespace sb::cf
 

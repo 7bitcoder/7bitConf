@@ -18,8 +18,6 @@ class JsonStreamConfigurationTest : public testing::Test
 
     void TearDown() override {}
 
-    ~JsonStreamConfigurationTest() {}
-
     static void TearDownTestSuite() {}
 };
 

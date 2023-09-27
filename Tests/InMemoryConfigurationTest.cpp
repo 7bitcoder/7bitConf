@@ -17,8 +17,6 @@ class InMemoryConfigurationTest : public testing::Test
 
     void TearDown() override {}
 
-    ~InMemoryConfigurationTest() {}
-
     static void TearDownTestSuite() {}
 };
 

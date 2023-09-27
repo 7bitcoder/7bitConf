@@ -21,18 +21,15 @@ namespace sb::cf
 
         explicit ChainedConfigurationSource(std::vector<IConfigurationSource::SPtr> sources = {});
 
-        static Ptr create(std::vector<IConfigurationSource::SPtr> sources = {});
+        [[nodiscard]] static Ptr create(std::vector<IConfigurationSource::SPtr> sources = {});
 
         void add(IConfigurationSource::SPtr source);
 
         IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
 
-        auto begin() { return _sources.begin(); }
+        [[nodiscard]] auto begin() { return _sources.begin(); }
 
-        auto end() { return _sources.end(); }
-
-      private:
-        void throwSourceNullException() const;
+        [[nodiscard]] auto end() { return _sources.end(); }
     };
 
     class EXPORT ChainedConfigurationProvider : public ConfigurationProviderBase

@@ -24,29 +24,30 @@ namespace sb::cf
         using Ptr = std::unique_ptr<KeyPerFileConfigurationSource>;
         using SPtr = std::shared_ptr<KeyPerFileConfigurationSource>;
 
-        KeyPerFileConfigurationSource(std::filesystem::path directoryPath, bool isOptional = false,
-                                      std::string ignorePrefix = "");
+        explicit KeyPerFileConfigurationSource(std::filesystem::path directoryPath, bool isOptional = false,
+                                               std::string ignorePrefix = "");
 
         KeyPerFileConfigurationSource(std::filesystem::path directoryPath, bool isOptional,
                                       std::function<bool(const std::filesystem::path &)> ignoreCondition);
 
-        static Ptr create(std::filesystem::path directoryPath, bool isOptional = false, std::string ignorePrefix = "");
+        [[nodiscard]] static Ptr create(std::filesystem::path directoryPath, bool isOptional = false,
+                                        std::string ignorePrefix = "");
 
-        static Ptr create(std::filesystem::path directoryPath, bool isOptional,
-                          std::function<bool(const std::filesystem::path &)> ignoreCondition);
+        [[nodiscard]] static Ptr create(std::filesystem::path directoryPath, bool isOptional,
+                                        std::function<bool(const std::filesystem::path &)> ignoreCondition);
 
-        const std::filesystem::path &getDirectoryPath() const;
+        [[nodiscard]] const std::filesystem::path &getDirectoryPath() const;
 
-        const std::function<bool(const std::filesystem::path &)> &getIgnoreCondition() const;
+        [[nodiscard]] const std::function<bool(const std::filesystem::path &)> &getIgnoreCondition() const;
 
-        const std::string &getIgnorePrefix() const;
+        [[nodiscard]] const std::string &getIgnorePrefix() const;
 
-        bool getIsOptional() const;
+        [[nodiscard]] bool getIsOptional() const;
 
         IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
 
       private:
-        bool canIgnore(const std::filesystem::path &filePath) const;
+        [[nodiscard]] bool canIgnore(const std::filesystem::path &filePath) const;
     };
 } // namespace sb::cf
 

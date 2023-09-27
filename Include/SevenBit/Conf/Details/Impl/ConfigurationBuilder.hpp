@@ -2,20 +2,22 @@
 
 #include "SevenBit/Conf/Configuration.hpp"
 #include "SevenBit/Conf/ConfigurationBuilder.hpp"
+#include "SevenBit/Conf/Details/Utils.hpp"
 
 namespace sb::cf
 {
     INLINE ConfigurationBuilder::ConfigurationBuilder(std::vector<IConfigurationSource::SPtr> sources)
         : _sources(std::move(sources))
     {
+        for (auto &source : _sources)
+        {
+            details::utils::assertPtr(source);
+        }
     }
 
     INLINE IConfigurationBuilder &ConfigurationBuilder::add(IConfigurationSource::SPtr source)
     {
-        if (!source)
-        {
-            throw NullPointerException("Source cannot be null");
-        }
+        details::utils::assertPtr(source);
         _sources.push_back(std::move(source));
         return *this;
     }
@@ -26,10 +28,8 @@ namespace sb::cf
         providers.reserve(_sources.size());
         for (auto &source : _sources)
         {
-            if (source)
-            {
-                providers.emplace_back(source->build(*this));
-            }
+            details::utils::assertPtr(source);
+            providers.emplace_back(source->build(*this));
         }
         return std::make_unique<Configuration>(std::move(providers));
     }

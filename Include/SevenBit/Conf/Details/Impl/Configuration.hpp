@@ -67,7 +67,7 @@ namespace sb::cf
         {
             return *value;
         }
-        return throwNullPointerException(key);
+        return throwNotFoundException(key);
     }
 
     INLINE const JsonValue &Configuration::deepAt(std::string_view key) const
@@ -76,7 +76,7 @@ namespace sb::cf
         {
             return *value;
         }
-        return throwNullPointerException(key);
+        return throwNotFoundException(key);
     }
 
     INLINE JsonValue &Configuration::deepAt(const std::vector<std::string_view> &key)
@@ -85,7 +85,7 @@ namespace sb::cf
         {
             return *value;
         }
-        return throwNullPointerException(key);
+        return throwNotFoundException(key);
     }
 
     INLINE const JsonValue &Configuration::deepAt(const std::vector<std::string_view> &key) const
@@ -94,7 +94,7 @@ namespace sb::cf
         {
             return *value;
         }
-        return throwNullPointerException(key);
+        return throwNotFoundException(key);
     }
 
     INLINE JsonValue &Configuration::operator[](std::string_view key)
@@ -120,11 +120,9 @@ namespace sb::cf
         configRoot.clear();
         for (auto &provider : _providers)
         {
-            if (provider)
-            {
-                provider->load();
-                details::JsonExt::deepMerge(configRoot, std::move(provider->getConfiguration()));
-            }
+            details::utils::assertPtr(provider);
+            provider->load();
+            details::JsonExt::deepMerge(configRoot, std::move(provider->getConfiguration()));
         }
     }
 
@@ -132,13 +130,13 @@ namespace sb::cf
 
     INLINE std::vector<IConfigurationProvider::Ptr> &Configuration::getProviders() { return _providers; }
 
-    INLINE JsonValue &Configuration::throwNullPointerException(const std::vector<std::string_view> &key) const
+    INLINE JsonValue &Configuration::throwNotFoundException(const std::vector<std::string_view> &key) const
     {
-        throw NullPointerException{"Value was not found for key: " + details::utils::joinViews(key, ":")};
+        throw ValueNotFoundException{"Value was not found for key: " + details::utils::joinViews(key, ":")};
     }
 
-    INLINE JsonValue &Configuration::throwNullPointerException(std::string_view key) const
+    INLINE JsonValue &Configuration::throwNotFoundException(std::string_view key) const
     {
-        throw NullPointerException{"Value was not found for key: " + std::string{key}};
+        throw ValueNotFoundException{"Value was not found for key: " + std::string{key}};
     }
 } // namespace sb::cf

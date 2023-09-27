@@ -20,7 +20,7 @@ namespace sb::cf
             JsonValue value;
         };
 
-        virtual Result parse(std::string_view setting) const = 0;
+        [[nodiscard]] virtual Result parse(std::string_view setting) const = 0;
 
         virtual ~ISettingParser() = default;
     };

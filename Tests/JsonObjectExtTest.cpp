@@ -18,8 +18,6 @@ class JsonObjectExtTest : public testing::Test
 
     void TearDown() override {}
 
-    ~JsonObjectExtTest() {}
-
     static void TearDownTestSuite() {}
 };
 

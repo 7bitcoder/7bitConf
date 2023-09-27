@@ -14,7 +14,7 @@ namespace sb::cf
 
         virtual void load() = 0;
 
-        virtual const JsonObject &getConfiguration() const = 0;
+        [[nodiscard]] virtual const JsonObject &getConfiguration() const = 0;
 
         virtual JsonObject &getConfiguration() = 0;
 

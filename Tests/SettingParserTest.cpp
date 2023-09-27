@@ -19,8 +19,6 @@ class SettingParserTest : public testing::Test
 
     void TearDown() override {}
 
-    ~SettingParserTest() {}
-
     static void TearDownTestSuite() {}
 };
 
@@ -115,7 +113,7 @@ TEST_F(SettingParserTest, ShouldFailCreateSettingParserDueEmptyKey)
 
     sb::cf::details::SettingParser parser{std::move(splitter), std::move(deserializers), "string", false, true};
 
-    EXPECT_THROW(parser.parse(setting), sb::cf::ConfigException);
+    EXPECT_THROW(auto result = parser.parse(setting), sb::cf::ConfigException);
     EXPECT_EQ(parser.getDefaultType(), "string");
     EXPECT_TRUE(parser.getThrowOnUnknownType());
     EXPECT_FALSE(parser.getAllowEmptyKeys());
@@ -157,7 +155,7 @@ TEST_F(SettingParserTest, ShouldFailDueToForUnknownType)
 
     sb::cf::details::SettingParser parser{std::move(splitter), std::move(deserializers), "string", true, true};
 
-    EXPECT_THROW(parser.parse(setting), sb::cf::ConfigException);
+    EXPECT_THROW(auto result = parser.parse(setting), sb::cf::ConfigException);
     EXPECT_EQ(parser.getDefaultType(), "string");
     EXPECT_TRUE(parser.getThrowOnUnknownType());
     EXPECT_TRUE(parser.getAllowEmptyKeys());
@@ -177,7 +175,7 @@ TEST_F(SettingParserTest, ShouldFailDueToForUnknownDefaultType)
 
     sb::cf::details::SettingParser parser{std::move(splitter), std::move(deserializers), "string", true, false};
 
-    EXPECT_THROW(parser.parse(setting), sb::cf::ConfigException);
+    EXPECT_THROW(auto result = parser.parse(setting), sb::cf::ConfigException);
     EXPECT_EQ(parser.getDefaultType(), "string");
     EXPECT_FALSE(parser.getThrowOnUnknownType());
     EXPECT_TRUE(parser.getAllowEmptyKeys());

@@ -17,10 +17,15 @@ class CommandLineConfigurationTest : public testing::Test
 
     void TearDown() override {}
 
-    ~CommandLineConfigurationTest() override = default;
-
     static void TearDownTestSuite() {}
 };
+
+TEST_F(CommandLineConfigurationTest, ShouldFailCreationDueToNullSource)
+{
+    std::vector<std::string_view> args;
+    EXPECT_THROW(auto result = sb::cf::CommandLineConfigurationSource::create(args, nullptr),
+                 sb::cf::NullPointerException);
+}
 
 TEST_F(CommandLineConfigurationTest, ShouldLoadConfFromArgs)
 {

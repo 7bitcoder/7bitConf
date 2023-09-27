@@ -24,16 +24,18 @@ namespace sb::cf::details
         SettingSplitter(std::vector<std::string_view> settingPrefixes, std::vector<std::string_view> settingSplitters,
                         std::vector<std::string_view> typeMarkers, std::vector<std::string_view> keySplitters);
 
-        ISettingSplitter::Result split(std::string_view setting) const override;
+        [[nodiscard]] ISettingSplitter::Result split(std::string_view setting) const override;
 
       private:
-        std::string_view tryRemovePrefix(std::string_view setting) const;
+        [[nodiscard]] std::string_view tryRemovePrefix(std::string_view setting) const;
 
-        std::pair<std::string_view, std::optional<std::string_view>> splitSetting(std::string_view setting) const;
+        [[nodiscard]] std::pair<std::string_view, std::optional<std::string_view>> splitSetting(
+            std::string_view setting) const;
 
-        std::pair<std::string_view, std::optional<std::string_view>> splitType(std::string_view key) const;
+        [[nodiscard]] std::pair<std::string_view, std::optional<std::string_view>> splitType(
+            std::string_view key) const;
 
-        std::vector<std::string_view> splitKey(std::string_view key) const;
+        [[nodiscard]] std::vector<std::string_view> splitKey(std::string_view key) const;
     };
 } // namespace sb::cf::details
 

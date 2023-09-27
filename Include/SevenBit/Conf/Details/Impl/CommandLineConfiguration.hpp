@@ -1,7 +1,7 @@
 #pragma once
 
 #include "SevenBit/Conf/CommandLineConfiguration.hpp"
-#include "SevenBit/Conf/Exceptions.hpp"
+#include "SevenBit/Conf/Details/Utils.hpp"
 
 namespace sb::cf
 {
@@ -9,10 +9,7 @@ namespace sb::cf
                                                                           ISettingParser::Ptr parser)
         : _args(std::move(args)), _parser(std::move(parser))
     {
-        if (!_parser)
-        {
-            throw NullPointerException("Parser cannot be null");
-        }
+        details::utils::assertPtr(_parser);
     }
 
     INLINE CommandLineConfigurationSource::SPtr CommandLineConfigurationSource::create(int argc,

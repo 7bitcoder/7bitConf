@@ -20,14 +20,12 @@ class ChainedConfigurationTest : public testing::Test
 
     void TearDown() override {}
 
-    ~ChainedConfigurationTest() {}
-
     static void TearDownTestSuite() {}
 };
 
 TEST_F(ChainedConfigurationTest, ShouldFailCreationDueToNullSource)
 {
-    EXPECT_THROW(sb::cf::ChainedConfigurationSource::create({nullptr}), sb::cf::NullPointerException);
+    EXPECT_THROW(auto result = sb::cf::ChainedConfigurationSource::create({nullptr}), sb::cf::NullPointerException);
 }
 
 TEST_F(ChainedConfigurationTest, ShouldFailAddDueToNullSource)

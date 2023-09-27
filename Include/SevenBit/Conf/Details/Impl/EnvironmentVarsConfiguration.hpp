@@ -2,6 +2,7 @@
 
 #include <cstdlib>
 
+#include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/EnvironmentVarsConfiguration.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"
 
@@ -19,10 +20,7 @@ namespace sb::cf
                                                                                   ISettingParser::Ptr parser)
         : _prefix(std::move(prefix)), _parser(std::move(parser))
     {
-        if (!_parser)
-        {
-            throw NullPointerException("Parser cannot be null");
-        }
+        details::utils::assertPtr(_parser);
     }
 
     INLINE EnvironmentVarsConfigurationSource::SPtr EnvironmentVarsConfigurationSource::create(
@@ -45,6 +43,7 @@ namespace sb::cf
         EnvironmentVarsConfigurationSource::SPtr source)
         : _source(std::move(source))
     {
+        details::utils::assertPtr(_source);
     }
 
     INLINE void EnvironmentVarsConfigurationProvider::load()

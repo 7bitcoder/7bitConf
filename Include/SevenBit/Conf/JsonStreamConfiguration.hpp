@@ -15,7 +15,7 @@ namespace sb::cf
       private:
         std::istream &_stream;
 
-        JsonStreamConfigurationSource(std::istream &stream);
+        explicit JsonStreamConfigurationSource(std::istream &stream);
 
       public:
         using Ptr = std::unique_ptr<JsonStreamConfigurationSource>;
@@ -23,7 +23,7 @@ namespace sb::cf
 
         static SPtr create(std::istream &stream);
 
-        std::istream &getStream();
+        [[nodiscard]] std::istream &getStream();
 
         IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
     };
@@ -34,12 +34,12 @@ namespace sb::cf
         JsonStreamConfigurationSource::SPtr _source;
 
       public:
-        JsonStreamConfigurationProvider(JsonStreamConfigurationSource::SPtr source);
+        explicit JsonStreamConfigurationProvider(JsonStreamConfigurationSource::SPtr source);
 
         void load() override;
 
       private:
-        JsonObject getJsonFromStream();
+        [[nodiscard]] JsonObject getJsonFromStream();
     };
 } // namespace sb::cf
 

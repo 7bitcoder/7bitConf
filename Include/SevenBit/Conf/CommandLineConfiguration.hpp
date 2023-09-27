@@ -23,15 +23,15 @@ namespace sb::cf
         using Ptr = std::unique_ptr<CommandLineConfigurationSource>;
         using SPtr = std::shared_ptr<CommandLineConfigurationSource>;
 
-        static SPtr create(int argc, const char *const *argv,
-                           ISettingParser::Ptr parser = SettingParserBuilder{}.build());
+        [[nodiscard]] static SPtr create(int argc, const char *const *argv,
+                                         ISettingParser::Ptr parser = SettingParserBuilder{}.build());
 
-        static SPtr create(std::vector<std::string_view> args,
-                           ISettingParser::Ptr parser = SettingParserBuilder{}.build());
+        [[nodiscard]] static SPtr create(std::vector<std::string_view> args,
+                                         ISettingParser::Ptr parser = SettingParserBuilder{}.build());
 
-        const std::vector<std::string_view> &getArgs() const;
+        [[nodiscard]] const std::vector<std::string_view> &getArgs() const;
 
-        const ISettingParser &getSettingParser() const;
+        [[nodiscard]] const ISettingParser &getSettingParser() const;
 
         IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
     };

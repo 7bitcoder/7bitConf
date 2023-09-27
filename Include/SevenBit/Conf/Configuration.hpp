@@ -23,7 +23,7 @@ namespace sb::cf
       public:
         using Ptr = std::unique_ptr<Configuration>;
 
-        Configuration(std::vector<IConfigurationProvider::Ptr> providers = {});
+        explicit Configuration(std::vector<IConfigurationProvider::Ptr> providers = {});
 
         Configuration(Configuration &&) = default;
         Configuration(const Configuration &) = delete;
@@ -33,80 +33,80 @@ namespace sb::cf
 
         void reload();
 
-        const std::vector<IConfigurationProvider::Ptr> &getProviders() const;
+        [[nodiscard]] const std::vector<IConfigurationProvider::Ptr> &getProviders() const;
 
-        std::vector<IConfigurationProvider::Ptr> &getProviders();
+        [[nodiscard]] std::vector<IConfigurationProvider::Ptr> &getProviders();
 
-        std::string toString(std::size_t indent = 1, std::string newLineMark = "\n") const override;
+        [[nodiscard]] std::string toString(std::size_t indent = 1, std::string newLineMark = "\n") const override;
 
-        JsonValue &root();
+        [[nodiscard]] JsonValue &root();
 
-        const JsonValue &root() const override;
+        [[nodiscard]] const JsonValue &root() const override;
 
-        JsonObject &rootAsObject();
+        [[nodiscard]] JsonObject &rootAsObject();
 
-        const JsonObject &rootAsObject() const override;
+        [[nodiscard]] const JsonObject &rootAsObject() const override;
 
-        JsonValue &at(const std::string &key);
+        [[nodiscard]] JsonValue &at(const std::string &key);
 
-        const JsonValue &at(const std::string &key) const override;
+        [[nodiscard]] const JsonValue &at(const std::string &key) const override;
 
-        JsonValue *find(std::string_view key);
+        [[nodiscard]] JsonValue *find(std::string_view key);
 
-        const JsonValue *find(std::string_view key) const override;
+        [[nodiscard]] const JsonValue *find(std::string_view key) const override;
 
-        JsonValue *deepFind(std::string_view key);
+        [[nodiscard]] JsonValue *deepFind(std::string_view key);
 
-        const JsonValue *deepFind(std::string_view key) const override;
+        [[nodiscard]] const JsonValue *deepFind(std::string_view key) const override;
 
-        JsonValue *deepFind(const std::vector<std::string_view> &key);
+        [[nodiscard]] JsonValue *deepFind(const std::vector<std::string_view> &key);
 
-        const JsonValue *deepFind(const std::vector<std::string_view> &key) const override;
+        [[nodiscard]] const JsonValue *deepFind(const std::vector<std::string_view> &key) const override;
 
-        JsonValue &deepAt(std::string_view key);
+        [[nodiscard]] JsonValue &deepAt(std::string_view key);
 
-        const JsonValue &deepAt(std::string_view key) const override;
+        [[nodiscard]] const JsonValue &deepAt(std::string_view key) const override;
 
-        JsonValue &deepAt(const std::vector<std::string_view> &key);
+        [[nodiscard]] JsonValue &deepAt(const std::vector<std::string_view> &key);
 
-        const JsonValue &deepAt(const std::vector<std::string_view> &key) const override;
+        [[nodiscard]] const JsonValue &deepAt(const std::vector<std::string_view> &key) const override;
 
-        JsonValue &operator[](std::string_view key);
+        [[nodiscard]] JsonValue &operator[](std::string_view key);
 
-        const JsonValue &operator[](std::string_view key) const override;
+        [[nodiscard]] const JsonValue &operator[](std::string_view key) const override;
 
-        JsonValue &operator[](const std::vector<std::string_view> &key);
+        [[nodiscard]] JsonValue &operator[](const std::vector<std::string_view> &key);
 
-        const JsonValue &operator[](const std::vector<std::string_view> &key) const override;
+        [[nodiscard]] const JsonValue &operator[](const std::vector<std::string_view> &key) const override;
 
-        auto begin() { return rootAsObject().begin(); }
+        [[nodiscard]] auto begin() { return rootAsObject().begin(); }
 
-        auto end() { return rootAsObject().end(); }
+        [[nodiscard]] auto end() { return rootAsObject().end(); }
 
-        auto rbegin() { return rootAsObject().rbegin(); }
+        [[nodiscard]] auto rbegin() { return rootAsObject().rbegin(); }
 
-        auto rend() { return rootAsObject().rend(); }
+        [[nodiscard]] auto rend() { return rootAsObject().rend(); }
 
-        auto begin() const { return rootAsObject().begin(); }
+        [[nodiscard]] auto begin() const { return rootAsObject().begin(); }
 
-        auto end() const { return rootAsObject().end(); }
+        [[nodiscard]] auto end() const { return rootAsObject().end(); }
 
-        auto rbegin() const { return rootAsObject().rbegin(); }
+        [[nodiscard]] auto rbegin() const { return rootAsObject().rbegin(); }
 
-        auto rend() const { return rootAsObject().rend(); }
+        [[nodiscard]] auto rend() const { return rootAsObject().rend(); }
 
-        auto cbegin() const { return rootAsObject().cbegin(); }
+        [[nodiscard]] auto cbegin() const { return rootAsObject().cbegin(); }
 
-        auto cend() const { return rootAsObject().cend(); }
+        [[nodiscard]] auto cend() const { return rootAsObject().cend(); }
 
-        auto crbegin() const { return rootAsObject().crbegin(); }
+        [[nodiscard]] auto crbegin() const { return rootAsObject().crbegin(); }
 
-        auto crend() const { return rootAsObject().crend(); }
+        [[nodiscard]] auto crend() const { return rootAsObject().crend(); }
 
       private:
-        JsonValue &throwNullPointerException(const std::vector<std::string_view> &key) const;
+        [[nodiscard]] JsonValue &throwNotFoundException(const std::vector<std::string_view> &key) const;
 
-        JsonValue &throwNullPointerException(std::string_view key) const;
+        [[nodiscard]] JsonValue &throwNotFoundException(std::string_view key) const;
     };
 } // namespace sb::cf
 
