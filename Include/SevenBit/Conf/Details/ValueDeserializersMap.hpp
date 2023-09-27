@@ -7,6 +7,7 @@
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
+#include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/IValueDeserializersMap.hpp"
 
 namespace sb::cf::details
