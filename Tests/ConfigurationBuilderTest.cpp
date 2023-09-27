@@ -4,6 +4,7 @@
 
 #include "Classes/CustomConfigSource.hpp"
 #include "SevenBit/Conf/ConfigurationBuilder.hpp"
+#include "SevenBit/Conf/Exceptions.hpp"
 #include "SevenBit/Conf/ObjectHolder.hpp"
 
 class ConfigurationBuilderTest : public testing::Test
