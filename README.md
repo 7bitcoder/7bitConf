@@ -1,18 +1,14 @@
 [![CI](https://github.com/7bitcoder/7bitConf/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/7bitcoder/7bitConf/actions/workflows/CI.yml)
 
 <div align="center">
-<img src="7bitConf-logo.svg" alt="logo" width="500" height="auto" />
-  <p>
-    C++17 configuration provider library! 
-  </p>
-
+  <img src="7bitConf-logo.svg" alt="logo" width="500" height="auto" />
+  <p> C++17 configuration provider library! </p>
 </div>
+
 <br />
 
 <details>
-  <summary>
-Table of Contents
-  </summary> 
+  <summary> Table of Contents </summary> 
 
 - [About The Project](#about-the-project)
     - [Built With](#built-with)
@@ -112,9 +108,7 @@ Create the appsettings.json file in the compiled executable directory:
   "Array": [
     1,
     2,
-    3,
-    4,
-    5
+    3
   ],
   "MySetting": "appsettings.json Value",
   "Logging": {
@@ -191,9 +185,8 @@ for (size_t i = 1; i < argc; ++i)
 auto configuration = ConfigurationBuilder{}.addCommandLine(configArgs).build();
 ```
 
-The command line configuration source can be more customized with additional addCommandLine method arguments:
-SettingParserOptions or custom SettingParser for
-more details see [Settings Parser](#settings-parser) section
+The command line configuration source can be more customized with additional addCommandLine method
+arguments: [SettingParserOptions](#setting-parser-options) or custom [Settings Parser](#settings-parser)
 
 #### Supported Types
 
@@ -241,8 +234,8 @@ is '\_\_' (double underscore) and for '!' is '\_\_\_' (triple underscore)
 Setting Array:2!uint=123 would be rewritten as Array\_\_2\_\_\_uint=123
 
 Same as command line source environment variables configuration source can be more customized with
-additional addEnvironmentVariables method arguments: SettingParserOptions or custom SettingParser for more details
-see [Settings Parser](#settings-parser) section
+additional addEnvironmentVariables method arguments: [SettingParserOptions](#setting-parser-options) or
+custom [Settings Parser](#settings-parser)
 
 ### Json File
 
@@ -395,6 +388,111 @@ int main(int argc, char **argv)
     return 0;
 }
 
+```
+
+### Setting Parser Config
+
+SettingParserConfig is a simple struct which contains the data used to configure setting parser, by default it is
+initialized with these values:
+
+```cpp
+struct SettingParserConfig
+{
+    std::vector<std::string_view> settingPrefixes = {"--"};
+    std::vector<std::string_view> settingSplitters = {"="};
+    std::vector<std::string_view> keySplitters = {":", "__"};
+    std::vector<std::string_view> typeMarkers = {"!", "___"};
+    std::string_view defaultType = "string";
+    bool throwOnUnknownType = true;
+    bool allowEmptyKeys = false;
+};
+```
+
+This configuration allows to specify different behaviors of the parser.
+
+Example setting --option:values:1!int=123 each part is marked as affected with ()
+
+- settingPrefixes - list of possible setting prefixes (--)option:values:1!int=123
+- settingSplitters - list of possible setting splitters --option:values:1!int(=)123
+- keySplitters - list of possible key splitters --option(:)values(:)1!int=123
+- typeMarkers - list of possible type markers --option:values:1(!)int=123
+- defaultType - is the type that is used if type was not specified in setting --option:values:1=123
+- throwOnUnknownType - if type was not recognized in parsing phase then exception will be thrown if in this case
+  this setting is set to false default type will be used --option:values:1!nonExistingType=123
+- allowEmptyKeys - if set to true and empty keys are detected exception will be thrown --option::1!int=123
+
+#### Usage Scenario
+
+All environment variables should be loaded as not nested objects (no key splitting) and without considering type
+
+```cpp
+#include <SevenBit/Conf.hpp>
+#include <iostream>
+
+using namespace sb::cf;
+
+int main(int argc, char **argv)
+{
+    SettingParserConfig envParserConfig;
+    envParserConfig.keySplitters.clear();
+    envParserConfig.typeMarkers.clear();
+
+    IConfiguration::Ptr configuration = ConfigurationBuilder{} //
+                                            .addAppSettings()
+                                            .addEnvironmentVariables("", envParserConfig)
+                                            .addCommandLine(argc, argv)
+                                            .build();
+
+    std::cout << "Configuration json:" << std::endl << std::setw(2) << *configuration;
+
+    return 0;
+}
+
+```
+
+In this case custom SettingParserConfig is used in addEnvironmentVariables method, keySplitters is cleared to prevent
+extracting nested keys and typeMarkers is cleared to prevent type
+extraction
+
+### Custom Setting Parser
+
+Library provides a SettingParserBuilder to create customized SettingParser
+
+```cpp
+#include <SevenBit/Conf.hpp>
+#include <iostream>
+
+using namespace sb::cf;
+
+struct MyTypeDeserializer final : IDeserializer
+{
+    JsonValue deserialize(std::optional<std::string_view> value) const final { return value ? value : "emptyValue"; }
+};
+
+int main(int argc, char **argv)
+{
+    SettingParserConfig envParserConfig;
+    envParserConfig.keySplitters.clear();
+    envParserConfig.settingPrefixes.push_back("//");
+    envParserConfig.defaultType = "myType";
+    envParserConfig.throwOnUnknownType = false;
+
+    ISettingParser::Ptr settingParser = SettingParserBuilder{} //
+                                            .useConfig(envParserConfig)
+                                            .useDefaultValueDeserializers()
+                                            .useValueDeserializer("myType", std::make_unique<MyTypeDeserializer>())
+                                            .build();
+
+    IConfiguration::Ptr configuration = ConfigurationBuilder{} //
+                                            .addAppSettings()
+                                            .addEnvironmentVariables("", std::move(settingParser))
+                                            .addCommandLine(argc, argv)
+                                            .build();
+
+    std::cout << "Configuration json:" << std::endl << std::setw(2) << *configuration;
+
+    return 0;
+}
 ```
 
 ## Build Library
