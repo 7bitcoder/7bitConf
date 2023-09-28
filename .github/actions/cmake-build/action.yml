@@ -35,4 +35,3 @@ runs:
     - name: Build
       run: cmake --build --preset conan-release
       shell: pwsh
-

@@ -60,5 +60,5 @@ namespace sb::cf
         virtual ~IConfiguration() = default;
     };
 
-    inline std::ostream &operator<<(std::ostream &os, const IConfiguration &p) { return os << p.root(); }
+    inline std::ostream &operator<<(std::ostream &os, const IConfiguration &config) { return os << config.root(); }
 } // namespace sb::cf

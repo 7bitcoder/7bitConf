@@ -23,6 +23,15 @@ class ChainedConfigurationTest : public testing::Test
     static void TearDownTestSuite() {}
 };
 
+TEST_F(ChainedConfigurationTest, ShouldLoadEmptyChainConfig)
+{
+    auto provider = sb::cf::ChainedConfigurationSource::create()->build(mock);
+
+    provider->load();
+
+    EXPECT_TRUE(provider->getConfiguration().empty());
+}
+
 TEST_F(ChainedConfigurationTest, ShouldFailCreationDueToNullSource)
 {
     EXPECT_THROW(auto result = sb::cf::ChainedConfigurationSource::create({nullptr}), sb::cf::NullPointerException);

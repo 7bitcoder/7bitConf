@@ -18,7 +18,7 @@ namespace sb::cf
       private:
         std::vector<std::pair<std::string_view, JsonValue>> _settings;
 
-        InMemoryConfigurationSource(std::vector<std::pair<std::string_view, JsonValue>> settings);
+        explicit InMemoryConfigurationSource(std::vector<std::pair<std::string_view, JsonValue>> settings);
 
       public:
         using Ptr = std::unique_ptr<InMemoryConfigurationSource>;

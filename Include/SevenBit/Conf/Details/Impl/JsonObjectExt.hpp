@@ -37,56 +37,36 @@ namespace sb::cf::details
 
     INLINE JsonValue *JsonExt::find(JsonObject &json, std::string_view key)
     {
-        if (auto it = json.find(key); it != json.end())
-        {
-            return &it->second;
-        }
-        return nullptr;
+        auto it = json.find(key);
+        return it != json.end() ? &it->second : nullptr;
     }
 
     INLINE const JsonValue *JsonExt::find(const JsonObject &json, std::string_view key)
     {
-        if (auto it = json.find(key); it != json.end())
-        {
-            return &it->second;
-        }
-        return nullptr;
+        auto it = json.find(key);
+        return it != json.end() ? &it->second : nullptr;
     }
 
     INLINE JsonValue *JsonExt::find(JsonArray &json, size_t index)
     {
-        if (index < json.size())
-        {
-            return &json[index];
-        }
-        return nullptr;
+        return index < json.size() ? &json[index] : nullptr;
     }
 
     INLINE const JsonValue *JsonExt::find(const JsonArray &json, size_t index)
     {
-        if (index < json.size())
-        {
-            return &json[index];
-        }
-        return nullptr;
+        return index < json.size() ? &json[index] : nullptr;
     }
 
     INLINE JsonValue *JsonExt::find(JsonArray &json, std::string_view key)
     {
-        if (auto [success, index] = details::utils::tryStringTo<size_t>(key); success)
-        {
-            return find(json, index);
-        }
-        return nullptr;
+        auto [success, index] = details::utils::tryStringTo<size_t>(key);
+        return success ? find(json, index) : nullptr;
     }
 
     INLINE const JsonValue *JsonExt::find(const JsonArray &json, std::string_view key)
     {
-        if (auto [success, index] = details::utils::tryStringTo<size_t>(key); success)
-        {
-            return find(json, index);
-        }
-        return nullptr;
+        auto [success, index] = details::utils::tryStringTo<size_t>(key);
+        return success ? find(json, index) : nullptr;
     }
 
     template <class TJson> auto deepFindImpl(TJson &json, const std::vector<std::string_view> &key)

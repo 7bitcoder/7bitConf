@@ -63,38 +63,26 @@ namespace sb::cf
 
     INLINE JsonValue &Configuration::deepAt(std::string_view key)
     {
-        if (auto value = deepFind(key))
-        {
-            return *value;
-        }
-        return throwNotFoundException(key);
+        auto value = deepFind(key);
+        return value ? *value : throwNotFoundException(key);
     }
 
     INLINE const JsonValue &Configuration::deepAt(std::string_view key) const
     {
-        if (auto value = deepFind(key))
-        {
-            return *value;
-        }
-        return throwNotFoundException(key);
+        auto value = deepFind(key);
+        return value ? *value : throwNotFoundException(key);
     }
 
     INLINE JsonValue &Configuration::deepAt(const std::vector<std::string_view> &key)
     {
-        if (auto value = deepFind(key))
-        {
-            return *value;
-        }
-        return throwNotFoundException(key);
+        auto value = deepFind(key);
+        return value ? *value : throwNotFoundException(key);
     }
 
     INLINE const JsonValue &Configuration::deepAt(const std::vector<std::string_view> &key) const
     {
-        if (auto value = deepFind(key))
-        {
-            return *value;
-        }
-        return throwNotFoundException(key);
+        auto value = deepFind(key);
+        return value ? *value : throwNotFoundException(key);
     }
 
     INLINE JsonValue &Configuration::operator[](std::string_view key)
