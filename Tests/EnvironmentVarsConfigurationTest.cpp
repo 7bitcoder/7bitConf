@@ -1,9 +1,9 @@
-#include "SevenBit/Conf/EnvironmentVarsConfiguration.hpp"
-#include "Mocks/ConfigurationBuilderMock.hpp"
-#include "SevenBit/Conf/Json.hpp"
 #include <cstdlib>
 #include <gtest/gtest.h>
-#include <iostream>
+
+#include "Mocks/ConfigurationBuilderMock.hpp"
+#include "SevenBit/Conf/EnvironmentVarsConfiguration.hpp"
+#include "SevenBit/Conf/Exceptions.hpp"
 
 #ifdef _WIN32
 #define _7BIT_CONF_PUT_ENV _putenv
@@ -38,10 +38,19 @@ class EnvironmentVarsConfigurationTest : public testing::Test
 
     void TearDown() override {}
 
-    ~EnvironmentVarsConfigurationTest() {}
-
     static void TearDownTestSuite() {}
 };
+
+TEST_F(EnvironmentVarsConfigurationTest, ShouldFailCreationDueToNullParser)
+{
+    EXPECT_THROW(auto result = sb::cf::EnvironmentVarsConfigurationSource::create("7BIT_CONFIG_", nullptr),
+                 sb::cf::NullPointerException);
+}
+
+TEST_F(EnvironmentVarsConfigurationTest, ShouldFailProviderCreationDueToNullSource)
+{
+    EXPECT_THROW(sb::cf::EnvironmentVarsConfigurationProvider(nullptr), sb::cf::NullPointerException);
+}
 
 TEST_F(EnvironmentVarsConfigurationTest, ShouldLoadConfFromEnvVars)
 {

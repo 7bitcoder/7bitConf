@@ -1,151 +1,80 @@
 #pragma once
-#include <cstddef>
-#include <cstdint>
-#include <tao/json/from_string.hpp>
 
-#include "SevenBit/Conf/Details/JsonObjectExt.hpp"
+#include <algorithm>
+
 #include "SevenBit/Conf/Details/SettingParser.hpp"
 #include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"
-#include "SevenBit/Conf/Json.hpp"
 
 namespace sb::cf::details
 {
-    INLINE SettingParser::SettingParser(SettingParserConfig cfg) : _config(cfg) {}
-
-    INLINE JsonObject SettingParser::parseSetting(std::string_view setting) const
+    INLINE SettingParser::SettingParser(ISettingSplitter::Ptr settingSplitter,
+                                        IValueDeserializersMap::Ptr valueDeserializersMap, std::string_view defaultType,
+                                        bool allowEmptyKeys, bool throwOnUnknownType)
+        : _settingSplitter(std::move(settingSplitter)), _valueDeserializersMap(std::move(valueDeserializersMap)),
+          _defaultType(defaultType), _allowEmptyKeys(allowEmptyKeys), _throwOnUnknownType(throwOnUnknownType)
     {
-        auto keyValue = details::utils::split(setting, _config.settingSplitter, 2);
-        if (keyValue.size() == 1)
-        {
-            return parseSetting(setting, std::nullopt);
-        }
-        if (keyValue.size() == 2)
-        {
-            return parseSetting(keyValue[0], std::make_optional(keyValue[1]));
-        }
-        throw SettingParserException("Wrong setting format: " + std::string{setting} +
-                                     " if should follow this scheme --<name>=<value>");
+        details::utils::assertPtr(_settingSplitter);
+        details::utils::assertPtr(_valueDeserializersMap);
     }
 
-    INLINE JsonObject SettingParser::parseSetting(std::string_view key, std::optional<std::string_view> value) const
+    INLINE ISettingParser::Result SettingParser::parse(std::string_view setting) const
     {
         try
         {
-            auto type = extractType(key);
-            auto keyStr = sanitizeKey(key);
-            auto keys = parseKey(keyStr);
-            return parseSetting(std::move(keys), parseValue(type, value));
+            auto [keys, type, value] = getSettingSplitter().split(setting);
+
+            checkKeys(keys);
+
+            return {std::move(keys), getDeserializerFor(type ? *type : getDefaultType()).deserialize(value)};
         }
-        catch (std::exception &e)
+        catch (const std::exception &e)
         {
-            throw SettingParserException{"Error for setting: '" + std::string{key} + "', value: '" +
-                                         std::string{value ? *value : ""} + "' error: " + e.what()};
+            throw SettingParserException("Parsing error for setting '" + std::string{setting} + "' error: " + e.what());
         }
     }
 
-    INLINE JsonObject SettingParser::parseSetting(const std::vector<std::string_view> &key, JsonValue value) const
+    INLINE const IDeserializer &SettingParser::getDeserializerFor(std::string_view type) const
     {
-        JsonObject result{};
-        JsonObjectExt::getOrCreateInner(result, key) = std::move(value);
-        return result;
-    }
-
-    INLINE std::string SettingParser::sanitizeKey(std::string_view key) const
-    {
-        std::string str{key};
-        details::utils::replaceAll(str, _config.alternativeKeySplitter, _config.keySplitter);
-        return str;
-    }
-
-    INLINE std::vector<std::string_view> SettingParser::parseKey(std::string_view key) const
-    {
-        if (details::utils::startsWith(key, _config.settingPrefix))
+        auto deserializer = getValueDeserializersMap().getDeserializerFor(type);
+        if (!deserializer)
         {
-            key = key.substr(_config.settingPrefix.size());
-        }
-        if (key.empty())
-        {
-            throw SettingParserException{"Key canot be empty"};
-        }
-        return details::utils::split(key, _config.keySplitter);
-    }
-
-    INLINE SettingParser::SettingType SettingParser::extractType(std::string_view &key) const
-    {
-        if (tryExtractType(key, "bool"))
-        {
-            return Bool;
-        }
-        if (tryExtractType(key, "int"))
-        {
-            return Int;
-        }
-        if (tryExtractType(key, "double"))
-        {
-            return Double;
-        }
-        if (tryExtractType(key, "json"))
-        {
-            return Json;
-        }
-        if (tryExtractType(key, "string"))
-        {
-            return String;
-        }
-        if (tryExtractType(key, "uint"))
-        {
-            return UInt;
-        }
-        if (tryExtractType(key, "null"))
-        {
-            return Null;
-        }
-        return String;
-    }
-
-    INLINE bool SettingParser::tryExtractType(std::string_view &value, std::string_view typeStr) const
-    {
-        if (details::utils::endsWith(value, typeStr, true))
-        {
-            auto mutated = value;
-            mutated.remove_suffix(typeStr.size());
-            if (details::utils::endsWith(mutated, _config.typeMarker))
+            if (getThrowOnUnknownType())
             {
-                mutated.remove_suffix(_config.typeMarker.size());
-                value = mutated;
-                return true;
+                throw ConfigException("Unknown setting type: " + std::string{type});
             }
-            if (details::utils::endsWith(mutated, _config.alternativeTypeMarker))
+            deserializer = getValueDeserializersMap().getDeserializerFor(getDefaultType());
+            if (!deserializer)
             {
-                mutated.remove_suffix(_config.alternativeTypeMarker.size());
-                value = mutated;
-                return true;
+                throw ConfigException("Unknown default setting type: " + std::string{getDefaultType()});
             }
         }
-        return false;
+        return *deserializer;
     }
 
-    INLINE JsonValue SettingParser::parseValue(SettingParser::SettingType type,
-                                               std::optional<std::string_view> value) const
+    INLINE void SettingParser::checkKeys(const std::vector<std::string_view> &keys) const
     {
-        switch (type)
+        if (getAllowEmptyKeys())
         {
-        case Json:
-            return value ? json::basic_from_string<JsonTraits>(*value) : JsonValue();
-        case Int:
-            return value ? details::utils::stringTo<std::int64_t>(*value) : 0;
-        case UInt:
-            return value ? details::utils::stringTo<std::uint64_t>(*value) : 0;
-        case Bool:
-            return value ? details::utils::stringTo<bool>(*value) : false;
-        case Double:
-            return value ? details::utils::stringTo<double>(*value) : 0.0;
-        case Null:
-            return json::null;
-        case String:
-        default:
-            return std::string{value ? *value : ""};
-        };
+            return;
+        }
+        if (keys.empty() || std::any_of(keys.begin(), keys.end(), [](auto key) { return key.empty(); }))
+        {
+            throw ConfigException("Setting key cannot be empty");
+        }
     }
+
+    INLINE const ISettingSplitter &SettingParser::getSettingSplitter() const { return *_settingSplitter; }
+
+    INLINE const IValueDeserializersMap &SettingParser::getValueDeserializersMap() const
+    {
+        return *_valueDeserializersMap;
+    }
+
+    INLINE std::string_view SettingParser::getDefaultType() const { return _defaultType; }
+
+    INLINE bool SettingParser::getAllowEmptyKeys() const { return _allowEmptyKeys; }
+
+    INLINE bool SettingParser::getThrowOnUnknownType() const { return _throwOnUnknownType; }
+
 } // namespace sb::cf::details

@@ -1,19 +1,20 @@
 #pragma once
 
 #include "SevenBit/Conf/CommandLineConfiguration.hpp"
-#include "SevenBit/Conf/LibraryConfig.hpp"
+#include "SevenBit/Conf/Details/Utils.hpp"
 
 namespace sb::cf
 {
     INLINE CommandLineConfigurationSource::CommandLineConfigurationSource(std::vector<std::string_view> args,
-                                                                          SettingParserConfig config)
-        : _args(std::move(args)), _parser(std::move(config))
+                                                                          ISettingParser::Ptr parser)
+        : _args(std::move(args)), _parser(std::move(parser))
     {
+        details::utils::assertPtr(_parser);
     }
 
     INLINE CommandLineConfigurationSource::SPtr CommandLineConfigurationSource::create(int argc,
                                                                                        const char *const *argv,
-                                                                                       SettingParserConfig config)
+                                                                                       ISettingParser::Ptr parser)
     {
         std::vector<std::string_view> args;
         if (argc > 1)
@@ -21,22 +22,22 @@ namespace sb::cf
             args.reserve(argc - 1);
             for (size_t i = 1; i < argc; ++i)
             {
-                args.push_back(argv[i]);
+                args.emplace_back(argv[i]);
             }
         }
-        return create(std::move(args), std::move(config));
+        return create(std::move(args), std::move(parser));
     }
 
     INLINE CommandLineConfigurationSource::SPtr CommandLineConfigurationSource::create(
-        std::vector<std::string_view> args, SettingParserConfig config)
+        std::vector<std::string_view> args, ISettingParser::Ptr parser)
     {
         return CommandLineConfigurationSource::SPtr(
-            new CommandLineConfigurationSource{std::move(args), std::move(config)});
+            new CommandLineConfigurationSource{std::move(args), std::move(parser)});
     }
 
     INLINE const std::vector<std::string_view> &CommandLineConfigurationSource::getArgs() const { return _args; }
 
-    INLINE const details::SettingParser &CommandLineConfigurationSource::getOptionsParser() const { return _parser; }
+    INLINE const ISettingParser &CommandLineConfigurationSource::getSettingParser() const { return *_parser; }
 
     INLINE IConfigurationProvider::Ptr CommandLineConfigurationSource::build(IConfigurationBuilder &builder)
     {
@@ -47,14 +48,17 @@ namespace sb::cf
         CommandLineConfigurationSource::SPtr source)
         : _source(std::move(source))
     {
+        details::utils::assertPtr(_source);
     }
 
     INLINE void CommandLineConfigurationProvider::load()
     {
         clear();
-        for (auto &arg : _source->getArgs())
+        auto &parser = _source->getSettingParser();
+        for (auto &setting : _source->getArgs())
         {
-            update(_source->getOptionsParser().parseSetting(arg));
+            auto [keys, value] = parser.parse(setting);
+            update(keys, std::move(value));
         }
     }
 } // namespace sb::cf

@@ -1,10 +1,10 @@
 #include <gtest/gtest.h>
-#include <iostream>
 #include <memory>
 #include <string_view>
 
 #include "Classes/CustomConfigSource.hpp"
 #include "SevenBit/Conf/ConfigurationBuilder.hpp"
+#include "SevenBit/Conf/Exceptions.hpp"
 #include "SevenBit/Conf/ObjectHolder.hpp"
 
 class ConfigurationBuilderTest : public testing::Test
@@ -18,10 +18,42 @@ class ConfigurationBuilderTest : public testing::Test
 
     void TearDown() override {}
 
-    ~ConfigurationBuilderTest() {}
-
     static void TearDownTestSuite() {}
 };
+
+TEST_F(ConfigurationBuilderTest, ShouldFailCreationDueToNullSource)
+{
+    EXPECT_THROW(sb::cf::ConfigurationBuilder{{nullptr}}, sb::cf::NullPointerException);
+}
+
+TEST_F(ConfigurationBuilderTest, ShouldFailAddDueToNullSource)
+{
+    auto builder = sb::cf::ConfigurationBuilder{};
+
+    EXPECT_THROW(builder.add(nullptr), sb::cf::NullPointerException);
+}
+
+TEST_F(ConfigurationBuilderTest, ShouldFailBuildDueToNullSource)
+{
+    auto builder = sb::cf::ConfigurationBuilder{};
+
+    builder.getSources().emplace_back(nullptr);
+
+    EXPECT_THROW(builder.build(), sb::cf::NullPointerException);
+}
+
+TEST_F(ConfigurationBuilderTest, ShouldClearSources)
+{
+    auto builder = sb::cf::ConfigurationBuilder{};
+
+    builder.addAppSettings("dev");
+
+    EXPECT_FALSE(builder.getSources().empty());
+
+    builder.clear();
+
+    EXPECT_TRUE(builder.getSources().empty());
+}
 
 TEST_F(ConfigurationBuilderTest, ShouldBuildSimpleConfig)
 {

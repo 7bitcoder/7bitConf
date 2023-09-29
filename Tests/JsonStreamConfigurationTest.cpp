@@ -1,10 +1,8 @@
 #include <gtest/gtest.h>
-#include <iostream>
 #include <sstream>
 
 #include "Mocks/ConfigurationBuilderMock.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"
-#include "SevenBit/Conf/Json.hpp"
 #include "SevenBit/Conf/JsonStreamConfiguration.hpp"
 
 class JsonStreamConfigurationTest : public testing::Test
@@ -20,10 +18,13 @@ class JsonStreamConfigurationTest : public testing::Test
 
     void TearDown() override {}
 
-    ~JsonStreamConfigurationTest() {}
-
     static void TearDownTestSuite() {}
 };
+
+TEST_F(JsonStreamConfigurationTest, ShouldFailProviderCreationDueToNullSource)
+{
+    EXPECT_THROW(sb::cf::JsonStreamConfigurationProvider(nullptr), sb::cf::NullPointerException);
+}
 
 TEST_F(JsonStreamConfigurationTest, ShouldLoadConfigFromStream)
 {

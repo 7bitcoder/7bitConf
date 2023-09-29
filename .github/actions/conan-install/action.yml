@@ -9,7 +9,7 @@ runs:
   using: composite
   steps:
     - name: Install Conan
-      uses: turtlebrowser/get-conan@main
+      uses: turtlebrowser/get-conan@v1.2
 
     - name: Set Proper Conan Profile
       uses: kanga333/variable-mapper@v0.3.0

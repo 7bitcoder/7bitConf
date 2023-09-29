@@ -1,9 +1,7 @@
 #include <gtest/gtest.h>
-#include <iostream>
 #include <string>
 
 #include "Mocks/ConfigurationBuilderMock.hpp"
-#include "SevenBit/Conf/JsonFileConfiguration.hpp"
 #include "SevenBit/Conf/KeyPerFileConfiguration.hpp"
 
 class KeyPerFileConfigurationTest : public testing::Test
@@ -18,8 +16,6 @@ class KeyPerFileConfigurationTest : public testing::Test
     void SetUp() override {}
 
     void TearDown() override {}
-
-    ~KeyPerFileConfigurationTest() {}
 
     static void TearDownTestSuite() {}
 };

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "SevenBit/Conf/ChainedConfiguration.hpp"
-#include "SevenBit/Conf/Details/JsonObjectExt.hpp"
+#include "SevenBit/Conf/Details/JsonExt.hpp"
 #include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/JsonFileConfiguration.hpp"
 #include "SevenBit/Conf/KeyPerFileConfiguration.hpp"
@@ -27,16 +27,16 @@ namespace sb::cf
                                                                                     bool isOptional,
                                                                                     std::string ignorePrefix)
     {
-        return KeyPerFileConfigurationSource::Ptr{
-            new KeyPerFileConfigurationSource{std::move(directoryPath), isOptional, std::move(ignorePrefix)}};
+        return std::make_unique<KeyPerFileConfigurationSource>(std::move(directoryPath), isOptional,
+                                                               std::move(ignorePrefix));
     }
 
     INLINE KeyPerFileConfigurationSource::Ptr KeyPerFileConfigurationSource::create(
         std::filesystem::path directoryPath, bool isOptional,
         std::function<bool(const std::filesystem::path &)> ignoreCondition)
     {
-        return KeyPerFileConfigurationSource::Ptr{
-            new KeyPerFileConfigurationSource{std::move(directoryPath), isOptional, std::move(ignoreCondition)}};
+        return std::make_unique<KeyPerFileConfigurationSource>(std::move(directoryPath), isOptional,
+                                                               std::move(ignoreCondition));
     }
 
     INLINE const std::filesystem::path &KeyPerFileConfigurationSource::getDirectoryPath() const
@@ -77,8 +77,7 @@ namespace sb::cf
                 auto mapSource = MapConfigurationSource::create(
                     std::move(fileSource), [name = filePath.stem().generic_string()](JsonObject config) -> JsonObject {
                         auto res = JsonObject{};
-                        details::JsonObjectExt::getOrCreateInner(res, details::utils::split(name, "__")) =
-                            std::move(config);
+                        details::JsonExt::deepGetOrOverride(res, details::utils::split(name, "__")) = std::move(config);
                         return res;
                     });
                 sources.add(mapSource);
@@ -87,15 +86,15 @@ namespace sb::cf
         return sources.build(builder);
     }
 
-    INLINE bool KeyPerFileConfigurationSource::canIgnore(std::filesystem::path filePath) const
+    INLINE bool KeyPerFileConfigurationSource::canIgnore(const std::filesystem::path &filePath) const
     {
         auto &ignorePrefix = getIgnorePrefix();
         if (!ignorePrefix.empty() && details::utils::startsWith(filePath.filename().generic_string(), ignorePrefix))
         {
             return true;
         }
-        auto &ignoreConfition = getIgnoreCondition();
-        if (!!ignoreConfition && ignoreConfition(filePath))
+        auto &ignoreCondition = getIgnoreCondition();
+        if (ignoreCondition && ignoreCondition(filePath))
         {
             return true;
         }

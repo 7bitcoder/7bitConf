@@ -1,15 +1,12 @@
 #pragma once
 
-#include <memory>
-#include <string>
 #include <vector>
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
 #include "SevenBit/Conf/ConfigurationProviderBase.hpp"
-#include "SevenBit/Conf/Details/SettingParser.hpp"
 #include "SevenBit/Conf/IConfigurationSource.hpp"
-#include "SevenBit/Conf/OptionsParserConfig.hpp"
+#include "SevenBit/Conf/SettingParserBuilder.hpp"
 
 namespace sb::cf
 {
@@ -18,21 +15,23 @@ namespace sb::cf
     {
       private:
         std::vector<std::string_view> _args;
-        details::SettingParser _parser;
+        ISettingParser::Ptr _parser;
 
-        CommandLineConfigurationSource(std::vector<std::string_view> args, SettingParserConfig config);
+        CommandLineConfigurationSource(std::vector<std::string_view> args, ISettingParser::Ptr parser);
 
       public:
         using Ptr = std::unique_ptr<CommandLineConfigurationSource>;
         using SPtr = std::shared_ptr<CommandLineConfigurationSource>;
 
-        static SPtr create(int argc, const char *const *argv, SettingParserConfig config = {});
+        [[nodiscard]] static SPtr create(int argc, const char *const *argv,
+                                         ISettingParser::Ptr parser = SettingParserBuilder{}.build());
 
-        static SPtr create(std::vector<std::string_view> args, SettingParserConfig config = {});
+        [[nodiscard]] static SPtr create(std::vector<std::string_view> args,
+                                         ISettingParser::Ptr parser = SettingParserBuilder{}.build());
 
-        const std::vector<std::string_view> &getArgs() const;
+        [[nodiscard]] const std::vector<std::string_view> &getArgs() const;
 
-        const details::SettingParser &getOptionsParser() const;
+        [[nodiscard]] const ISettingParser &getSettingParser() const;
 
         IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
     };
@@ -43,7 +42,7 @@ namespace sb::cf
         CommandLineConfigurationSource::SPtr _source;
 
       public:
-        CommandLineConfigurationProvider(CommandLineConfigurationSource::SPtr source);
+        explicit CommandLineConfigurationProvider(CommandLineConfigurationSource::SPtr source);
 
         void load() override;
     };

@@ -1,8 +1,8 @@
 include(Functions)
 
-if(NOT CMAKE_BUILD_TYPE)
+if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose Release or Debug" FORCE)
-endif()
+endif ()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/bin)
@@ -49,31 +49,31 @@ option(_7BIT_CONF_BUILD_TESTS "Build tests" OFF)
 option(_7BIT_CONF_INSTALL "Installs 7bitConf" OFF)
 option(_7BIT_CONF_BUILD_SINGLE_HEADER "Builds single header SevenBitConf.hpp" OFF)
 
-if(_7BIT_CONF_BUILD_PIC)
+if (_7BIT_CONF_BUILD_PIC)
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-endif()
+endif ()
 
-if(_7BIT_CONF_LIBRARY_TYPE STREQUAL "Shared")
+if (_7BIT_CONF_LIBRARY_TYPE STREQUAL "Shared")
     set(_7BIT_CONF_BUILD_LIBRARY_TYPE "Shared")
     set(_7BIT_CONF_SHARED_LIB true)
-elseif(_7BIT_CONF_LIBRARY_TYPE STREQUAL "HeaderOnly")
+elseif (_7BIT_CONF_LIBRARY_TYPE STREQUAL "HeaderOnly")
     set(_7BIT_CONF_BUILD_LIBRARY_TYPE "HeaderOnly")
     set(_7BIT_CONF_HEADER_ONLY_LIB true)
-else()
+else ()
     set(_7BIT_CONF_BUILD_LIBRARY_TYPE "Static")
     set(_7BIT_CONF_STATIC_LIB true)
-endif()
+endif ()
 
 configure_file(${CMAKE_SOURCE_DIR}/Include/SevenBit/Conf/CmakeDef.hpp.input ${CMAKE_SOURCE_DIR}/Include/SevenBit/Conf/CmakeDef.hpp)
 
 set(INFOS
-    "${CMAKE_PROJECT_NAME} version: ${_7BIT_CONF_VERSION}"
-    "${CMAKE_PROJECT_NAME} build type: ${CMAKE_BUILD_TYPE} "
-    "${CMAKE_PROJECT_NAME} build as ${_7BIT_CONF_BUILD_LIBRARY_TYPE} library"
-    "=================================================="
-    "Build tests: ${_7BIT_CONF_BUILD_TESTS}"
-    "Build examples: ${_7BIT_CONF_BUILD_EXAMPLES}"
-    "Build single header: ${_7BIT_CONF_BUILD_SINGLE_HEADER}"
-    "Install project: ${_7BIT_CONF_INSTALL}"
+        "${CMAKE_PROJECT_NAME} version: ${_7BIT_CONF_VERSION}"
+        "${CMAKE_PROJECT_NAME} build type: ${CMAKE_BUILD_TYPE} "
+        "${CMAKE_PROJECT_NAME} build as ${_7BIT_CONF_BUILD_LIBRARY_TYPE} library"
+        "=================================================="
+        "Build tests: ${_7BIT_CONF_BUILD_TESTS}"
+        "Build examples: ${_7BIT_CONF_BUILD_EXAMPLES}"
+        "Build single header: ${_7BIT_CONF_BUILD_SINGLE_HEADER}"
+        "Install project: ${_7BIT_CONF_INSTALL}"
 )
 printInfo("${INFOS}" = 50 7 0)

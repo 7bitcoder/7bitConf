@@ -1,29 +1,33 @@
-#include "Mocks/ConfigurationBuilderMock.hpp"
-#include "SevenBit/Conf/Json.hpp"
-#include "SevenBit/Conf/JsonConfiguration.hpp"
-#include "SevenBit/Conf/MapConfiguration.hpp"
 #include <gtest/gtest.h>
 #include <iostream>
 
-class MapConfigutationTest : public testing::Test
+#include "Mocks/ConfigurationBuilderMock.hpp"
+#include "SevenBit/Conf/Exceptions.hpp"
+#include "SevenBit/Conf/JsonConfiguration.hpp"
+#include "SevenBit/Conf/MapConfiguration.hpp"
+
+class MapConfigurationTest : public testing::Test
 {
   protected:
     ConfigurationBuilderMock mock;
 
     static void TearUpTestSuite() {}
 
-    MapConfigutationTest() {}
+    MapConfigurationTest() {}
 
     void SetUp() override {}
 
     void TearDown() override {}
 
-    ~MapConfigutationTest() {}
-
     static void TearDownTestSuite() {}
 };
 
-TEST_F(MapConfigutationTest, ShouldMapSimpleConfiguration)
+TEST_F(MapConfigurationTest, ShouldFailProviderCreationDueToNullSource)
+{
+    EXPECT_THROW(sb::cf::MapConfigurationProvider(nullptr, nullptr), sb::cf::NullPointerException);
+}
+
+TEST_F(MapConfigurationTest, ShouldMapSimpleConfiguration)
 {
     auto provider = sb::cf::MapConfigurationSource::create(sb::cf::JsonConfigurationSource::create({{"yes", 12345}}),
                                                            [](sb::cf::JsonObject ob) {

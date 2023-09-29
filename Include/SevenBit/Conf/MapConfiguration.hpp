@@ -2,7 +2,6 @@
 
 #include <functional>
 #include <memory>
-#include <vector>
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
@@ -25,9 +24,10 @@ namespace sb::cf
         using Ptr = std::unique_ptr<MapConfigurationSource>;
         using SPtr = std::shared_ptr<MapConfigurationSource>;
 
-        static SPtr create(IConfigurationSource::SPtr source, std::function<JsonObject(JsonObject)> mapFcn);
+        [[nodiscard]] static SPtr create(IConfigurationSource::SPtr source,
+                                         std::function<JsonObject(JsonObject)> mapFcn);
 
-        const std::function<JsonObject(JsonObject)> &getMapFcn() const;
+        [[nodiscard]] const std::function<JsonObject(JsonObject)> &getMapFcn() const;
 
         IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
     };

@@ -19,17 +19,17 @@ namespace sb::cf
         using Ptr = std::unique_ptr<ChainedConfigurationSource>;
         using SPtr = std::shared_ptr<ChainedConfigurationSource>;
 
-        ChainedConfigurationSource(std::vector<IConfigurationSource::SPtr> sources = {});
+        explicit ChainedConfigurationSource(std::vector<IConfigurationSource::SPtr> sources = {});
 
-        static Ptr create(std::vector<IConfigurationSource::SPtr> sources = {});
+        [[nodiscard]] static Ptr create(std::vector<IConfigurationSource::SPtr> sources = {});
 
         void add(IConfigurationSource::SPtr source);
 
         IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
 
-        auto begin() { return _sources.begin(); }
+        [[nodiscard]] auto begin() { return _sources.begin(); }
 
-        auto end() { return _sources.end(); }
+        [[nodiscard]] auto end() { return _sources.end(); }
     };
 
     class EXPORT ChainedConfigurationProvider : public ConfigurationProviderBase
@@ -38,7 +38,7 @@ namespace sb::cf
         std::vector<IConfigurationProvider::Ptr> _providers;
 
       public:
-        ChainedConfigurationProvider(std::vector<IConfigurationProvider::Ptr> providers);
+        explicit ChainedConfigurationProvider(std::vector<IConfigurationProvider::Ptr> providers);
 
         ChainedConfigurationProvider(const ChainedConfigurationProvider &) = delete;
 

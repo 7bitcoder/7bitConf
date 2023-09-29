@@ -3,7 +3,8 @@
 #include <memory>
 
 #include "SevenBit/Conf/ConfigurationProviderBase.hpp"
-#include "SevenBit/Conf/Details/JsonObjectExt.hpp"
+#include "SevenBit/Conf/Details/JsonExt.hpp"
+#include "SevenBit/Conf/Exceptions.hpp"
 
 namespace sb::cf
 {
@@ -17,6 +18,11 @@ namespace sb::cf
 
     INLINE void ConfigurationProviderBase::update(JsonObject configuration)
     {
-        details::JsonObjectExt::deepMerge(_configuration, std::move(configuration));
+        details::JsonExt::deepMerge(_configuration, std::move(configuration));
+    }
+
+    INLINE void ConfigurationProviderBase::update(const std::vector<std::string_view> &keys, JsonValue value)
+    {
+        details::JsonExt::updateWith(_configuration, keys, std::move(value));
     }
 } // namespace sb::cf

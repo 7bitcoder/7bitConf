@@ -2,52 +2,49 @@
 
 #include <optional>
 #include <string_view>
-#include <utility>
 #include <vector>
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
-#include "SevenBit/Conf/Details/Utils.hpp"
-#include "SevenBit/Conf/Json.hpp"
-#include "SevenBit/Conf/OptionsParserConfig.hpp"
+#include "SevenBit/Conf/ISettingParser.hpp"
+#include "SevenBit/Conf/ISettingSplitter.hpp"
+#include "SevenBit/Conf/IValueDeserializersMap.hpp"
+#include "SevenBit/Conf/SettingParserConfig.hpp"
 
 namespace sb::cf::details
 {
-    class EXPORT SettingParser
+    class EXPORT SettingParser : public ISettingParser
     {
       private:
-        enum SettingType
-        {
-            Int,
-            UInt,
-            Null,
-            Bool,
-            String,
-            Double,
-            Json
-        };
+        const ISettingSplitter::Ptr _settingSplitter;
+        const IValueDeserializersMap::Ptr _valueDeserializersMap;
 
-        SettingParserConfig _config;
+        const std::string_view _defaultType;
+        const bool _allowEmptyKeys;
+        const bool _throwOnUnknownType;
 
       public:
-        SettingParser(SettingParserConfig config = {});
+        using Ptr = std::unique_ptr<SettingParser>;
 
-        JsonObject parseSetting(std::string_view setting) const;
+        SettingParser(ISettingSplitter::Ptr settingSplitter, IValueDeserializersMap::Ptr valueDeserializersMap,
+                      std::string_view defaultType, bool allowEmptyKeys, bool throwOnUnknownType);
 
-        JsonObject parseSetting(std::string_view key, std::optional<std::string_view> value) const;
+        [[nodiscard]] ISettingParser::Result parse(std::string_view setting) const override;
+
+        [[nodiscard]] const ISettingSplitter &getSettingSplitter() const;
+
+        [[nodiscard]] const IValueDeserializersMap &getValueDeserializersMap() const;
+
+        [[nodiscard]] std::string_view getDefaultType() const;
+
+        [[nodiscard]] bool getAllowEmptyKeys() const;
+
+        [[nodiscard]] bool getThrowOnUnknownType() const;
 
       private:
-        std::vector<std::string_view> parseKey(std::string_view key) const;
+        [[nodiscard]] const IDeserializer &getDeserializerFor(std::string_view type) const;
 
-        JsonValue parseValue(SettingType type, std::optional<std::string_view> value) const;
-
-        SettingType extractType(std::string_view &value) const;
-
-        bool tryExtractType(std::string_view &value, std::string_view typeStr) const;
-
-        JsonObject parseSetting(const std::vector<std::string_view> &key, JsonValue value) const;
-
-        std::string sanitizeKey(std::string_view key) const;
+        void checkKeys(const std::vector<std::string_view> &keys) const;
     };
 } // namespace sb::cf::details
 

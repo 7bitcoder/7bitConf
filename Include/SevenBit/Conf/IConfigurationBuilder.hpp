@@ -4,6 +4,8 @@
 #include <functional>
 #include <memory>
 #include <sstream>
+#include <string>
+#include <string_view>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -20,7 +22,8 @@
 #include "SevenBit/Conf/JsonFileConfiguration.hpp"
 #include "SevenBit/Conf/JsonStreamConfiguration.hpp"
 #include "SevenBit/Conf/KeyPerFileConfiguration.hpp"
-#include "SevenBit/Conf/OptionsParserConfig.hpp"
+#include "SevenBit/Conf/SettingParserBuilder.hpp"
+#include "SevenBit/Conf/SettingParserConfig.hpp"
 
 namespace sb::cf
 {
@@ -30,13 +33,13 @@ namespace sb::cf
 
         virtual IConfigurationBuilder &add(IConfigurationSource::SPtr) = 0;
 
-        virtual std::unordered_map<std::string, IObject::SPtr> &getProperties() = 0;
+        [[nodiscard]] virtual std::unordered_map<std::string, IObject::SPtr> &getProperties() = 0;
 
-        virtual const std::unordered_map<std::string, IObject::SPtr> &getProperties() const = 0;
+        [[nodiscard]] virtual const std::unordered_map<std::string, IObject::SPtr> &getProperties() const = 0;
 
-        virtual std::vector<IConfigurationSource::SPtr> &getSources() = 0;
+        [[nodiscard]] virtual std::vector<IConfigurationSource::SPtr> &getSources() = 0;
 
-        virtual const std::vector<IConfigurationSource::SPtr> &getSources() const = 0;
+        [[nodiscard]] virtual const std::vector<IConfigurationSource::SPtr> &getSources() const = 0;
 
         virtual IConfiguration::Ptr build() = 0;
 
@@ -66,36 +69,52 @@ namespace sb::cf
             return add(AppSettingsConfigurationSource::create(std::move(environmentName)));
         }
 
-        IConfigurationBuilder &addEnvironmentVariables() { return addEnvironmentVariables("", {}); }
+        IConfigurationBuilder &addEnvironmentVariables() { return addEnvironmentVariables("", SettingParserConfig{}); }
 
         IConfigurationBuilder &addEnvironmentVariables(std::string prefix)
         {
-            return addEnvironmentVariables(std::move(prefix), {});
+            return addEnvironmentVariables(std::move(prefix), SettingParserConfig{});
         }
 
         IConfigurationBuilder &addEnvironmentVariables(std::string prefix, SettingParserConfig config)
         {
-            return add(EnvironmentVarsConfigurationSource::create(std::move(prefix), std::move(config)));
+            return addEnvironmentVariables(std::move(prefix),
+                                           SettingParserBuilder{}.useConfig(std::move(config)).build());
+        }
+
+        IConfigurationBuilder &addEnvironmentVariables(std::string prefix, ISettingParser::Ptr parser)
+        {
+            return add(EnvironmentVarsConfigurationSource::create(std::move(prefix), std::move(parser)));
         }
 
         IConfigurationBuilder &addCommandLine(int argc, char *const *const argv)
         {
-            return addCommandLine(argc, argv, {});
+            return addCommandLine(argc, argv, SettingParserConfig{});
         }
 
         IConfigurationBuilder &addCommandLine(std::vector<std::string_view> args)
         {
-            return addCommandLine(std::move(args), {});
+            return addCommandLine(std::move(args), SettingParserConfig{});
         }
 
         IConfigurationBuilder &addCommandLine(int argc, char *const *const argv, SettingParserConfig config)
         {
-            return add(CommandLineConfigurationSource::create(argc, argv, std::move(config)));
+            return addCommandLine(argc, argv, SettingParserBuilder{}.useConfig(std::move(config)).build());
         }
 
         IConfigurationBuilder &addCommandLine(std::vector<std::string_view> args, SettingParserConfig config)
         {
-            return add(CommandLineConfigurationSource::create(std::move(args), std::move(config)));
+            return addCommandLine(std::move(args), SettingParserBuilder{}.useConfig(std::move(config)).build());
+        }
+
+        IConfigurationBuilder &addCommandLine(int argc, char *const *const argv, ISettingParser::Ptr parser)
+        {
+            return add(CommandLineConfigurationSource::create(argc, argv, std::move(parser)));
+        }
+
+        IConfigurationBuilder &addCommandLine(std::vector<std::string_view> args, ISettingParser::Ptr parser)
+        {
+            return add(CommandLineConfigurationSource::create(std::move(args), std::move(parser)));
         }
 
         IConfigurationBuilder &addJson(JsonObject object)

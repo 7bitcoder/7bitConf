@@ -1,8 +1,9 @@
 #pragma once
 
+#include <memory>
+
 #include "SevenBit/Conf/AppSettingsConfiguration.hpp"
 #include "SevenBit/Conf/ChainedConfiguration.hpp"
-#include "SevenBit/Conf/Details/JsonObjectExt.hpp"
 #include "SevenBit/Conf/JsonFileConfiguration.hpp"
 
 namespace sb::cf
@@ -14,7 +15,7 @@ namespace sb::cf
 
     INLINE AppSettingsConfigurationSource::Ptr AppSettingsConfigurationSource::create(std::string environmentName)
     {
-        return AppSettingsConfigurationSource::Ptr(new AppSettingsConfigurationSource{std::move(environmentName)});
+        return std::make_unique<AppSettingsConfigurationSource>(std::move(environmentName));
     }
 
     INLINE const std::string &AppSettingsConfigurationSource::getEnvironmentName() const { return _envName; }

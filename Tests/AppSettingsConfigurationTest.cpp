@@ -1,5 +1,4 @@
 #include <gtest/gtest.h>
-#include <iostream>
 #include <string>
 
 #include "Mocks/ConfigurationBuilderMock.hpp"
@@ -17,8 +16,6 @@ class AppSettingsConfiguration : public testing::Test
     void SetUp() override {}
 
     void TearDown() override {}
-
-    ~AppSettingsConfiguration() {}
 
     static void TearDownTestSuite() {}
 };

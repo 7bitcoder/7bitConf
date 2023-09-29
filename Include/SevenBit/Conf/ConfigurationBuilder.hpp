@@ -6,7 +6,6 @@
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
-#include "SevenBit/Conf/IConfiguration.hpp"
 #include "SevenBit/Conf/IConfigurationBuilder.hpp"
 
 namespace sb::cf
@@ -21,9 +20,9 @@ namespace sb::cf
       public:
         using Ptr = std::unique_ptr<ConfigurationBuilder>;
 
-        ConfigurationBuilder(std::vector<IConfigurationSource::SPtr> = {});
+        explicit ConfigurationBuilder(std::vector<IConfigurationSource::SPtr> = {});
 
-        ConfigurationBuilder(ConfigurationBuilder &&) = default;
+        ConfigurationBuilder(ConfigurationBuilder &&) noexcept = default;
         ConfigurationBuilder(const ConfigurationBuilder &) = default;
 
         ConfigurationBuilder &operator=(ConfigurationBuilder &&) = default;
@@ -31,19 +30,17 @@ namespace sb::cf
 
         IConfigurationBuilder &add(IConfigurationSource::SPtr source) override;
 
-        std::vector<IConfigurationSource::SPtr> &getSources() override;
+        [[nodiscard]] std::vector<IConfigurationSource::SPtr> &getSources() override;
 
-        const std::vector<IConfigurationSource::SPtr> &getSources() const override;
+        [[nodiscard]] const std::vector<IConfigurationSource::SPtr> &getSources() const override;
 
-        std::unordered_map<std::string, IObject::SPtr> &getProperties() override;
+        [[nodiscard]] std::unordered_map<std::string, IObject::SPtr> &getProperties() override;
 
-        const std::unordered_map<std::string, IObject::SPtr> &getProperties() const override;
+        [[nodiscard]] const std::unordered_map<std::string, IObject::SPtr> &getProperties() const override;
 
         IConfiguration::Ptr build() override;
 
         void clear() override;
-
-        ~ConfigurationBuilder() = default;
     };
 } // namespace sb::cf
 

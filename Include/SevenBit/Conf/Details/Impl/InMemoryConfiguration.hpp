@@ -1,27 +1,21 @@
 #pragma once
 
-#include "SevenBit/Conf/Details/JsonObjectExt.hpp"
+#include "SevenBit/Conf/Details/JsonExt.hpp"
+#include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/InMemoryConfiguration.hpp"
-#include "SevenBit/Conf/Json.hpp"
 
 namespace sb::cf
 {
     INLINE InMemoryConfigurationSource::InMemoryConfigurationSource(
-        std::vector<std::pair<std::string_view, JsonValue>> settings, SettingParserConfig parserCfg)
-        : _settings(std::move(settings)), _settingsParser(std::move(parserCfg))
+        std::vector<std::pair<std::string_view, JsonValue>> settings)
+        : _settings(std::move(settings))
     {
     }
 
     INLINE InMemoryConfigurationSource::SPtr InMemoryConfigurationSource::create(
-        std::vector<std::pair<std::string_view, JsonValue>> settings, SettingParserConfig parserCfg)
+        std::vector<std::pair<std::string_view, JsonValue>> settings)
     {
-        return InMemoryConfigurationSource::SPtr(
-            new InMemoryConfigurationSource{std::move(settings), std::move(parserCfg)});
-    }
-
-    INLINE const details::SettingParser &InMemoryConfigurationSource::getSettingParser() const
-    {
-        return _settingsParser;
+        return InMemoryConfigurationSource::SPtr(new InMemoryConfigurationSource{std::move(settings)});
     }
 
     INLINE InMemoryConfigurationProvider::Ptr InMemoryConfigurationSource::build(IConfigurationBuilder &builder)
@@ -32,6 +26,7 @@ namespace sb::cf
     INLINE InMemoryConfigurationProvider::InMemoryConfigurationProvider(InMemoryConfigurationSource::SPtr source)
         : _source(std::move(source))
     {
+        details::utils::assertPtr(_source);
     }
 
     INLINE void InMemoryConfigurationProvider::load()
@@ -40,7 +35,7 @@ namespace sb::cf
         for (auto &[key, value] : *_source)
         {
             JsonObject result{};
-            details::JsonObjectExt::getOrCreateInner(result, key) = std::move(value);
+            details::JsonExt::deepGetOrOverride(result, key) = std::move(value);
             update(std::move(result));
         }
     }

@@ -1,30 +1,32 @@
-#include "Mocks/ConfigurationBuilderMock.hpp"
-#include "SevenBit/Conf/InMemoryConfiguration.hpp"
-#include "SevenBit/Conf/Json.hpp"
-#include "SevenBit/Conf/JsonConfiguration.hpp"
-#include "SevenBit/Conf/MapConfiguration.hpp"
 #include <gtest/gtest.h>
 #include <iostream>
 
-class SettingConfigutationTest : public testing::Test
+#include "Mocks/ConfigurationBuilderMock.hpp"
+#include "SevenBit/Conf/Exceptions.hpp"
+#include "SevenBit/Conf/InMemoryConfiguration.hpp"
+
+class InMemoryConfigurationTest : public testing::Test
 {
   protected:
     ConfigurationBuilderMock mock;
 
     static void TearUpTestSuite() {}
 
-    SettingConfigutationTest() {}
+    InMemoryConfigurationTest() {}
 
     void SetUp() override {}
 
     void TearDown() override {}
 
-    ~SettingConfigutationTest() {}
-
     static void TearDownTestSuite() {}
 };
 
-TEST_F(SettingConfigutationTest, ShouldLoadSimpleSettingConfiguration)
+TEST_F(InMemoryConfigurationTest, ShouldFailProviderCreationDueToNullSource)
+{
+    EXPECT_THROW(sb::cf::InMemoryConfigurationProvider(nullptr), sb::cf::NullPointerException);
+}
+
+TEST_F(InMemoryConfigurationTest, ShouldLoadSimpleSettingConfiguration)
 {
     auto provider =
         sb::cf::InMemoryConfigurationSource::create({{"yes:yes:inner", sb::cf::JsonArray{1, 2, 3, 4, 5}}})->build(mock);

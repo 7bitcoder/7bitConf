@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: ["dev", "main"]
+    branches: [ "dev", "main" ]
     paths-ignore:
       - ".readthedocs.yaml"
       - "README.md"
@@ -16,8 +16,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        libraryType: [HeaderOnly, Static, Shared]
-        os: [ubuntu-22.04, macos-12, windows-2022]
+        libraryType: [ HeaderOnly, Static, Shared ]
+        os: [ ubuntu-22.04, macos-12, windows-2022 ]
 
     runs-on: ${{matrix.os}}
 
@@ -25,6 +25,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Install Conan Packages
+        id: conan
         uses: ./.github/actions/conan-install
         with:
           install-dir: ${{ env.BUILD_DIR }}
@@ -32,10 +33,7 @@ jobs:
       - name: CMake Build
         uses: ./.github/actions/cmake-build
         with:
-          build-dir: ${{ env.BUILD_DIR }}
-          build-type: ${{ env.BUILD_TYPE }}
           library-type: ${{ matrix.libraryType }}
 
       - name: Test
-        working-directory: ${{ env.BUILD_DIR }}
-        run: ctest -C ${{env.BUILD_TYPE}}
+        run: ctest -j 10 --preset conan-release

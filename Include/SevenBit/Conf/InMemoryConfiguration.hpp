@@ -8,7 +8,6 @@
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
 #include "SevenBit/Conf/ConfigurationProviderBase.hpp"
-#include "SevenBit/Conf/Details/SettingParser.hpp"
 #include "SevenBit/Conf/IConfigurationSource.hpp"
 
 namespace sb::cf
@@ -18,25 +17,20 @@ namespace sb::cf
     {
       private:
         std::vector<std::pair<std::string_view, JsonValue>> _settings;
-        details::SettingParser _settingsParser;
 
-        InMemoryConfigurationSource(std::vector<std::pair<std::string_view, JsonValue>> settings,
-                                    SettingParserConfig parserCfg);
+        explicit InMemoryConfigurationSource(std::vector<std::pair<std::string_view, JsonValue>> settings);
 
       public:
         using Ptr = std::unique_ptr<InMemoryConfigurationSource>;
         using SPtr = std::shared_ptr<InMemoryConfigurationSource>;
 
-        static SPtr create(std::vector<std::pair<std::string_view, JsonValue>> settings,
-                           SettingParserConfig parserCfg = {});
-
-        const details::SettingParser &getSettingParser() const;
+        [[nodiscard]] static SPtr create(std::vector<std::pair<std::string_view, JsonValue>> settings);
 
         IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
 
-        auto begin() { return _settings.begin(); }
+        [[nodiscard]] auto begin() { return _settings.begin(); }
 
-        auto end() { return _settings.end(); }
+        [[nodiscard]] auto end() { return _settings.end(); }
     };
 
     class EXPORT InMemoryConfigurationProvider : public ConfigurationProviderBase
@@ -45,7 +39,7 @@ namespace sb::cf
         InMemoryConfigurationSource::SPtr _source;
 
       public:
-        InMemoryConfigurationProvider(InMemoryConfigurationSource::SPtr source);
+        explicit InMemoryConfigurationProvider(InMemoryConfigurationSource::SPtr source);
 
         void load() override;
     };

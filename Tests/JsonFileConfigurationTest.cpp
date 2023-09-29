@@ -1,5 +1,4 @@
 #include <gtest/gtest.h>
-#include <iostream>
 
 #include "Mocks/ConfigurationBuilderMock.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"
@@ -18,10 +17,13 @@ class JsonFileConfigurationTest : public testing::Test
 
     void TearDown() override {}
 
-    ~JsonFileConfigurationTest() {}
-
     static void TearDownTestSuite() {}
 };
+
+TEST_F(JsonFileConfigurationTest, ShouldFailProviderCreationDueToNullSource)
+{
+    EXPECT_THROW(sb::cf::JsonFileConfigurationProvider(nullptr), sb::cf::NullPointerException);
+}
 
 TEST_F(JsonFileConfigurationTest, ShouldLoadSimpleJsonConfigFile)
 {
