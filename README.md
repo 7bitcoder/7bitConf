@@ -1,6 +1,6 @@
 [![CI](https://github.com/7bitcoder/7bitConf/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/7bitcoder/7bitConf/actions/workflows/CI.yml) ![Conan Center](https://img.shields.io/conan/v/7bitconf)
 
-<div style="text-align:center;">
+<div align="center">
   <span>
     <img src="7bitConf-logo.svg" alt="logo" width="500" height="auto" />
     <p> C++17 configuration provider library! </p>
