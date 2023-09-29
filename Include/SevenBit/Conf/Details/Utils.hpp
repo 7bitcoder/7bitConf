@@ -15,37 +15,35 @@
 
 namespace sb::cf::details::utils
 {
-    EXPORT [[nodiscard]] bool isNumberString(std::string_view str);
+    EXPORT bool isNumberString(std::string_view str);
 
-    EXPORT [[nodiscard]] bool ignoreCaseLess(std::string_view str, std::string_view search);
+    EXPORT bool ignoreCaseLess(std::string_view str, std::string_view search);
 
-    EXPORT [[nodiscard]] bool ignoreCaseEqual(std::string_view str, std::string_view search);
+    EXPORT bool ignoreCaseEqual(std::string_view str, std::string_view search);
 
-    EXPORT [[nodiscard]] bool containsAt(std::string_view str, size_t index, std::string_view search);
+    EXPORT bool containsAt(std::string_view str, size_t index, std::string_view search);
 
-    EXPORT [[nodiscard]] std::optional<std::string_view> containsAt(std::string_view str, size_t index,
-                                                                    const std::vector<std::string_view> &searches);
+    EXPORT std::optional<std::string_view> containsAt(std::string_view str, size_t index,
+                                                      const std::vector<std::string_view> &searches);
 
-    EXPORT [[nodiscard]] bool containsAtFromEnd(std::string_view str, size_t index, std::string_view search);
+    EXPORT bool containsAtFromEnd(std::string_view str, size_t index, std::string_view search);
 
-    EXPORT [[nodiscard]] std::optional<std::string_view> containsAtFromEnd(
-        std::string_view str, size_t index, const std::vector<std::string_view> &searches);
+    EXPORT std::optional<std::string_view> containsAtFromEnd(std::string_view str, size_t index,
+                                                             const std::vector<std::string_view> &searches);
 
-    EXPORT [[nodiscard]] bool startsWith(std::string_view str, std::string_view search);
+    EXPORT bool startsWith(std::string_view str, std::string_view search);
 
-    EXPORT [[nodiscard]] std::vector<std::string_view> split(std::string_view str, std::string_view divider);
+    EXPORT std::vector<std::string_view> split(std::string_view str, std::string_view divider);
 
-    EXPORT [[nodiscard]] std::vector<std::string_view> split(std::string_view str,
-                                                             const std::vector<std::string_view> &dividers);
+    EXPORT std::vector<std::string_view> split(std::string_view str, const std::vector<std::string_view> &dividers);
 
-    EXPORT [[nodiscard]] std::optional<std::pair<std::string_view, std::string_view>> tryBreak(
+    EXPORT std::optional<std::pair<std::string_view, std::string_view>> tryBreak(
         std::string_view str, const std::vector<std::string_view> &dividers);
 
-    EXPORT [[nodiscard]] std::optional<std::pair<std::string_view, std::string_view>> tryBreakFromEnd(
+    EXPORT std::optional<std::pair<std::string_view, std::string_view>> tryBreakFromEnd(
         std::string_view str, const std::vector<std::string_view> &dividers);
 
-    EXPORT [[nodiscard]] std::string joinViews(const std::vector<std::string_view> &strings,
-                                               const std::string &divider);
+    EXPORT std::string joinViews(const std::vector<std::string_view> &strings, const std::string &divider);
 
     template <class T> void assertPtr(const T *ptr)
     {
@@ -59,7 +57,7 @@ namespace sb::cf::details::utils
 
     template <class T> void assertPtr(const std::shared_ptr<T> &ptr) { assertPtr(ptr.get()); }
 
-    template <class TNumber> [[nodiscard]] std::pair<bool, TNumber> tryStringTo(std::string_view str, bool full = true)
+    template <class TNumber> std::pair<bool, TNumber> tryStringTo(std::string_view str, bool full = true)
     {
         TNumber number = 0;
         while (!str.empty() && std::isspace(str.front()))
@@ -72,7 +70,7 @@ namespace sb::cf::details::utils
         return {success, number};
     }
 
-    template <> [[nodiscard]] inline std::pair<bool, double> tryStringTo<double>(std::string_view str, bool full)
+    template <> inline std::pair<bool, double> tryStringTo<double>(std::string_view str, bool full)
     {
         try
         {
@@ -88,7 +86,7 @@ namespace sb::cf::details::utils
         }
     }
 
-    template <> [[nodiscard]] inline std::pair<bool, bool> tryStringTo<bool>(std::string_view str, bool full)
+    template <> inline std::pair<bool, bool> tryStringTo<bool>(std::string_view str, bool full)
     {
         if (ignoreCaseEqual(str, "true"))
         {
@@ -105,7 +103,7 @@ namespace sb::cf::details::utils
         return {false, false};
     }
 
-    template <class TNumber> [[nodiscard]] TNumber stringTo(std::string_view str, bool full = true)
+    template <class TNumber> TNumber stringTo(std::string_view str, bool full = true)
     {
         if (auto [success, number] = tryStringTo<TNumber>(str, full); success)
         {
