@@ -12,20 +12,20 @@ int main(int argc, char **argv)
 {
     SettingParserConfig envParserConfig;
     envParserConfig.keySplitters.clear();
-    envParserConfig.settingPrefixes.push_back("//");
+    envParserConfig.settingPrefixes.emplace_back("//");
     envParserConfig.defaultType = "myType";
     envParserConfig.throwOnUnknownType = false;
 
     ISettingParser::Ptr settingParser = SettingParserBuilder{} //
-                                            .useConfig(envParserConfig)
+                                            .useConfig(std::move(envParserConfig))
                                             .useDefaultValueDeserializers()
                                             .useValueDeserializer("myType", std::make_unique<MyTypeDeserializer>())
                                             .build();
 
     IConfiguration::Ptr configuration = ConfigurationBuilder{} //
                                             .addAppSettings()
-                                            .addEnvironmentVariables("", std::move(settingParser))
-                                            .addCommandLine(argc, argv)
+                                            .addEnvironmentVariables()
+                                            .addCommandLine(argc, argv, std::move(settingParser))
                                             .build();
 
     std::cout << "Configuration json:" << std::endl << std::setw(2) << *configuration;

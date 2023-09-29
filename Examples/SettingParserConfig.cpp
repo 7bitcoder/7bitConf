@@ -11,7 +11,7 @@ int main(int argc, char **argv)
 
     IConfiguration::Ptr configuration = ConfigurationBuilder{} //
                                             .addAppSettings()
-                                            .addEnvironmentVariables("", envParserConfig)
+                                            .addEnvironmentVariables("", std::move(envParserConfig))
                                             .addCommandLine(argc, argv)
                                             .build();
 
