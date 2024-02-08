@@ -22,16 +22,17 @@ set(CPACK_PACKAGE_VERSION_MAJOR ${_7BIT_CONF_VERSION_MAJOR})
 set(CPACK_PACKAGE_VERSION_MINOR ${_7BIT_CONF_VERSION_MINOR})
 set(CPACK_PACKAGE_VERSION_PATCH ${_7BIT_CONF_VERSION_PATCH})
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "7bitInjector is a simple C++ dependency injection library")
-set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
-set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README.md")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
 set(CPACK_SOURCE_GENERATOR "TGZ;ZIP")
 
-set(_7BIT_CONF_HEADERS_DIR "${CMAKE_SOURCE_DIR}/Include")
+set(_7BIT_CONF_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Include")
+set(_7BIT_CONF_CONF_DIR "${_7BIT_CONF_INCLUDE_DIR}/SevenBit/Conf")
 
-set(_7BIT_CONF_MAIN_HEADER "${_7BIT_CONF_HEADERS_DIR}/SevenBit/Conf.hpp")
-file(GLOB _7BIT_CONF_TOP_HEADERS "${_7BIT_CONF_HEADERS_DIR}/SevenBit/Conf/*.hpp")
-file(GLOB _7BIT_CONF_DETAILS_HEADERS "${_7BIT_CONF_HEADERS_DIR}/SevenBit/Conf/Details/*.hpp")
-file(GLOB _7BIT_CONF_IMPL_HEADERS "${_7BIT_CONF_HEADERS_DIR}/SevenBit/Conf/Impl/*.hpp")
+set(_7BIT_CONF_MAIN_HEADER "${_7BIT_CONF_INCLUDE_DIR}/SevenBit/Conf.hpp")
+file(GLOB _7BIT_CONF_TOP_HEADERS "${_7BIT_CONF_CONF_DIR}/*.hpp")
+file(GLOB _7BIT_CONF_DETAILS_HEADERS "${_7BIT_CONF_CONF_DIR}/Details/*.hpp")
+file(GLOB _7BIT_CONF_IMPL_HEADERS "${_7BIT_CONF_CONF_DIR}/Impl/*.hpp")
 set(_7BIT_CONF_ALL_HEADERS ${_7BIT_CONF_MAIN_HEADER} ${_7BIT_CONF_TOP_HEADERS} ${_7BIT_CONF_DETAILS_HEADERS} ${_7BIT_CONF_IMPL_HEADERS})
 
 source_group("Header Files\\SevenBit" FILES ${_7BIT_CONF_TOP_HEADERS})
@@ -64,12 +65,22 @@ else ()
     set(_7BIT_CONF_STATIC_LIB true)
 endif ()
 
-configure_file(${CMAKE_SOURCE_DIR}/Include/SevenBit/Conf/CmakeDef.hpp.input ${CMAKE_SOURCE_DIR}/Include/SevenBit/Conf/CmakeDef.hpp)
+configure_file(${_7BIT_CONF_CONF_DIR}/CmakeDef.hpp.input ${_7BIT_CONF_CONF_DIR}/CmakeDef.hpp)
+
+set(BYTE_SIZE 8)
+math(EXPR MEMORY_SIZE "${CMAKE_SIZEOF_VOID_P} * ${BYTE_SIZE}")
 
 set(INFOS
-        "${CMAKE_PROJECT_NAME} version: ${_7BIT_CONF_VERSION}"
-        "${CMAKE_PROJECT_NAME} build type: ${CMAKE_BUILD_TYPE} "
-        "${CMAKE_PROJECT_NAME} build as ${_7BIT_CONF_BUILD_LIBRARY_TYPE} library"
+        "${_7BIT_CONF_LIBRARY} ${_7BIT_CONF_VERSION}"
+        "Build type: ${CMAKE_BUILD_TYPE}"
+        "Library type: ${_7BIT_CONF_BUILD_LIBRARY_TYPE}"
+        "=================================================="
+        "Cmake version: ${CMAKE_VERSION}"
+        "Os: ${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_VERSION}"
+        "Architecture: ${CMAKE_SYSTEM_PROCESSOR} ${MEMORY_SIZE}bit"
+        "CXX compiler: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}"
+        "CXX standard: ${CMAKE_CXX_STANDARD}"
+        "Generator: ${CMAKE_GENERATOR}"
         "=================================================="
         "Build tests: ${_7BIT_CONF_BUILD_TESTS}"
         "Build examples: ${_7BIT_CONF_BUILD_EXAMPLES}"
