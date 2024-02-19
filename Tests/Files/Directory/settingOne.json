@@ -1,9 +1,0 @@
-{
-  "number": 12345,
-  "array": [1, 2, 3, 4, 5, 6],
-  "string": "string",
-  "object": {
-    "num": 134,
-    "string": "string"
-  }
-}
