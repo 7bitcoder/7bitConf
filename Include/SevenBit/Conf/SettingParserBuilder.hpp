@@ -47,5 +47,5 @@ namespace sb::cf
 } // namespace sb::cf
 
 #ifdef _7BIT_CONF_ADD_IMPL
-#include "SevenBit/Conf/Details/Impl/SettingParserBuilder.hpp"
+#include "SevenBit/Conf/Impl/SettingParserBuilder.hpp"
 #endif

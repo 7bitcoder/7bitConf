@@ -1,8 +1,8 @@
 include(Functions)
 
-if (NOT CMAKE_BUILD_TYPE)
+if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose Release or Debug" FORCE)
-endif ()
+endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/bin)
@@ -28,16 +28,21 @@ set(CPACK_SOURCE_GENERATOR "TGZ;ZIP")
 
 set(_7BIT_CONF_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Include")
 set(_7BIT_CONF_CONF_DIR "${_7BIT_CONF_INCLUDE_DIR}/SevenBit/Conf")
+set(_7BIT_CONF_SOURCES_DIR "${_7BIT_CONF_CONF_DIR}/Sources")
+set(_7BIT_CONF_DETAILS_DIR "${_7BIT_CONF_CONF_DIR}/Details")
 
 set(_7BIT_CONF_MAIN_HEADER "${_7BIT_CONF_INCLUDE_DIR}/SevenBit/Conf.hpp")
-file(GLOB _7BIT_CONF_TOP_HEADERS "${_7BIT_CONF_CONF_DIR}/*.hpp")
-file(GLOB _7BIT_CONF_DETAILS_HEADERS "${_7BIT_CONF_CONF_DIR}/Details/*.hpp")
-file(GLOB _7BIT_CONF_IMPL_HEADERS "${_7BIT_CONF_CONF_DIR}/Impl/*.hpp")
-set(_7BIT_CONF_ALL_HEADERS ${_7BIT_CONF_MAIN_HEADER} ${_7BIT_CONF_TOP_HEADERS} ${_7BIT_CONF_DETAILS_HEADERS} ${_7BIT_CONF_IMPL_HEADERS})
-
-source_group("Header Files\\SevenBit" FILES ${_7BIT_CONF_TOP_HEADERS})
-source_group("Header Files\\SevenBit\\Details" FILES ${_7BIT_CONF_DETAILS_HEADERS})
-source_group("Header Files\\SevenBit\\Details\\Impl" FILES ${_7BIT_CONF_IMPL_HEADERS})
+file(GLOB _7BIT_CONF_PUBLIC_HEADERS
+    "${_7BIT_CONF_CONF_DIR}/*.hpp"
+    "${_7BIT_CONF_SOURCES_DIR}/*.hpp"
+)
+file(GLOB _7BIT_CONF_DETAILS_HEADERS "${_7BIT_CONF_DETAILS_DIR}/*.hpp")
+file(GLOB _7BIT_CONF_IMPL_HEADERS
+    "${_7BIT_CONF_CONF_DIR}/Impl/*.hpp"
+    "${_7BIT_CONF_SOURCES_DIR}/Impl/*.hpp"
+    "${_7BIT_CONF_DETAILS_DIR}/Impl/*.hpp"
+)
+set(_7BIT_CONF_ALL_HEADERS ${_7BIT_CONF_MAIN_HEADER} ${_7BIT_CONF_PUBLIC_HEADERS} ${_7BIT_CONF_DETAILS_HEADERS} ${_7BIT_CONF_IMPL_HEADERS})
 
 set(_7BIT_CONF_LIBRARY_TYPE "Static" CACHE STRING "Library build type: Shared;Static;HeaderOnly")
 set(_7BIT_CONF_LIBRARY_TYPE_VALUES "Shared;Static;HeaderOnly" CACHE STRING "List of possible _7BIT_CONF_LIBRARY_TYPE values")
@@ -46,24 +51,33 @@ set_property(CACHE _7BIT_CONF_LIBRARY_TYPE PROPERTY STRINGS Shared Static Header
 
 option(_7BIT_CONF_BUILD_PIC "Build position independent code (-fPIC)" OFF)
 option(_7BIT_CONF_BUILD_EXAMPLES "Build example" OFF)
-option(_7BIT_CONF_BUILD_TESTS "Build tests" OFF)
+option(_7BIT_CONF_BUILD_ALL_TESTS "Build tests" OFF)
+option(_7BIT_CONF_BUILD_UNIT_TESTS "Build unit tests" OFF)
+option(_7BIT_CONF_BUILD_INTEGRATION_TESTS "Build integration tests" OFF)
+option(_7BIT_CONF_BUILD_E2E_TESTS "Build e2e tests" OFF)
 option(_7BIT_CONF_INSTALL "Installs 7bitConf" OFF)
 option(_7BIT_CONF_BUILD_SINGLE_HEADER "Builds single header SevenBitConf.hpp" OFF)
 
-if (_7BIT_CONF_BUILD_PIC)
-    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-endif ()
+if(_7BIT_CONF_BUILD_ALL_TESTS)
+    set(_7BIT_CONF_BUILD_UNIT_TESTS ${_7BIT_CONF_BUILD_ALL_TESTS})
+    set(_7BIT_CONF_BUILD_INTEGRATION_TESTS ${_7BIT_CONF_BUILD_ALL_TESTS})
+    set(_7BIT_CONF_BUILD_E2E_TESTS ${_7BIT_CONF_BUILD_ALL_TESTS})
+endif()
 
-if (_7BIT_CONF_LIBRARY_TYPE STREQUAL "Shared")
+if(_7BIT_CONF_BUILD_PIC)
+    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+endif()
+
+if(_7BIT_CONF_LIBRARY_TYPE STREQUAL "Shared")
     set(_7BIT_CONF_BUILD_LIBRARY_TYPE "Shared")
     set(_7BIT_CONF_SHARED_LIB true)
-elseif (_7BIT_CONF_LIBRARY_TYPE STREQUAL "HeaderOnly")
+elseif(_7BIT_CONF_LIBRARY_TYPE STREQUAL "HeaderOnly")
     set(_7BIT_CONF_BUILD_LIBRARY_TYPE "HeaderOnly")
     set(_7BIT_CONF_HEADER_ONLY_LIB true)
-else ()
+else()
     set(_7BIT_CONF_BUILD_LIBRARY_TYPE "Static")
     set(_7BIT_CONF_STATIC_LIB true)
-endif ()
+endif()
 
 configure_file(${_7BIT_CONF_CONF_DIR}/CmakeDef.hpp.input ${_7BIT_CONF_CONF_DIR}/CmakeDef.hpp)
 
@@ -71,20 +85,22 @@ set(BYTE_SIZE 8)
 math(EXPR MEMORY_SIZE "${CMAKE_SIZEOF_VOID_P} * ${BYTE_SIZE}")
 
 set(INFOS
-        "${_7BIT_CONF_LIBRARY} ${_7BIT_CONF_VERSION}"
-        "Build type: ${CMAKE_BUILD_TYPE}"
-        "Library type: ${_7BIT_CONF_BUILD_LIBRARY_TYPE}"
-        "=================================================="
-        "Cmake version: ${CMAKE_VERSION}"
-        "Os: ${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_VERSION}"
-        "Architecture: ${CMAKE_SYSTEM_PROCESSOR} ${MEMORY_SIZE}bit"
-        "CXX compiler: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}"
-        "CXX standard: ${CMAKE_CXX_STANDARD}"
-        "Generator: ${CMAKE_GENERATOR}"
-        "=================================================="
-        "Build tests: ${_7BIT_CONF_BUILD_TESTS}"
-        "Build examples: ${_7BIT_CONF_BUILD_EXAMPLES}"
-        "Build single header: ${_7BIT_CONF_BUILD_SINGLE_HEADER}"
-        "Install project: ${_7BIT_CONF_INSTALL}"
+    "${_7BIT_CONF_LIBRARY} ${_7BIT_CONF_VERSION}"
+    "Build type: ${CMAKE_BUILD_TYPE}"
+    "Library type: ${_7BIT_CONF_BUILD_LIBRARY_TYPE}"
+    "=================================================="
+    "Cmake version: ${CMAKE_VERSION}"
+    "Os: ${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_VERSION}"
+    "Architecture: ${CMAKE_SYSTEM_PROCESSOR} ${MEMORY_SIZE}bit"
+    "CXX compiler: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}"
+    "CXX standard: ${CMAKE_CXX_STANDARD}"
+    "Generator: ${CMAKE_GENERATOR}"
+    "=================================================="
+    "Build unit tests: ${_7BIT_CONF_BUILD_UNIT_TESTS}"
+    "Build integration tests: ${_7BIT_CONF_BUILD_INTEGRATION_TESTS}"
+    "Build e2e tests: ${_7BIT_CONF_BUILD_E2E_TESTS}"
+    "Build examples: ${_7BIT_CONF_BUILD_EXAMPLES}"
+    "Build single header: ${_7BIT_CONF_BUILD_SINGLE_HEADER}"
+    "Install project: ${_7BIT_CONF_INSTALL}"
 )
 printInfo("${INFOS}" = 50 7 0)

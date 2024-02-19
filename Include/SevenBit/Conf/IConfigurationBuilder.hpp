@@ -3,7 +3,6 @@
 #include <filesystem>
 #include <functional>
 #include <memory>
-#include <sstream>
 #include <string>
 #include <string_view>
 #include <unordered_map>
@@ -12,18 +11,18 @@
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
-#include "SevenBit/Conf/AppSettingsConfiguration.hpp"
-#include "SevenBit/Conf/CommandLineConfiguration.hpp"
-#include "SevenBit/Conf/EnvironmentVarsConfiguration.hpp"
 #include "SevenBit/Conf/IConfiguration.hpp"
 #include "SevenBit/Conf/IObject.hpp"
-#include "SevenBit/Conf/InMemoryConfiguration.hpp"
-#include "SevenBit/Conf/JsonConfiguration.hpp"
-#include "SevenBit/Conf/JsonFileConfiguration.hpp"
-#include "SevenBit/Conf/JsonStreamConfiguration.hpp"
-#include "SevenBit/Conf/KeyPerFileConfiguration.hpp"
 #include "SevenBit/Conf/SettingParserBuilder.hpp"
 #include "SevenBit/Conf/SettingParserConfig.hpp"
+#include "SevenBit/Conf/Sources/AppSettingsConfiguration.hpp"
+#include "SevenBit/Conf/Sources/CommandLineConfiguration.hpp"
+#include "SevenBit/Conf/Sources/EnvironmentVarsConfiguration.hpp"
+#include "SevenBit/Conf/Sources/InMemoryConfiguration.hpp"
+#include "SevenBit/Conf/Sources/JsonConfiguration.hpp"
+#include "SevenBit/Conf/Sources/JsonFileConfiguration.hpp"
+#include "SevenBit/Conf/Sources/JsonStreamConfiguration.hpp"
+#include "SevenBit/Conf/Sources/KeyPerFileConfiguration.hpp"
 
 namespace sb::cf
 {

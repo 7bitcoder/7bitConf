@@ -1,0 +1,10 @@
+{
+  "array": [1],
+  "string": "stringdev",
+  "object": {
+    "string": "stringdev",
+    "inner": {
+      "num": 12345
+    }
+  }
+}

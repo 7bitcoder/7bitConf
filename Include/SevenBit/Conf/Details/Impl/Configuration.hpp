@@ -3,7 +3,7 @@
 #include <string>
 #include <tao/json/to_string.hpp>
 
-#include "SevenBit/Conf/Configuration.hpp"
+#include "SevenBit/Conf/Details/Configuration.hpp"
 #include "SevenBit/Conf/Details/JsonExt.hpp"
 #include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"

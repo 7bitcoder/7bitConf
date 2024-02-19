@@ -49,5 +49,5 @@ namespace sb::cf
 } // namespace sb::cf
 
 #ifdef _7BIT_CONF_ADD_IMPL
-#include "SevenBit/Conf/Details/Impl/Exceptions.hpp"
+#include "SevenBit/Conf/Impl/Exceptions.hpp"
 #endif
