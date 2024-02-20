@@ -5,7 +5,7 @@
 // #include "Mocks/DeserializerMock.hpp"
 // #include "Mocks/SettingSplitterMock.hpp"
 // #include "Mocks/ValueDeserializersMapMock.hpp"
-// #include "SevenBit/Conf/Details/SettingParser.hpp"
+// #include "SevenBit/Conf/Details/EnvironmentVarsParser.hpp"
 // #include "SevenBit/Conf/Exceptions.hpp"
 //
 // class SettingParserTest : public testing::Test

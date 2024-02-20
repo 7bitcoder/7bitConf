@@ -4,10 +4,10 @@
 // #include "Mocks/DeserializerMock.hpp"
 // #include "Mocks/SettingSplitterMock.hpp"
 // #include "Mocks/ValueDeserializersMapMock.hpp"
-// #include "SevenBit/Conf/Details/SettingParser.hpp"
+// #include "SevenBit/Conf/Details/EnvironmentVarsParser.hpp"
 // #include "SevenBit/Conf/Details/SettingSplitter.hpp"
 // #include "SevenBit/Conf/Details/ValueDeserializersMap.hpp"
-// #include "SevenBit/Conf/SettingParserBuilder.hpp"
+// #include "SevenBit/Conf/EnvironmentVarsParserBuilder.hpp"
 //
 // class SettingParserBuilderTest : public testing::Test
 // {
@@ -42,7 +42,7 @@
 // {
 //     sb::cf::SettingParserBuilder builder;
 //
-//     sb::cf::SettingParserConfig config;
+//     sb::cf::EnvironmentVarsParserConfig config;
 //     config.defaultType = "int";
 //     config.throwOnUnknownType = false;
 //     config.allowEmptyKeys = true;

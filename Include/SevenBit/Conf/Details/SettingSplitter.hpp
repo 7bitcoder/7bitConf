@@ -22,9 +22,9 @@ namespace sb::cf::details
 
       public:
         SettingSplitter(std::vector<std::string_view> settingSplitters, std::vector<std::string_view> typeMarkers,
-                        std::vector<std::string_view> keySplitters, bool allowEmptyKeys);
+                        std::vector<std::string_view> keySplitters, bool allowEmptyKeys = false);
 
-        [[nodiscard]] ISettingSplitter::Result split(std::string_view setting) const override;
+        [[nodiscard]] Result split(std::string_view setting) const override;
 
       private:
         [[nodiscard]] std::pair<std::string_view, std::optional<std::string_view>> splitSetting(

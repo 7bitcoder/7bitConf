@@ -12,10 +12,9 @@
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
 #include "SevenBit/Conf/CommandLineParserBuilder.hpp"
-#include "SevenBit/Conf/CommandLineParserConfig.hpp"
+#include "SevenBit/Conf/EnvironmentVarsParserBuilder.hpp"
 #include "SevenBit/Conf/IConfiguration.hpp"
 #include "SevenBit/Conf/IObject.hpp"
-#include "SevenBit/Conf/SettingParserBuilder.hpp"
 #include "SevenBit/Conf/Sources/AppSettingsConfiguration.hpp"
 #include "SevenBit/Conf/Sources/CommandLineConfiguration.hpp"
 #include "SevenBit/Conf/Sources/EnvironmentVarsConfiguration.hpp"
@@ -69,20 +68,31 @@ namespace sb::cf
             return add(AppSettingsConfigurationSource::create(std::move(environmentName)));
         }
 
-        IConfigurationBuilder &addEnvironmentVariables() { return addEnvironmentVariables("", SettingParserConfig{}); }
+        IConfigurationBuilder &addEnvironmentVariables()
+        {
+            return addEnvironmentVariables("", EnvironmentVarsParserConfig{});
+        }
 
         IConfigurationBuilder &addEnvironmentVariables(std::string prefix)
         {
-            return addEnvironmentVariables(std::move(prefix), SettingParserConfig{});
+            return addEnvironmentVariables(std::move(prefix), EnvironmentVarsParserConfig{});
         }
 
-        IConfigurationBuilder &addEnvironmentVariables(std::string prefix, SettingParserConfig config)
+        IConfigurationBuilder &addEnvironmentVariables(std::string prefix, EnvironmentVarsParserConfig config)
         {
             return addEnvironmentVariables(std::move(prefix),
-                                           SettingParserBuilder{}.useConfig(std::move(config)).build());
+                                           [&](auto &builder) { builder.useConfig(std::move(config)); });
         }
 
-        IConfigurationBuilder &addEnvironmentVariables(std::string prefix, ISettingParser::Ptr parser)
+        template <class TBuilderFunc>
+        IConfigurationBuilder &addEnvironmentVariables(std::string prefix, TBuilderFunc parserBuilderFunctor)
+        {
+            EnvironmentVarsParserBuilder builder;
+            parserBuilderFunctor(builder);
+            return addEnvironmentVariables(std::move(prefix), builder.build());
+        }
+
+        IConfigurationBuilder &addEnvironmentVariables(std::string prefix, ISettingsParser::Ptr parser)
         {
             return add(EnvironmentVarsConfigurationSource::create(std::move(prefix), std::move(parser)));
         }
@@ -99,12 +109,28 @@ namespace sb::cf
 
         IConfigurationBuilder &addCommandLine(int argc, char *const *const argv, CommandLineParserConfig config)
         {
-            return addCommandLine(argc, argv, CommandLineParserBuilder{}.useConfig(std::move(config)).build());
+            return addCommandLine(argc, argv, [&](auto &builder) { builder.useConfig(std::move(config)); });
         }
 
         IConfigurationBuilder &addCommandLine(std::vector<std::string_view> args, CommandLineParserConfig config)
         {
-            return addCommandLine(std::move(args), CommandLineParserBuilder{}.useConfig(std::move(config)).build());
+            return addCommandLine(std::move(args), [&](auto &builder) { builder.useConfig(std::move(config)); });
+        }
+
+        template <class TBuilderFunc>
+        IConfigurationBuilder &addCommandLine(int argc, char *const *const argv, TBuilderFunc parserBuilderFunctor)
+        {
+            CommandLineParserBuilder builder;
+            parserBuilderFunctor(builder);
+            return addCommandLine(argc, argv, builder.build());
+        }
+
+        template <class TBuilderFunc>
+        IConfigurationBuilder &addCommandLine(std::vector<std::string_view> args, TBuilderFunc parserBuilderFunctor)
+        {
+            CommandLineParserBuilder builder;
+            parserBuilderFunctor(builder);
+            return addCommandLine(std::move(args), builder.build());
         }
 
         IConfigurationBuilder &addCommandLine(int argc, char *const *const argv, ISettingsParser::Ptr parser)

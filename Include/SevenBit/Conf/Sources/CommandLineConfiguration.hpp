@@ -5,7 +5,6 @@
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
 #include "SevenBit/Conf/IConfigurationSource.hpp"
-#include "SevenBit/Conf/SettingParserBuilder.hpp"
 #include "SevenBit/Conf/Sources/ConfigurationProviderBase.hpp"
 
 namespace sb::cf

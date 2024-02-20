@@ -1,11 +1,10 @@
 #pragma once
 
 #include "SevenBit/Conf/CommandLineParserBuilder.hpp"
+#include "SevenBit/Conf/Details/CommandLineParser.hpp"
 #include "SevenBit/Conf/Details/DefaultDeserializers.hpp"
 #include "SevenBit/Conf/Details/Deserializers.hpp"
-#include "SevenBit/Conf/Details/SettingParser.hpp"
 #include "SevenBit/Conf/Details/SettingSplitter.hpp"
-#include "SevenBit/Conf/Details/SettingsParser.hpp"
 #include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/Details/ValueDeserializersMap.hpp"
 
@@ -46,13 +45,13 @@ namespace sb::cf
     INLINE ISettingsParser::Ptr CommandLineParserBuilder::build()
     {
         auto hadWhiteSpaceSplitters = tryRemoveWhiteSpaceSplitters();
-        return std::make_unique<details::SettingsParser>(getSplitter(), getValueDeserializersMap(),
-                                                         std::move(getConfig().optionPrefixes), hadWhiteSpaceSplitters);
+        return std::make_unique<details::CommandLineParser>(
+            getSplitter(), getValueDeserializersMap(), std::move(getConfig().prefixes), hadWhiteSpaceSplitters);
     }
 
     INLINE bool CommandLineParserBuilder::tryRemoveWhiteSpaceSplitters()
     {
-        auto &splitters = getConfig().optionSplitters;
+        auto &splitters = getConfig().splitters;
         const auto it = details::utils::removeIf(splitters.begin(), splitters.end(),
                                                  [](auto splitter) { return details::utils::isWhiteSpace(splitter); });
         const auto removeCnt = splitters.end() - it;
@@ -66,8 +65,8 @@ namespace sb::cf
         {
             auto &config = getConfig();
             useSplitter(std::make_unique<details::SettingSplitter>(
-                std::move(config.optionSplitters), std::move(config.optionTypeMarkers),
-                std::move(config.optionKeySplitters), config.allowEmptyKeys));
+                std::move(config.splitters), std::move(config.typeMarkers),
+                std::move(config.keySplitters), config.allowEmptyKeys));
         }
         return std::move(_splitter);
     }

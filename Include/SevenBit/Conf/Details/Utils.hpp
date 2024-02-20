@@ -2,11 +2,9 @@
 
 #include <charconv>
 #include <cstddef>
-#include <memory>
 #include <optional>
 #include <string>
 #include <string_view>
-#include <utility>
 #include <vector>
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
@@ -57,21 +55,9 @@ namespace sb::cf::details::utils
 
     template <class T> void assertPtr(const std::shared_ptr<T> &ptr) { assertPtr(ptr.get()); }
 
-    EXPORT inline size_t startsWhiteSpace(std::string_view str)
-    {
-        size_t result = 0;
-        for (unsigned char ch : str)
-        {
-            if (!std::isspace(ch))
-            {
-                break;
-            }
-            ++result;
-        }
-        return result;
-    }
+    EXPORT inline size_t startsWhiteSpace(std::string_view str);
 
-    EXPORT inline bool isWhiteSpace(std::string_view str) { return startsWhiteSpace(str) == str.size(); }
+    EXPORT inline bool isWhiteSpace(std::string_view str);
 
     template <class TNumber> std::pair<bool, TNumber> tryStringTo(std::string_view str, bool full = true)
     {

@@ -5,7 +5,7 @@ using namespace sb::cf;
 
 int main(int argc, char **argv)
 {
-    SettingParserConfig envParserConfig;
+    EnvironmentVarsParserConfig envParserConfig;
     envParserConfig.keySplitters.clear();
     envParserConfig.typeMarkers.clear();
 

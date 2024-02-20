@@ -6,7 +6,6 @@
 #include "SevenBit/Conf/Exceptions.hpp"
 #include "SevenBit/Conf/Sources/EnvironmentVarsConfiguration.hpp"
 
-
 #ifdef _WIN32
 extern "C" __declspec(dllimport) char **_environ;
 #define _7BIT_CONF_ENV_PTR _environ
@@ -18,14 +17,14 @@ extern "C" char **environ;
 namespace sb::cf
 {
     INLINE EnvironmentVarsConfigurationSource::EnvironmentVarsConfigurationSource(std::string prefix,
-                                                                                  ISettingParser::Ptr parser)
+                                                                                  ISettingsParser::Ptr parser)
         : _prefix(std::move(prefix)), _parser(std::move(parser))
     {
         details::utils::assertPtr(_parser);
     }
 
     INLINE EnvironmentVarsConfigurationSource::SPtr EnvironmentVarsConfigurationSource::create(
-        std::string prefix, ISettingParser::Ptr parser)
+        std::string prefix, ISettingsParser::Ptr parser)
     {
         return EnvironmentVarsConfigurationSource::SPtr(
             new EnvironmentVarsConfigurationSource{std::move(prefix), std::move(parser)});
@@ -33,7 +32,7 @@ namespace sb::cf
 
     INLINE const std::string &EnvironmentVarsConfigurationSource::getPrefix() { return _prefix; }
 
-    INLINE const ISettingParser &EnvironmentVarsConfigurationSource::getSettingParser() { return *_parser; }
+    INLINE const ISettingsParser &EnvironmentVarsConfigurationSource::getSettingParser() { return *_parser; }
 
     INLINE IConfigurationProvider::Ptr EnvironmentVarsConfigurationSource::build(IConfigurationBuilder &builder)
     {
@@ -50,12 +49,7 @@ namespace sb::cf
     INLINE void EnvironmentVarsConfigurationProvider::load()
     {
         clear();
-        auto &parser = _source->getSettingParser();
-        for (auto &setting : getEnvVars())
-        {
-            auto [keys, value] = parser.parse(setting);
-            update(keys, std::move(value));
-        }
+        set(_source->getSettingParser().parse(getEnvVars()));
     }
 
     INLINE std::vector<std::string_view> EnvironmentVarsConfigurationProvider::getEnvVars()

@@ -10,7 +10,7 @@ struct MyTypeDeserializer final : IDeserializer
 
 int main(int argc, char **argv)
 {
-    SettingParserConfig envParserConfig;
+    EnvironmentVarsParserConfig envParserConfig;
     envParserConfig.keySplitters.clear();
     envParserConfig.settingPrefixes.emplace_back("//");
     envParserConfig.defaultType = "myType";

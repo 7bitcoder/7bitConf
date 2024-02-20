@@ -10,20 +10,21 @@ namespace sb::cf::details::utils
 {
     INLINE bool isNumberString(std::string_view str)
     {
-        return !str.empty() && std::all_of(str.begin(), str.end(), [](char ch) { return std::isdigit(ch); });
+        return !str.empty() && std::all_of(str.begin(), str.end(), [](unsigned char ch) { return std::isdigit(ch); });
     }
 
     INLINE bool ignoreCaseLess(std::string_view str, std::string_view search)
     {
-        return std::lexicographical_compare(str.begin(), str.end(), search.begin(), search.end(),
-                                            [](char cha, char chb) { return std::tolower(cha) < std::tolower(chb); });
+        return std::lexicographical_compare(
+            str.begin(), str.end(), search.begin(), search.end(),
+            [](unsigned char cha, unsigned char chb) { return std::tolower(cha) < std::tolower(chb); });
     }
 
     INLINE bool ignoreCaseEqual(std::string_view str, std::string_view search)
     {
         return str.size() == search.size() &&
                std::equal(str.begin(), str.end(), search.begin(), search.end(),
-                          [](char cha, char chb) { return std::tolower(cha) == std::tolower(chb); });
+                          [](unsigned char cha, unsigned char chb) { return std::tolower(cha) == std::tolower(chb); });
     }
 
     INLINE bool containsAt(std::string_view str, size_t index, std::string_view search)
@@ -140,15 +141,23 @@ namespace sb::cf::details::utils
     INLINE std::string joinViews(const std::vector<std::string_view> &strings, const std::string &divider)
     {
         std::string res;
-        if (strings.empty())
+        if (!strings.empty())
         {
-            return res;
+            for (size_t i = 0; i < strings.size() - 1; ++i)
+            {
+                res += std::string{strings[i]} + divider;
+            }
+            res += strings.back();
         }
-        for (size_t i = 0; i < strings.size() - 1; ++i)
-        {
-            res += std::string{strings[i]} + divider;
-        }
-        res += strings.back();
         return res;
     }
+
+    INLINE inline size_t startsWhiteSpace(std::string_view str)
+    {
+        const auto it = std::find_if(str.begin(), str.end(), [](const unsigned char ch) { return !std::isspace(ch); });
+        return it - str.begin();
+    }
+
+    INLINE inline bool isWhiteSpace(std::string_view str) { return startsWhiteSpace(str) == str.size(); }
+
 } // namespace sb::cf::details::utils

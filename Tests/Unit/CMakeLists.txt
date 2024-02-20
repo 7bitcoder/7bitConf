@@ -1,13 +1,13 @@
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS *.cpp)
 
 add_executable(UnitTests
-    ${SOURCES}
+        ${SOURCES}
 )
 
 target_link_libraries(UnitTests PUBLIC
-    GTest::gtest
-    GTest::gmock
-    7bitConf
+        GTest::gtest
+        GTest::gmock
+        7bitConf
 )
 
 file(GLOB_RECURSE FILES CONFIGURE_DEPENDS Files/*)
@@ -21,4 +21,4 @@ file(COPY ${FILES_DIR} DESTINATION ${CMAKE_BINARY_DIR}/Directory)
 
 include(GoogleTest)
 gtest_discover_tests(UnitTests
-    WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+        WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})

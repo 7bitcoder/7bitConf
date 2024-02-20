@@ -192,7 +192,7 @@ auto configuration = ConfigurationBuilder{}.addCommandLine(configArgs).build();
 ```
 
 The command line configuration source can be more customized with the additional addCommandLine method
-arguments: [SettingParserConfig](#setting-parser-config) or [SettingsParser](#custom-setting-parser).
+arguments: [EnvironmentVarsParserConfig](#setting-parser-config) or [SettingsParser](#custom-setting-parser).
 
 #### Supported Types
 
@@ -242,7 +242,7 @@ is '\_\_' (double underscore) and for '!' is '\_\_\_' (triple underscore).
 Setting Array:2!uint=123 would be rewritten as Array\_\_2\_\_\_uint=123
 
 Same as command line source, environment variables configuration source can be more customized with
-additional addEnvironmentVariables method arguments: [SettingParserConfig](#setting-parser-config)
+additional addEnvironmentVariables method arguments: [EnvironmentVarsParserConfig](#setting-parser-config)
 or [SettingsParser](#custom-setting-parser).
 
 ### Json File
@@ -406,11 +406,12 @@ int main(int argc, char **argv)
 
 ## Setting Parser Config
 
-SettingParserConfig is a simple struct that contains the data used to configure the setting parser, by default it is
+EnvironmentVarsParserConfig is a simple struct that contains the data used to configure the setting parser, by default
+it is
 initialized with these values:
 
 ```cpp
-struct SettingParserConfig
+struct EnvironmentVarsParserConfig
 {
     std::vector<std::string_view> settingPrefixes = {"--"};
     std::vector<std::string_view> settingSplitters = {"="};
@@ -448,7 +449,7 @@ using namespace sb::cf;
 
 int main(int argc, char **argv)
 {
-    SettingParserConfig envParserConfig;
+    EnvironmentVarsParserConfig envParserConfig;
     envParserConfig.keySplitters.clear();
     envParserConfig.typeMarkers.clear();
 
@@ -464,7 +465,8 @@ int main(int argc, char **argv)
 }
 ```
 
-In this case, custom SettingParserConfig is used in addEnvironmentVariables method, keySplitters is cleared to prevent
+In this case, custom EnvironmentVarsParserConfig is used in addEnvironmentVariables method, keySplitters is cleared to
+prevent
 extracting nested keys and typeMarkers is cleared to prevent type extraction.
 
 ## Custom Setting Parser
@@ -492,7 +494,7 @@ struct MyTypeDeserializer final : IDeserializer
 
 int main(int argc, char **argv)
 {
-    SettingParserConfig envParserConfig;
+    EnvironmentVarsParserConfig envParserConfig;
     envParserConfig.keySplitters.clear();
     envParserConfig.settingPrefixes.emplace_back("//");
     envParserConfig.defaultType = "myType";

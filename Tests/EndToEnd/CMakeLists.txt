@@ -1,7 +1,10 @@
+add_executable(CliEcho Cli/echo.cpp)
 
-if(_7BIT_DI_BUILD_EXAMPLES)
-    find_package(Python REQUIRED)
+target_link_libraries(CliEcho 7bitConf)
 
-    # add_test(NAME EndToEnd.Examples COMMAND ${Python_EXECUTABLE} test_examples.py ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-    # WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Examples)
-endif()
+find_package(Python REQUIRED)
+
+add_test(NAME EndToEnd.CommandLine
+        COMMAND ${Python_EXECUTABLE} test.py ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+        CONFIGURATIONS --exe $<TARGET_FILE:CliEcho>
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Cli)
