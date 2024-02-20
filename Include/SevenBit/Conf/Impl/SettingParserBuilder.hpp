@@ -3,6 +3,7 @@
 #include "SevenBit/Conf/Details/Deserializers.hpp"
 #include "SevenBit/Conf/Details/SettingParser.hpp"
 #include "SevenBit/Conf/Details/SettingSplitter.hpp"
+#include "SevenBit/Conf/Details/SettingsParser.hpp"
 #include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/Details/ValueDeserializersMap.hpp"
 #include "SevenBit/Conf/SettingParserBuilder.hpp"
@@ -25,7 +26,7 @@ namespace sb::cf
     INLINE SettingParserBuilder &SettingParserBuilder::useValueDeserializer(std::string_view type,
                                                                             IDeserializer::Ptr valueDeserializer)
     {
-        _deserializersMap.emplace_back(type, std::move(valueDeserializer));
+        _valueDeserializers.emplace_back(type, std::move(valueDeserializer));
         return *this;
     }
 
@@ -49,9 +50,7 @@ namespace sb::cf
 
     INLINE ISettingParser::Ptr SettingParserBuilder::build()
     {
-        auto &config = getConfig();
-        return std::make_unique<details::SettingParser>(getSplitter(), getValueDeserializersMap(), config.defaultType,
-                                                        config.allowEmptyKeys, config.throwOnUnknownType);
+        return std::make_unique<details::SettingParser>(getSplitter(), getValueDeserializersMap());
     }
 
     INLINE ISettingSplitter::Ptr SettingParserBuilder::getSplitter()
@@ -60,8 +59,8 @@ namespace sb::cf
         {
             auto &config = getConfig();
             useSplitter(std::make_unique<details::SettingSplitter>(
-                std::move(config.settingPrefixes), std::move(config.settingSplitters), std::move(config.typeMarkers),
-                std::move(config.keySplitters)));
+                std::move(config.settingSplitters), std::move(config.typeMarkers), std::move(config.keySplitters),
+                config.allowEmptyKeys));
         }
         return std::move(_splitter);
     }
@@ -70,16 +69,13 @@ namespace sb::cf
     {
         if (!_valueDeserializersMap)
         {
-            if (_deserializersMap.empty())
+            if (_valueDeserializers.empty())
             {
                 useDefaultValueDeserializers();
             }
-            auto valueDeserializers = std::make_unique<details::ValueDeserializersMap>();
-            for (auto &[type, deserializer] : _deserializersMap)
-            {
-                valueDeserializers->set(type, std::move(deserializer));
-            }
-            useValueDeserializersMap(std::move(valueDeserializers));
+            auto &config = getConfig();
+            useValueDeserializersMap(std::make_unique<details::ValueDeserializersMap>(
+                config.defaultType, config.throwOnUnknownType, std::move(_valueDeserializers)));
         }
         return std::move(_valueDeserializersMap);
     }

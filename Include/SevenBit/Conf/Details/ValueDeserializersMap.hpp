@@ -14,7 +14,7 @@ namespace sb::cf::details
 {
     class EXPORT ValueDeserializersMap : public IValueDeserializersMap
     {
-      private:
+      public:
         struct CaseInsensitiveLess
         {
             using is_transparent = int;
@@ -25,24 +25,36 @@ namespace sb::cf::details
             }
         };
 
-        std::map<std::string, IDeserializer::Ptr, CaseInsensitiveLess> _deserializersLookup;
+        using Deserializers = std::vector<std::pair<std::string_view, IDeserializer::Ptr>>;
+        using DeserializersMap = std::map<std::string, IDeserializer::Ptr, CaseInsensitiveLess>;
+
+      private:
+        DeserializersMap _deserializersMap;
+        const std::string_view _defaultType;
+        const bool _throwOnUnknownType;
 
       public:
         using Ptr = std::unique_ptr<ValueDeserializersMap>;
 
-        ValueDeserializersMap() = default;
+        explicit ValueDeserializersMap(std::string_view defaultType, bool throwOnUnknownType = true,
+                                       Deserializers valueDeserializers = {});
 
         ValueDeserializersMap(const ValueDeserializersMap &) = delete;
         ValueDeserializersMap(ValueDeserializersMap &&) noexcept = default;
 
         ValueDeserializersMap &operator=(const ValueDeserializersMap &) = delete;
-        ValueDeserializersMap &operator=(ValueDeserializersMap &&) = default;
+        ValueDeserializersMap &operator=(ValueDeserializersMap &&) = delete;
 
-        [[nodiscard]] std::map<std::string, IDeserializer::Ptr, CaseInsensitiveLess> &getDeserializersMap();
+        [[nodiscard]] DeserializersMap &getDeserializersMap();
 
         void set(std::string_view type, IDeserializer::Ptr deserializer);
 
-        [[nodiscard]] const IDeserializer *getDeserializerFor(std::string_view type) const override;
+        [[nodiscard]] const IDeserializer &getDeserializerFor(std::optional<std::string_view> type) const override;
+
+      private:
+        [[nodiscard]] const IDeserializer &getDefaultDeserializer() const;
+
+        [[nodiscard]] const IDeserializer *findDeserializerFor(std::string_view type) const;
     };
 } // namespace sb::cf::details
 

@@ -11,10 +11,11 @@
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
+#include "SevenBit/Conf/CommandLineParserBuilder.hpp"
+#include "SevenBit/Conf/CommandLineParserConfig.hpp"
 #include "SevenBit/Conf/IConfiguration.hpp"
 #include "SevenBit/Conf/IObject.hpp"
 #include "SevenBit/Conf/SettingParserBuilder.hpp"
-#include "SevenBit/Conf/SettingParserConfig.hpp"
 #include "SevenBit/Conf/Sources/AppSettingsConfiguration.hpp"
 #include "SevenBit/Conf/Sources/CommandLineConfiguration.hpp"
 #include "SevenBit/Conf/Sources/EnvironmentVarsConfiguration.hpp"
@@ -88,30 +89,30 @@ namespace sb::cf
 
         IConfigurationBuilder &addCommandLine(int argc, char *const *const argv)
         {
-            return addCommandLine(argc, argv, SettingParserConfig{});
+            return addCommandLine(argc, argv, CommandLineParserConfig{});
         }
 
         IConfigurationBuilder &addCommandLine(std::vector<std::string_view> args)
         {
-            return addCommandLine(std::move(args), SettingParserConfig{});
+            return addCommandLine(std::move(args), CommandLineParserConfig{});
         }
 
-        IConfigurationBuilder &addCommandLine(int argc, char *const *const argv, SettingParserConfig config)
+        IConfigurationBuilder &addCommandLine(int argc, char *const *const argv, CommandLineParserConfig config)
         {
-            return addCommandLine(argc, argv, SettingParserBuilder{}.useConfig(std::move(config)).build());
+            return addCommandLine(argc, argv, CommandLineParserBuilder{}.useConfig(std::move(config)).build());
         }
 
-        IConfigurationBuilder &addCommandLine(std::vector<std::string_view> args, SettingParserConfig config)
+        IConfigurationBuilder &addCommandLine(std::vector<std::string_view> args, CommandLineParserConfig config)
         {
-            return addCommandLine(std::move(args), SettingParserBuilder{}.useConfig(std::move(config)).build());
+            return addCommandLine(std::move(args), CommandLineParserBuilder{}.useConfig(std::move(config)).build());
         }
 
-        IConfigurationBuilder &addCommandLine(int argc, char *const *const argv, ISettingParser::Ptr parser)
+        IConfigurationBuilder &addCommandLine(int argc, char *const *const argv, ISettingsParser::Ptr parser)
         {
             return add(CommandLineConfigurationSource::create(argc, argv, std::move(parser)));
         }
 
-        IConfigurationBuilder &addCommandLine(std::vector<std::string_view> args, ISettingParser::Ptr parser)
+        IConfigurationBuilder &addCommandLine(std::vector<std::string_view> args, ISettingsParser::Ptr parser)
         {
             return add(CommandLineConfigurationSource::create(std::move(args), std::move(parser)));
         }

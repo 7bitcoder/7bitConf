@@ -7,10 +7,10 @@
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
+#include "SevenBit/Conf/Details/SettingParserConfig.hpp"
 #include "SevenBit/Conf/ISettingParser.hpp"
 #include "SevenBit/Conf/ISettingSplitter.hpp"
 #include "SevenBit/Conf/IValueDeserializersMap.hpp"
-#include "SevenBit/Conf/SettingParserConfig.hpp"
 
 namespace sb::cf
 {
@@ -20,7 +20,7 @@ namespace sb::cf
       private:
         ISettingSplitter::Ptr _splitter;
         IValueDeserializersMap::Ptr _valueDeserializersMap;
-        std::vector<std::pair<std::string_view, IDeserializer::Ptr>> _deserializersMap;
+        std::vector<std::pair<std::string_view, IDeserializer::Ptr>> _valueDeserializers;
         std::optional<SettingParserConfig> _config;
 
       public:

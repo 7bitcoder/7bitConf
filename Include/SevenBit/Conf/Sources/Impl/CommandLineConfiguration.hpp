@@ -3,11 +3,10 @@
 #include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/Sources/CommandLineConfiguration.hpp"
 
-
 namespace sb::cf
 {
     INLINE CommandLineConfigurationSource::CommandLineConfigurationSource(std::vector<std::string_view> args,
-                                                                          ISettingParser::Ptr parser)
+                                                                          ISettingsParser::Ptr parser)
         : _args(std::move(args)), _parser(std::move(parser))
     {
         details::utils::assertPtr(_parser);
@@ -15,7 +14,7 @@ namespace sb::cf
 
     INLINE CommandLineConfigurationSource::SPtr CommandLineConfigurationSource::create(int argc,
                                                                                        const char *const *argv,
-                                                                                       ISettingParser::Ptr parser)
+                                                                                       ISettingsParser::Ptr parser)
     {
         std::vector<std::string_view> args;
         if (argc > 1)
@@ -30,7 +29,7 @@ namespace sb::cf
     }
 
     INLINE CommandLineConfigurationSource::SPtr CommandLineConfigurationSource::create(
-        std::vector<std::string_view> args, ISettingParser::Ptr parser)
+        std::vector<std::string_view> args, ISettingsParser::Ptr parser)
     {
         return CommandLineConfigurationSource::SPtr(
             new CommandLineConfigurationSource{std::move(args), std::move(parser)});
@@ -38,7 +37,7 @@ namespace sb::cf
 
     INLINE const std::vector<std::string_view> &CommandLineConfigurationSource::getArgs() const { return _args; }
 
-    INLINE const ISettingParser &CommandLineConfigurationSource::getSettingParser() const { return *_parser; }
+    INLINE const ISettingsParser &CommandLineConfigurationSource::getSettingsParser() const { return *_parser; }
 
     INLINE IConfigurationProvider::Ptr CommandLineConfigurationSource::build(IConfigurationBuilder &builder)
     {
@@ -55,11 +54,6 @@ namespace sb::cf
     INLINE void CommandLineConfigurationProvider::load()
     {
         clear();
-        auto &parser = _source->getSettingParser();
-        for (auto &setting : _source->getArgs())
-        {
-            auto [keys, value] = parser.parse(setting);
-            update(keys, std::move(value));
-        }
+        set(_source->getSettingsParser().parse(_source->getArgs()));
     }
 } // namespace sb::cf

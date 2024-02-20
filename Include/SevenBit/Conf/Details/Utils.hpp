@@ -57,13 +57,26 @@ namespace sb::cf::details::utils
 
     template <class T> void assertPtr(const std::shared_ptr<T> &ptr) { assertPtr(ptr.get()); }
 
+    EXPORT inline size_t startsWhiteSpace(std::string_view str)
+    {
+        size_t result = 0;
+        for (unsigned char ch : str)
+        {
+            if (!std::isspace(ch))
+            {
+                break;
+            }
+            ++result;
+        }
+        return result;
+    }
+
+    EXPORT inline bool isWhiteSpace(std::string_view str) { return startsWhiteSpace(str) == str.size(); }
+
     template <class TNumber> std::pair<bool, TNumber> tryStringTo(std::string_view str, bool full = true)
     {
         TNumber number = 0;
-        while (!str.empty() && std::isspace(str.front()))
-        {
-            str.remove_prefix(1);
-        }
+        str.remove_prefix(startsWhiteSpace(str));
         auto last = str.data() + str.size();
         auto res = std::from_chars(str.data(), last, number);
         auto success = res.ec == std::errc{} && (!full || res.ptr == last);
@@ -111,6 +124,24 @@ namespace sb::cf::details::utils
         }
         throw ConfigException{"Cannot convert string to number: " + std::string{str}};
     }
+
+    template <class ForwardIt, class UnaryPredicate>
+    static ForwardIt removeIf(ForwardIt first, ForwardIt last, UnaryPredicate &&p)
+    {
+        first = std::find_if(first, last, p);
+        if (first != last)
+        {
+            for (ForwardIt i = first; ++i != last;)
+            {
+                if (!p(*i))
+                {
+                    *first++ = std::move(*i);
+                }
+            }
+        }
+        return first;
+    }
+
 } // namespace sb::cf::details::utils
 
 #ifdef _7BIT_CONF_ADD_IMPL

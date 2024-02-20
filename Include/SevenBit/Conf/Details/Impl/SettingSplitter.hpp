@@ -6,37 +6,23 @@
 namespace sb::cf::details
 {
 
-    INLINE SettingSplitter::SettingSplitter(std::vector<std::string_view> settingPrefixes,
-                                            std::vector<std::string_view> settingSplitters,
+    INLINE SettingSplitter::SettingSplitter(std::vector<std::string_view> settingSplitters,
                                             std::vector<std::string_view> typeMarkers,
-                                            std::vector<std::string_view> keySplitters)
-        : _settingPrefixes(std::move(settingPrefixes)), _settingSplitters(std::move(settingSplitters)),
-          _typeMarkers(std::move(typeMarkers)), _keySplitters(std::move(keySplitters))
+                                            std::vector<std::string_view> keySplitters, const bool allowEmptyKeys)
+        : _settingSplitters(std::move(settingSplitters)), _typeMarkers(std::move(typeMarkers)),
+          _keySplitters(std::move(keySplitters)), _allowEmptyKeys(allowEmptyKeys)
     {
     }
 
-    INLINE ISettingSplitter::Result SettingSplitter::split(std::string_view setting) const
+    INLINE ISettingSplitter::Result SettingSplitter::split(const std::string_view setting) const
     {
-        auto [key, value] = splitSetting(tryRemovePrefix(setting));
-        auto [rawKey, type] = splitType(key);
+        auto [rawKey, value] = splitSetting(setting);
+        auto type = tryExtractType(rawKey);
         return {splitKey(rawKey), type, value};
     }
 
-    INLINE std::string_view SettingSplitter::tryRemovePrefix(std::string_view setting) const
-    {
-        for (auto &prefix : _settingPrefixes)
-        {
-            if (details::utils::startsWith(setting, prefix))
-            {
-                setting.remove_prefix(prefix.size());
-                break;
-            }
-        }
-        return setting;
-    }
-
     INLINE std::pair<std::string_view, std::optional<std::string_view>> SettingSplitter::splitSetting(
-        std::string_view setting) const
+        const std::string_view setting) const
     {
         if (auto breakResult = details::utils::tryBreak(setting, _settingSplitters))
         {
@@ -45,18 +31,33 @@ namespace sb::cf::details
         return {setting, std::nullopt};
     }
 
-    INLINE std::pair<std::string_view, std::optional<std::string_view>> SettingSplitter::splitType(
-        std::string_view key) const
+    INLINE std::optional<std::string_view> SettingSplitter::tryExtractType(std::string_view &key) const
     {
         if (auto breakResult = details::utils::tryBreakFromEnd(key, _typeMarkers))
         {
-            return {breakResult->first, breakResult->second};
+            key = breakResult->first;
+            return breakResult->second;
         }
-        return {key, std::nullopt};
+        return std::nullopt;
     }
 
-    INLINE std::vector<std::string_view> SettingSplitter::splitKey(std::string_view key) const
+    INLINE std::vector<std::string_view> SettingSplitter::splitKey(const std::string_view key) const
     {
-        return details::utils::split(key, _keySplitters);
+        auto keys = details::utils::split(key, _keySplitters);
+        checkKeys(keys);
+        return keys;
+    }
+
+    INLINE void SettingSplitter::checkKeys(const std::vector<std::string_view> &keys) const
+    {
+        if (_allowEmptyKeys)
+        {
+            return;
+        }
+        if (keys.empty() ||
+            std::any_of(keys.begin(), keys.end(), [](const std::string_view &key) { return key.empty(); }))
+        {
+            throw ConfigException("Setting key cannot be empty");
+        }
     }
 } // namespace sb::cf::details

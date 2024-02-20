@@ -9,13 +9,11 @@
 namespace sb::cf::details
 {
     INLINE SettingParser::SettingParser(ISettingSplitter::Ptr settingSplitter,
-                                        IValueDeserializersMap::Ptr valueDeserializersMap, std::string_view defaultType,
-                                        bool allowEmptyKeys, bool throwOnUnknownType)
-        : _settingSplitter(std::move(settingSplitter)), _valueDeserializersMap(std::move(valueDeserializersMap)),
-          _defaultType(defaultType), _allowEmptyKeys(allowEmptyKeys), _throwOnUnknownType(throwOnUnknownType)
+                                        IValueDeserializersMap::Ptr valueDeserializersMap)
+        : _settingSplitter(std::move(settingSplitter)), _valueDeserializersMap(std::move(valueDeserializersMap))
     {
-        details::utils::assertPtr(_settingSplitter);
-        details::utils::assertPtr(_valueDeserializersMap);
+        utils::assertPtr(_settingSplitter);
+        utils::assertPtr(_valueDeserializersMap);
     }
 
     INLINE ISettingParser::Result SettingParser::parse(std::string_view setting) const
@@ -23,44 +21,11 @@ namespace sb::cf::details
         try
         {
             auto [keys, type, value] = getSettingSplitter().split(setting);
-
-            checkKeys(keys);
-
-            return {std::move(keys), getDeserializerFor(type ? *type : getDefaultType()).deserialize(value)};
+            return {std::move(keys), getValueDeserializersMap().getDeserializerFor(type).deserialize(value)};
         }
         catch (const std::exception &e)
         {
             throw SettingParserException("Parsing error for setting '" + std::string{setting} + "' error: " + e.what());
-        }
-    }
-
-    INLINE const IDeserializer &SettingParser::getDeserializerFor(std::string_view type) const
-    {
-        auto deserializer = getValueDeserializersMap().getDeserializerFor(type);
-        if (!deserializer)
-        {
-            if (getThrowOnUnknownType())
-            {
-                throw ConfigException("Unknown setting type: " + std::string{type});
-            }
-            deserializer = getValueDeserializersMap().getDeserializerFor(getDefaultType());
-            if (!deserializer)
-            {
-                throw ConfigException("Unknown default setting type: " + std::string{getDefaultType()});
-            }
-        }
-        return *deserializer;
-    }
-
-    INLINE void SettingParser::checkKeys(const std::vector<std::string_view> &keys) const
-    {
-        if (getAllowEmptyKeys())
-        {
-            return;
-        }
-        if (keys.empty() || std::any_of(keys.begin(), keys.end(), [](auto key) { return key.empty(); }))
-        {
-            throw ConfigException("Setting key cannot be empty");
         }
     }
 
@@ -70,11 +35,4 @@ namespace sb::cf::details
     {
         return *_valueDeserializersMap;
     }
-
-    INLINE std::string_view SettingParser::getDefaultType() const { return _defaultType; }
-
-    INLINE bool SettingParser::getAllowEmptyKeys() const { return _allowEmptyKeys; }
-
-    INLINE bool SettingParser::getThrowOnUnknownType() const { return _throwOnUnknownType; }
-
 } // namespace sb::cf::details
