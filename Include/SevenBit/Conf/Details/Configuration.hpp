@@ -11,7 +11,7 @@
 #include "SevenBit/Conf/IConfigurationProvider.hpp"
 #include "SevenBit/Conf/Json.hpp"
 
-namespace sb::cf
+namespace sb::cf::details
 {
     class EXPORT Configuration : public IConfiguration
     {
@@ -108,7 +108,7 @@ namespace sb::cf
 
         [[nodiscard]] JsonValue &throwNotFoundException(std::string_view key) const;
     };
-} // namespace sb::cf
+} // namespace sb::cf::details
 
 #ifdef _7BIT_CONF_ADD_IMPL
 #include "SevenBit/Conf/Details/Impl/Configuration.hpp"

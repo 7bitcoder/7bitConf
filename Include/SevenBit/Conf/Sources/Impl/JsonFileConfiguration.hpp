@@ -39,18 +39,19 @@ namespace sb::cf
 
     INLINE JsonObject JsonFileConfigurationProvider::getJsonFromFile()
     {
-        if (!std::filesystem::exists(_source->getFilePath()))
+        auto &filePath = _source->getFilePath();
+        if (!std::filesystem::exists(filePath))
         {
             if (_source->getIsOptional())
             {
                 return JsonObject{};
             }
-            throw ConfigFileNotFoundException(_source->getFilePath());
+            throw ConfigFileNotFoundException(filePath);
         }
-        auto json = tao::json::basic_from_file<JsonTraits>(_source->getFilePath());
+        auto json = tao::json::basic_from_file<JsonTraits>(filePath);
         if (!json.is_object())
         {
-            throw BadConfigFileException(_source->getFilePath(), "file does not contain json object");
+            throw BadConfigFileException(filePath, "file does not contain json object");
         }
         return json.get_object();
     }

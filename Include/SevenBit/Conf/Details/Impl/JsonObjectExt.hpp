@@ -194,7 +194,7 @@ namespace sb::cf::details
         return *current;
     }
 
-    INLINE void JsonExt::deepMerge(JsonValue &json, JsonValue override)
+    INLINE void JsonExt::deepMerge(JsonValue &json, JsonValue &&override)
     {
         if (override.is_uninitialized()) // undefined is mark for skip
         {
@@ -214,7 +214,7 @@ namespace sb::cf::details
         }
     }
 
-    INLINE void JsonExt::deepMerge(JsonArray &json, JsonArray override)
+    INLINE void JsonExt::deepMerge(JsonArray &json, JsonArray &&override)
     {
         if (json.empty())
         {
@@ -231,7 +231,7 @@ namespace sb::cf::details
         }
     }
 
-    INLINE void JsonExt::deepMerge(JsonObject &json, JsonObject override)
+    INLINE void JsonExt::deepMerge(JsonObject &json, JsonObject &&override)
     {
         if (json.empty())
         {
@@ -252,6 +252,16 @@ namespace sb::cf::details
     INLINE void JsonExt::updateWith(JsonObject &json, const std::vector<std::string_view> &keys, JsonObject &&value)
     {
         deepGetOrOverride(json, keys) = std::move(value);
+    }
+
+    INLINE void JsonExt::updateWith(JsonObject &json, std::string_view key, JsonValue &&value)
+    {
+        deepGetOrOverride(json, key) = std::move(value);
+    }
+
+    INLINE void JsonExt::updateWith(JsonObject &json, std::string_view key, JsonObject &&value)
+    {
+        deepGetOrOverride(json, key) = std::move(value);
     }
 
     INLINE void JsonExt::checkSegmentSize(const std::vector<std::string_view> &key)

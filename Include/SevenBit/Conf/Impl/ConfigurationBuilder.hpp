@@ -31,7 +31,7 @@ namespace sb::cf
             details::Require::notNull(source);
             providers.emplace_back(source->build(*this));
         }
-        return std::make_unique<Configuration>(std::move(providers));
+        return std::make_unique<details::Configuration>(std::move(providers));
     }
 
     INLINE void ConfigurationBuilder::clear() { _sources.clear(); }

@@ -36,7 +36,7 @@ namespace sb::cf
 
     INLINE EnvironmentVarsParserBuilder &EnvironmentVarsParserBuilder::useDefaultValueDeserializers()
     {
-        DefaultDeserializers::add(_valueDeserializers);
+        details::DefaultDeserializers::add(_valueDeserializers);
         return *this;
     }
 
@@ -50,9 +50,9 @@ namespace sb::cf
         if (!_splitter)
         {
             auto &config = getConfig();
-            useSplitter(
-                std::make_unique<details::SettingSplitter>(std::move(config.variableSplitters), std::move(config.typeMarkers),
-                                                           std::move(config.keySplitters), config.allowEmptyKeys));
+            useSplitter(std::make_unique<details::SettingSplitter>(
+                std::move(config.variableSplitters), std::move(config.typeMarkers), std::move(config.keySplitters),
+                config.allowEmptyKeys));
         }
         return std::move(_splitter);
     }
@@ -61,15 +61,21 @@ namespace sb::cf
     {
         if (!_valueDeserializersMap)
         {
-            if (_valueDeserializers.empty())
-            {
-                useDefaultValueDeserializers();
-            }
             auto &config = getConfig();
             useValueDeserializersMap(std::make_unique<details::ValueDeserializersMap>(
-                config.defaultType, config.throwOnUnknownType, std::move(_valueDeserializers)));
+                config.defaultType, config.throwOnUnknownType, getValueDeserializers()));
         }
         return std::move(_valueDeserializersMap);
+    }
+
+    INLINE std::vector<std::pair<std::string_view, IDeserializer::Ptr>> EnvironmentVarsParserBuilder::
+        getValueDeserializers()
+    {
+        if (_valueDeserializers.empty())
+        {
+            useDefaultValueDeserializers();
+        }
+        return std::move(_valueDeserializers);
     }
 
     INLINE EnvironmentVarsParserConfig &EnvironmentVarsParserBuilder::getConfig()

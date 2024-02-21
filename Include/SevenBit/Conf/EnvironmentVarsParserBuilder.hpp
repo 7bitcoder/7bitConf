@@ -41,6 +41,8 @@ namespace sb::cf
 
         IValueDeserializersMap::Ptr getValueDeserializersMap();
 
+        std::vector<std::pair<std::string_view, IDeserializer::Ptr>> getValueDeserializers();
+
         EnvironmentVarsParserConfig &getConfig();
     };
 

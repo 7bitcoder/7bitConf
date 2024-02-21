@@ -5,8 +5,6 @@
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
-#include "SevenBit/Conf/Exceptions.hpp"
-
 namespace sb::cf::details
 {
     struct ContainerUtils

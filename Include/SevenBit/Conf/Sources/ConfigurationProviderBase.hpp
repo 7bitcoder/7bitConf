@@ -23,11 +23,11 @@ namespace sb::cf
       protected:
         void clear();
 
-        void set(JsonObject configuration);
+        void set(JsonObject &&configuration);
 
-        void update(JsonObject configuration);
+        void update(JsonObject &&configuration);
 
-        void update(const std::vector<std::string_view> &keys, JsonValue value);
+        void update(const std::vector<std::string_view> &keys, JsonValue &&value);
     };
 } // namespace sb::cf
 

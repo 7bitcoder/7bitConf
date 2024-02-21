@@ -28,16 +28,20 @@
 //     auto deserializers = std::make_unique<ValueDeserializersMapMock>();
 //     auto splitter = std::make_unique<SettingSplitterMock>();
 //
-//     std::vector<std::string_view> settings = {"--option:deep:deep!int=123"};
+//     std::string_view setting = "--option:deep:deep!int=123";
 //     sb::cf::ISettingSplitter::Result returned = {{"option", "deep", "deep"}, "int", "123"};
 //     EXPECT_CALL(*splitter, split).WillOnce(testing::Return(returned));
 //     EXPECT_CALL(*deserializers, getDeserializerFor).WillOnce(testing::Return(&deserializer));
 //     sb::cf::JsonValue returnedValue = 123;
 //     EXPECT_CALL(deserializer, deserialize).WillOnce(testing::Return(returnedValue));
 //
-//     sb::cf::details::EnvironmentVarsParser parser{std::move(splitter), std::move(deserializers)};
+//     sb::cf::details::EnvironmentVarsParser parser{std::move(splitter), std::move(deserializers), "string", false,
+//     true};
 //
-//     EXPECT_EQ(parser.parse(settings), (sb::cf::JsonObject{{"option", {{"deep", {{"deep", 123}}}}}}));
+//     EXPECT_EQ(parser.parse(setting), (sb::cf::ISettingParser::Result{{"option", "deep", "deep"}, 123}));
+//     EXPECT_EQ(parser.getDefaultType(), "string");
+//     EXPECT_TRUE(parser.getThrowOnUnknownType());
+//     EXPECT_FALSE(parser.getAllowEmptyKeys());
 // }
 //
 // TEST_F(EnvironmentVarsParserTest, ShouldFailCreateSettingParserDueNullSplitter)
@@ -45,8 +49,9 @@
 //     sb::cf::ISettingSplitter::Ptr splitter;
 //     auto deserializers = std::make_unique<ValueDeserializersMapMock>();
 //
-//     EXPECT_THROW((sb::cf::details::EnvironmentVarsParser{std::move(splitter), std::move(deserializers)}),
-//                  sb::cf::ConfigException);
+//     EXPECT_THROW(
+//         (sb::cf::details::EnvironmentVarsParser{std::move(splitter), std::move(deserializers), "string", false,
+//         true}), sb::cf::ConfigException);
 // }
 //
 // TEST_F(EnvironmentVarsParserTest, ShouldFailCreateSettingParserDueNullDeserializers)
@@ -54,8 +59,9 @@
 //     sb::cf::IValueDeserializersMap::Ptr deserializers;
 //     auto splitter = std::make_unique<SettingSplitterMock>();
 //
-//     EXPECT_THROW((sb::cf::details::EnvironmentVarsParser{std::move(splitter), std::move(deserializers)}),
-//                  sb::cf::ConfigException);
+//     EXPECT_THROW(
+//         (sb::cf::details::EnvironmentVarsParser{std::move(splitter), std::move(deserializers), "string", false,
+//         true}), sb::cf::ConfigException);
 // }
 //
 // TEST_F(EnvironmentVarsParserTest, ShouldUseDefaultType)

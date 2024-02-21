@@ -33,7 +33,7 @@ namespace sb::cf::details
         return value ? StringUtils::convertTo<double>(*value) : 0.0;
     }
 
-    INLINE JsonValue NullDeserializer::deserialize(std::optional<std::string_view> value) const { return json::null; }
+    INLINE JsonValue NullDeserializer::deserialize(std::optional<std::string_view>) const { return json::null; }
 
     INLINE JsonValue JsonDeserializer::deserialize(std::optional<std::string_view> value) const
     {

@@ -58,12 +58,7 @@ namespace sb::cf
         auto &prefix = _source->getPrefix();
         for (auto env = _7BIT_CONF_ENV_PTR; *env; env++)
         {
-            std::string_view envStr = *env;
-            if (prefix.empty())
-            {
-                result.push_back(envStr);
-            }
-            else if (details::StringUtils::startsWith(envStr, prefix))
+            if (std::string_view envStr = *env; prefix.empty() || details::StringUtils::startsWith(envStr, prefix))
             {
                 result.push_back(envStr.substr(prefix.size()));
             }

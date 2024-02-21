@@ -109,10 +109,10 @@ namespace sb::cf::details
         std::vector<std::string_view> result;
         for (int i = 0; i < str.size(); ++i)
         {
-            if (auto foundDelim = containsAt(str, i, separators))
+            if (const auto separator = containsAt(str, i, separators))
             {
                 result.emplace_back(str.substr(0, i));
-                str.remove_prefix(foundDelim->size() + result.back().size());
+                str.remove_prefix(separator->size() + result.back().size());
                 i = -1;
             }
         }
@@ -125,9 +125,9 @@ namespace sb::cf::details
     {
         for (size_t i = 0; i < str.size(); ++i)
         {
-            if (auto foundDelim = containsAt(str, i, separators))
+            if (const auto separator = containsAt(str, i, separators))
             {
-                return std::make_pair(str.substr(0, i), str.substr(i + foundDelim->size()));
+                return std::make_pair(str.substr(0, i), str.substr(i + separator->size()));
             }
         }
         return std::nullopt;
@@ -138,9 +138,9 @@ namespace sb::cf::details
     {
         for (int i = static_cast<int>(str.size()) - 1; i >= 0; --i)
         {
-            if (auto foundDelim = containsAtFromEnd(str, i, separators))
+            if (const auto separator = containsAtFromEnd(str, i, separators))
             {
-                return std::make_pair(str.substr(0, i + 1 - foundDelim->size()), str.substr(i + 1));
+                return std::make_pair(str.substr(0, i + 1 - separator->size()), str.substr(i + 1));
             }
         }
         return std::nullopt;

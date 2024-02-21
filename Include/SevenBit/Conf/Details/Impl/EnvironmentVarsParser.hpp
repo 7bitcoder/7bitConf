@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include "SevenBit/Conf/Details/EnvironmentVarsParser.hpp"
+#include "SevenBit/Conf/Details/JsonExt.hpp"
 #include "SevenBit/Conf/Details/Require.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"
 

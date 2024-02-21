@@ -29,7 +29,7 @@ namespace sb::cf::details
         using Ptr = std::unique_ptr<CommandLineParser>;
 
         CommandLineParser(ISettingSplitter::Ptr optionSplitter, IValueDeserializersMap::Ptr valueDeserializersMap,
-                          std::vector<std::string_view> optionPrefixes, bool considerSeparated);
+                          std::vector<std::string_view> optionPrefixes, bool considerSeparated = true);
 
         [[nodiscard]] JsonObject parse(const std::vector<std::string_view> &arguments) const override;
 

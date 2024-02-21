@@ -17,7 +17,7 @@ namespace sb::cf::details
     INLINE ISettingSplitter::Result SettingSplitter::split(const std::string_view setting) const
     {
         auto [rawKey, value] = splitSetting(setting);
-        auto type = tryExtractType(rawKey);
+        const auto type = tryExtractType(rawKey);
         return {splitKey(rawKey), type, value};
     }
 
