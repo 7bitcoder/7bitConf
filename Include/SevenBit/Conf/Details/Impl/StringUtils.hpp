@@ -3,31 +3,30 @@
 #include <algorithm>
 #include <cctype>
 
-#include "SevenBit/Conf/Details/Utils.hpp"
-#include "SevenBit/Conf/Exceptions.hpp"
+#include "SevenBit/Conf/Details/StringUtils.hpp"
 
-namespace sb::cf::details::utils
+namespace sb::cf::details
 {
-    INLINE bool isNumberString(std::string_view str)
+    INLINE bool StringUtils::isNumber(std::string_view str)
     {
         return !str.empty() && std::all_of(str.begin(), str.end(), [](unsigned char ch) { return std::isdigit(ch); });
     }
 
-    INLINE bool ignoreCaseLess(std::string_view str, std::string_view search)
+    INLINE bool StringUtils::ignoreCaseLess(std::string_view str, std::string_view search)
     {
         return std::lexicographical_compare(
             str.begin(), str.end(), search.begin(), search.end(),
             [](unsigned char cha, unsigned char chb) { return std::tolower(cha) < std::tolower(chb); });
     }
 
-    INLINE bool ignoreCaseEqual(std::string_view str, std::string_view search)
+    INLINE bool StringUtils::ignoreCaseEqual(std::string_view str, std::string_view search)
     {
         return str.size() == search.size() &&
                std::equal(str.begin(), str.end(), search.begin(), search.end(),
                           [](unsigned char cha, unsigned char chb) { return std::tolower(cha) == std::tolower(chb); });
     }
 
-    INLINE bool containsAt(std::string_view str, size_t index, std::string_view search)
+    INLINE bool StringUtils::containsAt(std::string_view str, size_t index, std::string_view search)
     {
         if (index >= str.size() || search.empty())
         {
@@ -36,8 +35,8 @@ namespace sb::cf::details::utils
         return str.compare(index, search.size(), search) == 0;
     }
 
-    INLINE std::optional<std::string_view> containsAt(std::string_view str, size_t index,
-                                                      const std::vector<std::string_view> &searches)
+    INLINE std::optional<std::string_view> StringUtils::containsAt(std::string_view str, size_t index,
+                                                                   const std::vector<std::string_view> &searches)
     {
         for (auto &search : searches)
         {
@@ -49,7 +48,7 @@ namespace sb::cf::details::utils
         return std::nullopt;
     }
 
-    INLINE bool containsAtFromEnd(std::string_view str, size_t index, std::string_view search)
+    INLINE bool StringUtils::containsAtFromEnd(std::string_view str, size_t index, std::string_view search)
     {
         if (index + 1 < search.size())
         {
@@ -58,8 +57,8 @@ namespace sb::cf::details::utils
         return containsAt(str, index + 1 - search.size(), search);
     }
 
-    INLINE std::optional<std::string_view> containsAtFromEnd(std::string_view str, size_t index,
-                                                             const std::vector<std::string_view> &searches)
+    INLINE std::optional<std::string_view> StringUtils::containsAtFromEnd(std::string_view str, size_t index,
+                                                                          const std::vector<std::string_view> &searches)
     {
         for (auto &search : searches)
         {
@@ -71,7 +70,7 @@ namespace sb::cf::details::utils
         return std::nullopt;
     }
 
-    INLINE bool startsWith(std::string_view str, std::string_view search)
+    INLINE bool StringUtils::startsWith(std::string_view str, std::string_view search)
     {
         auto searchIt = search.begin();
         for (auto it = str.begin(); it != str.end() && searchIt != search.end(); ++it, ++searchIt)
@@ -84,11 +83,19 @@ namespace sb::cf::details::utils
         return searchIt == search.end();
     }
 
-    INLINE std::vector<std::string_view> split(std::string_view str, std::string_view divider)
+    INLINE size_t StringUtils::startsWithWhiteSpace(std::string_view str)
+    {
+        const auto it = std::find_if(str.begin(), str.end(), [](const unsigned char ch) { return !std::isspace(ch); });
+        return it - str.begin();
+    }
+
+    INLINE bool StringUtils::isWhiteSpace(std::string_view str) { return startsWithWhiteSpace(str) == str.size(); }
+
+    INLINE std::vector<std::string_view> StringUtils::split(std::string_view str, std::string_view separator)
     {
         std::vector<std::string_view> result;
         std::string::size_type begin = 0, pos = 0;
-        for (; std::string_view::npos != (pos = str.find_first_of(divider, pos)); begin = (pos += divider.size()))
+        for (; std::string_view::npos != (pos = str.find_first_of(separator, pos)); begin = (pos += separator.size()))
         {
             result.push_back(str.substr(begin, pos - begin));
         }
@@ -96,12 +103,13 @@ namespace sb::cf::details::utils
         return result;
     }
 
-    INLINE std::vector<std::string_view> split(std::string_view str, const std::vector<std::string_view> &dividers)
+    INLINE std::vector<std::string_view> StringUtils::split(std::string_view str,
+                                                            const std::vector<std::string_view> &separators)
     {
         std::vector<std::string_view> result;
         for (int i = 0; i < str.size(); ++i)
         {
-            if (auto foundDelim = containsAt(str, i, dividers))
+            if (auto foundDelim = containsAt(str, i, separators))
             {
                 result.emplace_back(str.substr(0, i));
                 str.remove_prefix(foundDelim->size() + result.back().size());
@@ -112,12 +120,12 @@ namespace sb::cf::details::utils
         return result;
     }
 
-    INLINE std::optional<std::pair<std::string_view, std::string_view>> tryBreak(
-        std::string_view str, const std::vector<std::string_view> &dividers)
+    INLINE std::optional<std::pair<std::string_view, std::string_view>> StringUtils::tryBreak(
+        std::string_view str, const std::vector<std::string_view> &separators)
     {
         for (size_t i = 0; i < str.size(); ++i)
         {
-            if (auto foundDelim = containsAt(str, i, dividers))
+            if (auto foundDelim = containsAt(str, i, separators))
             {
                 return std::make_pair(str.substr(0, i), str.substr(i + foundDelim->size()));
             }
@@ -125,12 +133,12 @@ namespace sb::cf::details::utils
         return std::nullopt;
     }
 
-    INLINE std::optional<std::pair<std::string_view, std::string_view>> tryBreakFromEnd(
-        std::string_view str, const std::vector<std::string_view> &dividers)
+    INLINE std::optional<std::pair<std::string_view, std::string_view>> StringUtils::tryBreakFromEnd(
+        std::string_view str, const std::vector<std::string_view> &separators)
     {
         for (int i = static_cast<int>(str.size()) - 1; i >= 0; --i)
         {
-            if (auto foundDelim = containsAtFromEnd(str, i, dividers))
+            if (auto foundDelim = containsAtFromEnd(str, i, separators))
             {
                 return std::make_pair(str.substr(0, i + 1 - foundDelim->size()), str.substr(i + 1));
             }
@@ -138,26 +146,17 @@ namespace sb::cf::details::utils
         return std::nullopt;
     }
 
-    INLINE std::string joinViews(const std::vector<std::string_view> &strings, const std::string &divider)
+    INLINE std::string StringUtils::join(const std::vector<std::string_view> &strs, const std::string &separator)
     {
         std::string res;
-        if (!strings.empty())
+        if (!strs.empty())
         {
-            for (size_t i = 0; i < strings.size() - 1; ++i)
+            for (size_t i = 0; i < strs.size() - 1; ++i)
             {
-                res += std::string{strings[i]} + divider;
+                res += std::string{strs[i]} + separator;
             }
-            res += strings.back();
+            res += strs.back();
         }
         return res;
     }
-
-    INLINE inline size_t startsWhiteSpace(std::string_view str)
-    {
-        const auto it = std::find_if(str.begin(), str.end(), [](const unsigned char ch) { return !std::isspace(ch); });
-        return it - str.begin();
-    }
-
-    INLINE inline bool isWhiteSpace(std::string_view str) { return startsWhiteSpace(str) == str.size(); }
-
-} // namespace sb::cf::details::utils
+} // namespace sb::cf::details

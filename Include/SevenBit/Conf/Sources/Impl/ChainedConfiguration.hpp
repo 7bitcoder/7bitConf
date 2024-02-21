@@ -2,10 +2,8 @@
 
 #include <memory>
 
-#include "SevenBit/Conf/Details/Utils.hpp"
-#include "SevenBit/Conf/Exceptions.hpp"
+#include "SevenBit/Conf/Details/Require.hpp"
 #include "SevenBit/Conf/Sources/ChainedConfiguration.hpp"
-
 
 namespace sb::cf
 {
@@ -14,7 +12,7 @@ namespace sb::cf
     {
         for (auto &source : _sources)
         {
-            details::utils::assertPtr(source);
+            details::Require::notNull(source);
         }
     }
 
@@ -26,7 +24,7 @@ namespace sb::cf
 
     INLINE void ChainedConfigurationSource::add(IConfigurationSource::SPtr source)
     {
-        details::utils::assertPtr(source);
+        details::Require::notNull(source);
         _sources.push_back(std::move(source));
     }
 
@@ -36,7 +34,7 @@ namespace sb::cf
         providers.reserve(_sources.size());
         for (auto &source : _sources)
         {
-            details::utils::assertPtr(source);
+            details::Require::notNull(source);
             providers.emplace_back(source->build(builder));
         }
         return std::make_unique<ChainedConfigurationProvider>(std::move(providers));
@@ -48,7 +46,7 @@ namespace sb::cf
     {
         for (auto &provider : _providers)
         {
-            details::utils::assertPtr(provider);
+            details::Require::notNull(provider);
         }
     }
 
@@ -57,7 +55,7 @@ namespace sb::cf
         clear();
         for (auto &provider : _providers)
         {
-            details::utils::assertPtr(provider);
+            details::Require::notNull(provider);
             provider->load();
             update(std::move(provider->getConfiguration()));
         }

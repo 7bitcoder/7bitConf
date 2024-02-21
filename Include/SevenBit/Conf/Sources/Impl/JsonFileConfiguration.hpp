@@ -3,7 +3,7 @@
 #include <filesystem>
 #include <tao/json/from_file.hpp>
 
-#include "SevenBit/Conf/Details/Utils.hpp"
+#include "SevenBit/Conf/Details/Require.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"
 #include "SevenBit/Conf/Sources/JsonFileConfiguration.hpp"
 
@@ -32,7 +32,7 @@ namespace sb::cf
     INLINE JsonFileConfigurationProvider::JsonFileConfigurationProvider(JsonFileConfigurationSource::SPtr source)
         : _source(std::move(source))
     {
-        details::utils::assertPtr(_source);
+        details::Require::notNull(_source);
     }
 
     INLINE void JsonFileConfigurationProvider::load() { set(getJsonFromFile()); }

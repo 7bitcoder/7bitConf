@@ -3,7 +3,7 @@
 #include <algorithm>
 
 #include "SevenBit/Conf/Details/EnvironmentVarsParser.hpp"
-#include "SevenBit/Conf/Details/Utils.hpp"
+#include "SevenBit/Conf/Details/Require.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"
 
 namespace sb::cf::details
@@ -12,8 +12,8 @@ namespace sb::cf::details
                                                         IValueDeserializersMap::Ptr valueDeserializersMap)
         : _settingSplitter(std::move(settingSplitter)), _valueDeserializersMap(std::move(valueDeserializersMap))
     {
-        utils::assertPtr(_settingSplitter);
-        utils::assertPtr(_valueDeserializersMap);
+        Require::notNull(_settingSplitter);
+        Require::notNull(_valueDeserializersMap);
     }
 
     INLINE JsonObject EnvironmentVarsParser::parse(const std::vector<std::string_view> &envVariables) const

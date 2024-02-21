@@ -1,7 +1,7 @@
 #pragma once
 
 #include "SevenBit/Conf/Details/SettingSplitter.hpp"
-#include "SevenBit/Conf/Details/Utils.hpp"
+#include "SevenBit/Conf/Details/StringUtils.hpp"
 
 namespace sb::cf::details
 {
@@ -24,7 +24,7 @@ namespace sb::cf::details
     INLINE std::pair<std::string_view, std::optional<std::string_view>> SettingSplitter::splitSetting(
         const std::string_view setting) const
     {
-        if (auto breakResult = details::utils::tryBreak(setting, _settingSplitters))
+        if (auto breakResult = StringUtils::tryBreak(setting, _settingSplitters))
         {
             return {breakResult->first, breakResult->second};
         }
@@ -33,7 +33,7 @@ namespace sb::cf::details
 
     INLINE std::optional<std::string_view> SettingSplitter::tryExtractType(std::string_view &key) const
     {
-        if (auto breakResult = details::utils::tryBreakFromEnd(key, _typeMarkers))
+        if (auto breakResult = StringUtils::tryBreakFromEnd(key, _typeMarkers))
         {
             key = breakResult->first;
             return breakResult->second;
@@ -43,7 +43,7 @@ namespace sb::cf::details
 
     INLINE std::vector<std::string_view> SettingSplitter::splitKey(const std::string_view key) const
     {
-        auto keys = details::utils::split(key, _keySplitters);
+        auto keys = StringUtils::split(key, _keySplitters);
         checkKeys(keys);
         return keys;
     }

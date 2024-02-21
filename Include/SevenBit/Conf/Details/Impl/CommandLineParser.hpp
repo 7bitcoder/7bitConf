@@ -3,7 +3,8 @@
 #include <algorithm>
 
 #include "SevenBit/Conf/Details/CommandLineParser.hpp"
-#include "SevenBit/Conf/Details/Utils.hpp"
+#include "SevenBit/Conf/Details/Require.hpp"
+#include "SevenBit/Conf/Details/StringUtils.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"
 
 #include <SevenBit/Conf/Details/JsonExt.hpp>
@@ -17,8 +18,8 @@ namespace sb::cf::details
         : _optionSplitter(std::move(optionSplitter)), _valueDeserializersMap(std::move(valueDeserializersMap)),
           _optionPrefixes(std::move(optionPrefixes)), _considerSeparated(considerSeparated)
     {
-        utils::assertPtr(_optionSplitter);
-        utils::assertPtr(_valueDeserializersMap);
+        Require::notNull(_optionSplitter);
+        Require::notNull(_valueDeserializersMap);
     }
 
     INLINE JsonObject CommandLineParser::parse(const std::vector<std::string_view> &arguments) const
@@ -44,11 +45,11 @@ namespace sb::cf::details
         const std::vector<std::string_view> &arguments, size_t &index) const
     {
         auto argument = arguments[index];
-        const auto hasOptionPrefix = tryRemoveOptionPrefix(argument);
+        const auto hadOptionPrefix = tryRemoveOptionPrefix(argument);
 
         auto [keys, type, value] = _optionSplitter->split(argument);
 
-        if (_considerSeparated && hasOptionPrefix && !value && index + 1 < arguments.size())
+        if (_considerSeparated && hadOptionPrefix && !value && index + 1 < arguments.size())
         {
             if (auto nextArgument = arguments[index + 1]; !tryGetOptionPrefix(nextArgument))
             {
@@ -73,7 +74,7 @@ namespace sb::cf::details
     {
         for (auto &optionPrefix : _optionPrefixes)
         {
-            if (utils::startsWith(argument, optionPrefix))
+            if (StringUtils::startsWith(argument, optionPrefix))
             {
                 return optionPrefix;
             }

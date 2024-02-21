@@ -9,7 +9,7 @@ namespace sb::cf
 {
     struct EnvironmentVarsParserConfig
     {
-        std::vector<std::string_view> splitters = {"="};
+        std::vector<std::string_view> variableSplitters = {"="};
         std::vector<std::string_view> keySplitters = {":", "__"};
         std::vector<std::string_view> typeMarkers = {"!", "___"};
         std::string_view defaultType = "string";

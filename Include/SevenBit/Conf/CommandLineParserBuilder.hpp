@@ -37,8 +37,6 @@ namespace sb::cf
         ISettingsParser::Ptr build();
 
       private:
-        bool tryRemoveWhiteSpaceSplitters();
-
         ISettingSplitter::Ptr getSplitter();
 
         IValueDeserializersMap::Ptr getValueDeserializersMap();

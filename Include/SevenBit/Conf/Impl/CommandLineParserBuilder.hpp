@@ -1,11 +1,14 @@
 #pragma once
 
+#include <algorithm>
+
 #include "SevenBit/Conf/CommandLineParserBuilder.hpp"
 #include "SevenBit/Conf/Details/CommandLineParser.hpp"
+#include "SevenBit/Conf/Details/ContainerUtils.hpp"
 #include "SevenBit/Conf/Details/DefaultDeserializers.hpp"
 #include "SevenBit/Conf/Details/Deserializers.hpp"
 #include "SevenBit/Conf/Details/SettingSplitter.hpp"
-#include "SevenBit/Conf/Details/Utils.hpp"
+#include "SevenBit/Conf/Details/StringUtils.hpp"
 #include "SevenBit/Conf/Details/ValueDeserializersMap.hpp"
 
 namespace sb::cf
@@ -38,25 +41,18 @@ namespace sb::cf
 
     INLINE CommandLineParserBuilder &CommandLineParserBuilder::useDefaultValueDeserializers()
     {
-        DefaultDeserializers::addDefault(_valueDeserializers);
+        DefaultDeserializers::add(_valueDeserializers);
         return *this;
     }
 
     INLINE ISettingsParser::Ptr CommandLineParserBuilder::build()
     {
-        auto hadWhiteSpaceSplitters = tryRemoveWhiteSpaceSplitters();
-        return std::make_unique<details::CommandLineParser>(
-            getSplitter(), getValueDeserializersMap(), std::move(getConfig().prefixes), hadWhiteSpaceSplitters);
-    }
+        auto &config = getConfig();
+        auto hadWhiteSpaceSplitters = details::ContainerUtils::eraseIf(
+            config.optionSplitters, [](const auto splitter) { return details::StringUtils::isWhiteSpace(splitter); });
 
-    INLINE bool CommandLineParserBuilder::tryRemoveWhiteSpaceSplitters()
-    {
-        auto &splitters = getConfig().splitters;
-        const auto it = details::utils::removeIf(splitters.begin(), splitters.end(),
-                                                 [](auto splitter) { return details::utils::isWhiteSpace(splitter); });
-        const auto removeCnt = splitters.end() - it;
-        splitters.erase(it, splitters.end());
-        return removeCnt;
+        return std::make_unique<details::CommandLineParser>(getSplitter(), getValueDeserializersMap(),
+                                                            std::move(config.optionPrefixes), hadWhiteSpaceSplitters);
     }
 
     INLINE ISettingSplitter::Ptr CommandLineParserBuilder::getSplitter()
@@ -65,8 +61,8 @@ namespace sb::cf
         {
             auto &config = getConfig();
             useSplitter(std::make_unique<details::SettingSplitter>(
-                std::move(config.splitters), std::move(config.typeMarkers),
-                std::move(config.keySplitters), config.allowEmptyKeys));
+                std::move(config.optionSplitters), std::move(config.typeMarkers), std::move(config.keySplitters),
+                config.allowEmptyKeys));
         }
         return std::move(_splitter);
     }

@@ -2,8 +2,7 @@
 
 #include "SevenBit/Conf/ConfigurationBuilder.hpp"
 #include "SevenBit/Conf/Details/Configuration.hpp"
-#include "SevenBit/Conf/Details/Utils.hpp"
-
+#include "SevenBit/Conf/Details/Require.hpp"
 
 namespace sb::cf
 {
@@ -12,13 +11,13 @@ namespace sb::cf
     {
         for (auto &source : _sources)
         {
-            details::utils::assertPtr(source);
+            details::Require::notNull(source);
         }
     }
 
     INLINE IConfigurationBuilder &ConfigurationBuilder::add(IConfigurationSource::SPtr source)
     {
-        details::utils::assertPtr(source);
+        details::Require::notNull(source);
         _sources.push_back(std::move(source));
         return *this;
     }
@@ -29,7 +28,7 @@ namespace sb::cf
         providers.reserve(_sources.size());
         for (auto &source : _sources)
         {
-            details::utils::assertPtr(source);
+            details::Require::notNull(source);
             providers.emplace_back(source->build(*this));
         }
         return std::make_unique<Configuration>(std::move(providers));

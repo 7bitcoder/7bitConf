@@ -1,7 +1,7 @@
 #pragma once
 
 #include "SevenBit/Conf/Details/JsonExt.hpp"
-#include "SevenBit/Conf/Details/Utils.hpp"
+#include "SevenBit/Conf/Details/Require.hpp"
 #include "SevenBit/Conf/Sources/InMemoryConfiguration.hpp"
 
 namespace sb::cf
@@ -26,7 +26,7 @@ namespace sb::cf
     INLINE InMemoryConfigurationProvider::InMemoryConfigurationProvider(InMemoryConfigurationSource::SPtr source)
         : _source(std::move(source))
     {
-        details::utils::assertPtr(_source);
+        details::Require::notNull(_source);
     }
 
     INLINE void InMemoryConfigurationProvider::load()

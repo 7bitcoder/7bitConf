@@ -1,7 +1,7 @@
 #include <cstddef>
 #include <gtest/gtest.h>
 
-#include "SevenBit/Conf/Details/Utils.hpp"
+#include "SevenBit/Conf/Details/StringUtils.hpp"
 #include "Utilities/ParamsTest.hpp"
 
 class UtilsTest : public testing::Test
@@ -26,7 +26,7 @@ Params<std::string_view, bool> CheckNumberStringsData{
 PARAMS_TEST(UtilsTest, ShouldCheckNumberStrings, CheckNumberStringsData)
 {
     auto &[string, expected] = GetParam();
-    EXPECT_EQ(sb::cf::details::utils::isNumberString(string), expected);
+    EXPECT_EQ(sb::cf::details::StringUtils::isNumber(string), expected);
 }
 
 Params<std::string_view, std::string_view, bool> IgnoreCaseLessData{
@@ -46,7 +46,7 @@ Params<std::string_view, std::string_view, bool> IgnoreCaseLessData{
 PARAMS_TEST(UtilsTest, ShouldIgnoreCaseLessCompareStrings, IgnoreCaseLessData)
 {
     auto &[string, search, expected] = GetParam();
-    EXPECT_EQ(sb::cf::details::utils::ignoreCaseLess(string, search), expected);
+    EXPECT_EQ(sb::cf::details::StringUtils::ignoreCaseLess(string, search), expected);
 }
 
 Params<std::string_view, std::string_view, bool> IgnoreCaseEqualsData{
@@ -66,7 +66,7 @@ Params<std::string_view, std::string_view, bool> IgnoreCaseEqualsData{
 PARAMS_TEST(UtilsTest, ShouldIgnoreCaseCompareStrings, IgnoreCaseEqualsData)
 {
     auto &[string, search, expected] = GetParam();
-    EXPECT_EQ(sb::cf::details::utils::ignoreCaseEqual(string, search), expected);
+    EXPECT_EQ(sb::cf::details::StringUtils::ignoreCaseEqual(string, search), expected);
 }
 
 Params<std::string_view, size_t, std::string_view, bool> ContainsAtData{
@@ -81,7 +81,7 @@ Params<std::string_view, size_t, std::string_view, bool> ContainsAtData{
 PARAMS_TEST(UtilsTest, ShouldContainsAt, ContainsAtData)
 {
     auto &[string, index, search, expected] = GetParam();
-    EXPECT_EQ(sb::cf::details::utils::containsAt(string, index, search), expected);
+    EXPECT_EQ(sb::cf::details::StringUtils::containsAt(string, index, search), expected);
 }
 
 Params<std::string_view, size_t, std::vector<std::string_view>, std::optional<std::string_view>> ContainsAtMultitData{
@@ -107,7 +107,7 @@ Params<std::string_view, size_t, std::vector<std::string_view>, std::optional<st
 PARAMS_TEST(UtilsTest, ShouldContainsAtMulti, ContainsAtMultitData)
 {
     auto &[string, index, searches, expected] = GetParam();
-    EXPECT_EQ(sb::cf::details::utils::containsAt(string, index, searches), expected);
+    EXPECT_EQ(sb::cf::details::StringUtils::containsAt(string, index, searches), expected);
 }
 
 Params<std::string_view, size_t, std::string_view, bool> ContainsAtFromEndData{
@@ -121,7 +121,7 @@ Params<std::string_view, size_t, std::string_view, bool> ContainsAtFromEndData{
 PARAMS_TEST(UtilsTest, ShouldContainsAtFromEnd, ContainsAtFromEndData)
 {
     auto &[string, index, search, expected] = GetParam();
-    EXPECT_EQ(sb::cf::details::utils::containsAtFromEnd(string, index, search), expected);
+    EXPECT_EQ(sb::cf::details::StringUtils::containsAtFromEnd(string, index, search), expected);
 }
 
 Params<std::string_view, size_t, std::vector<std::string_view>, std::optional<std::string_view>>
@@ -150,7 +150,7 @@ Params<std::string_view, size_t, std::vector<std::string_view>, std::optional<st
 PARAMS_TEST(UtilsTest, ShouldContainsAtFromEndMulti, ContainsAtFromEndMultitData)
 {
     auto &[string, index, searches, expected] = GetParam();
-    EXPECT_EQ(sb::cf::details::utils::containsAtFromEnd(string, index, searches), expected);
+    EXPECT_EQ(sb::cf::details::StringUtils::containsAtFromEnd(string, index, searches), expected);
 }
 
 Params<std::string_view, std::string_view, bool> StartsWithData{
@@ -162,7 +162,7 @@ Params<std::string_view, std::string_view, bool> StartsWithData{
 PARAMS_TEST(UtilsTest, ShouldStartsWith, StartsWithData)
 {
     auto &[string, search, expected] = GetParam();
-    EXPECT_EQ(sb::cf::details::utils::startsWith(string, search), expected);
+    EXPECT_EQ(sb::cf::details::StringUtils::startsWith(string, search), expected);
 }
 
 Params<std::string, std::string, std::vector<std::string_view>> SplitStrData{
@@ -181,7 +181,7 @@ Params<std::string, std::string, std::vector<std::string_view>> SplitStrData{
 PARAMS_TEST(UtilsTest, ShouldSplitString, SplitStrData)
 {
     auto &[string, delim, expected] = GetParam();
-    EXPECT_EQ(sb::cf::details::utils::split(string, delim), expected);
+    EXPECT_EQ(sb::cf::details::StringUtils::split(string, delim), expected);
 }
 
 Params<std::string, std::vector<std::string_view>, std::vector<std::string_view>> SplitStrMultiData{
@@ -204,7 +204,7 @@ Params<std::string, std::vector<std::string_view>, std::vector<std::string_view>
 PARAMS_TEST(UtilsTest, ShouldSplitStringMulti, SplitStrMultiData)
 {
     auto &[string, delims, expected] = GetParam();
-    EXPECT_EQ(sb::cf::details::utils::split(string, delims), expected);
+    EXPECT_EQ(sb::cf::details::StringUtils::split(string, delims), expected);
 }
 
 Params<std::string, std::vector<std::string_view>, std::optional<std::pair<std::string_view, std::string_view>>>
@@ -225,7 +225,7 @@ Params<std::string, std::vector<std::string_view>, std::optional<std::pair<std::
 PARAMS_TEST(UtilsTest, ShouldBreakString, BreakStrData)
 {
     auto &[string, delim, expected] = GetParam();
-    EXPECT_EQ(sb::cf::details::utils::tryBreak(string, delim), expected);
+    EXPECT_EQ(sb::cf::details::StringUtils::tryBreak(string, delim), expected);
 }
 
 Params<std::string, std::vector<std::string_view>, std::optional<std::pair<std::string_view, std::string_view>>>
@@ -246,8 +246,8 @@ Params<std::string, std::vector<std::string_view>, std::optional<std::pair<std::
 PARAMS_TEST(UtilsTest, ShouldBreakFromEndString, BreakFromEndStrData)
 {
     auto &[string, delim, expected] = GetParam();
-    auto res = sb::cf::details::utils::tryBreakFromEnd(string, delim);
-    EXPECT_EQ(sb::cf::details::utils::tryBreakFromEnd(string, delim), expected);
+    auto res = sb::cf::details::StringUtils::tryBreakFromEnd(string, delim);
+    EXPECT_EQ(sb::cf::details::StringUtils::tryBreakFromEnd(string, delim), expected);
 }
 
 Params<std::vector<std::string_view>, std::string, std::string> JoinStrData{
@@ -265,14 +265,7 @@ Params<std::vector<std::string_view>, std::string, std::string> JoinStrData{
 PARAMS_TEST(UtilsTest, ShouldJoinStrings, JoinStrData)
 {
     auto &[strings, delim, expected] = GetParam();
-    EXPECT_EQ(sb::cf::details::utils::joinViews(strings, delim), expected);
-}
-
-TEST_F(UtilsTest, ShouldAssertPtr)
-{
-    int i = 1;
-    EXPECT_NO_THROW(sb::cf::details::utils::assertPtr(&i));
-    EXPECT_THROW(sb::cf::details::utils::assertPtr<int>(nullptr), sb::cf::NullPointerException);
+    EXPECT_EQ(sb::cf::details::StringUtils::join(strings, delim), expected);
 }
 
 Params<std::string_view, bool, std::pair<bool, int>> ConvertToNumberIntData{
@@ -282,7 +275,7 @@ Params<std::string_view, bool, std::pair<bool, int>> ConvertToNumberIntData{
 PARAMS_TEST(UtilsTest, ShouldConvertToIntNumber, ConvertToNumberIntData)
 {
     auto &[string, full, expected] = GetParam();
-    auto [success, result] = sb::cf::details::utils::tryStringTo<int>(string, full);
+    auto [success, result] = sb::cf::details::StringUtils::tryConvertTo<int>(string, full);
 
     EXPECT_EQ(success, expected.first);
     if (success)
@@ -299,7 +292,7 @@ Params<std::string_view, bool, std::pair<bool, double>> ConvertToNumberDoubleDat
 PARAMS_TEST(UtilsTest, ShouldConvertToDoubleNumber, ConvertToNumberDoubleData)
 {
     auto &[string, full, expected] = GetParam();
-    auto [success, result] = sb::cf::details::utils::tryStringTo<double>(string, full);
+    auto [success, result] = sb::cf::details::StringUtils::tryConvertTo<double>(string, full);
 
     EXPECT_EQ(success, expected.first);
     if (success)
@@ -317,7 +310,7 @@ Params<std::string_view, bool, std::pair<bool, bool>> ConvertToBoolData{
 PARAMS_TEST(UtilsTest, ShouldConvertToBool, ConvertToBoolData)
 {
     auto &[string, full, expected] = GetParam();
-    auto [success, result] = sb::cf::details::utils::tryStringTo<bool>(string, full);
+    auto [success, result] = sb::cf::details::StringUtils::tryConvertTo<bool>(string, full);
 
     EXPECT_EQ(success, expected.first);
     if (success)

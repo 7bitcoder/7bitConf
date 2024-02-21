@@ -44,7 +44,7 @@ namespace sb::cf
 
         virtual void clear() = 0;
 
-        template <class TFactory> IConfigurationBuilder &addFrom(TFactory factory) { return add(factory(*this)); }
+        template <class TFactory> IConfigurationBuilder &addFrom(TFactory &&factory) { return add(factory(*this)); }
 
         IConfigurationBuilder &addJsonFile(std::filesystem::path filePath)
         {
@@ -68,10 +68,7 @@ namespace sb::cf
             return add(AppSettingsConfigurationSource::create(std::move(environmentName)));
         }
 
-        IConfigurationBuilder &addEnvironmentVariables()
-        {
-            return addEnvironmentVariables("", EnvironmentVarsParserConfig{});
-        }
+        IConfigurationBuilder &addEnvironmentVariables() { return addEnvironmentVariables(""); }
 
         IConfigurationBuilder &addEnvironmentVariables(std::string prefix)
         {
@@ -85,7 +82,7 @@ namespace sb::cf
         }
 
         template <class TBuilderFunc>
-        IConfigurationBuilder &addEnvironmentVariables(std::string prefix, TBuilderFunc parserBuilderFunctor)
+        IConfigurationBuilder &addEnvironmentVariables(std::string prefix, TBuilderFunc &&parserBuilderFunctor)
         {
             EnvironmentVarsParserBuilder builder;
             parserBuilderFunctor(builder);
@@ -118,7 +115,7 @@ namespace sb::cf
         }
 
         template <class TBuilderFunc>
-        IConfigurationBuilder &addCommandLine(int argc, char *const *const argv, TBuilderFunc parserBuilderFunctor)
+        IConfigurationBuilder &addCommandLine(int argc, char *const *const argv, TBuilderFunc &&parserBuilderFunctor)
         {
             CommandLineParserBuilder builder;
             parserBuilderFunctor(builder);
@@ -126,7 +123,7 @@ namespace sb::cf
         }
 
         template <class TBuilderFunc>
-        IConfigurationBuilder &addCommandLine(std::vector<std::string_view> args, TBuilderFunc parserBuilderFunctor)
+        IConfigurationBuilder &addCommandLine(std::vector<std::string_view> args, TBuilderFunc &&parserBuilderFunctor)
         {
             CommandLineParserBuilder builder;
             parserBuilderFunctor(builder);
@@ -150,7 +147,7 @@ namespace sb::cf
 
         IConfigurationBuilder &addKeyPerFile(std::filesystem::path directoryPath)
         {
-            return addKeyPerFile(std::move(directoryPath), false, "");
+            return addKeyPerFile(std::move(directoryPath), false);
         }
 
         IConfigurationBuilder &addKeyPerFile(std::filesystem::path directoryPath, bool isOptional)

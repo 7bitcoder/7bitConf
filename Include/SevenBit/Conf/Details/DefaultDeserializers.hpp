@@ -6,7 +6,7 @@ namespace sb::cf
 {
     struct DefaultDeserializers
     {
-        static void addDefault(std::vector<std::pair<std::string_view, IDeserializer::Ptr>> &deserializers)
+        static void add(std::vector<std::pair<std::string_view, IDeserializer::Ptr>> &deserializers)
         {
             deserializers.emplace_back("string", std::make_unique<details::StringDeserializer>());
             deserializers.emplace_back("bool", std::make_unique<details::BoolDeserializer>());

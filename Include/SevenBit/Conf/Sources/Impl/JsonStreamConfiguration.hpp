@@ -2,7 +2,7 @@
 
 #include <tao/json/from_stream.hpp>
 
-#include "SevenBit/Conf/Details/Utils.hpp"
+#include "SevenBit/Conf/Details/Require.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"
 #include "SevenBit/Conf/Sources/JsonStreamConfiguration.hpp"
 
@@ -25,7 +25,7 @@ namespace sb::cf
     INLINE JsonStreamConfigurationProvider::JsonStreamConfigurationProvider(JsonStreamConfigurationSource::SPtr source)
         : _source(std::move(source))
     {
-        details::utils::assertPtr(_source);
+        details::Require::notNull(_source);
     }
 
     INLINE void JsonStreamConfigurationProvider::load() { set(getJsonFromStream()); }

@@ -36,7 +36,7 @@ namespace sb::cf
 
     INLINE EnvironmentVarsParserBuilder &EnvironmentVarsParserBuilder::useDefaultValueDeserializers()
     {
-        DefaultDeserializers::addDefault(_valueDeserializers);
+        DefaultDeserializers::add(_valueDeserializers);
         return *this;
     }
 
@@ -51,7 +51,7 @@ namespace sb::cf
         {
             auto &config = getConfig();
             useSplitter(
-                std::make_unique<details::SettingSplitter>(std::move(config.splitters), std::move(config.typeMarkers),
+                std::make_unique<details::SettingSplitter>(std::move(config.variableSplitters), std::move(config.typeMarkers),
                                                            std::move(config.keySplitters), config.allowEmptyKeys));
         }
         return std::move(_splitter);

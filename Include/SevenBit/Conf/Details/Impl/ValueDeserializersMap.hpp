@@ -1,6 +1,5 @@
 #pragma once
 
-#include "SevenBit/Conf/Details/Utils.hpp"
 #include "SevenBit/Conf/Details/ValueDeserializersMap.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"
 

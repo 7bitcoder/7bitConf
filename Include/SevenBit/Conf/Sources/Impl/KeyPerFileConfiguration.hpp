@@ -1,7 +1,7 @@
 #pragma once
 
 #include "SevenBit/Conf/Details/JsonExt.hpp"
-#include "SevenBit/Conf/Details/Utils.hpp"
+#include "SevenBit/Conf/Details/StringUtils.hpp"
 #include "SevenBit/Conf/Sources/ChainedConfiguration.hpp"
 #include "SevenBit/Conf/Sources/JsonFileConfiguration.hpp"
 #include "SevenBit/Conf/Sources/KeyPerFileConfiguration.hpp"
@@ -11,15 +11,15 @@ namespace sb::cf
 {
     INLINE KeyPerFileConfigurationSource::KeyPerFileConfigurationSource(std::filesystem::path directoryPath,
                                                                         bool isOptional, std::string ignorePrefix)
-        : _directoryPath(std::move(directoryPath)), _isOptional(isOptional), _ignorePrefix(std::move(ignorePrefix))
+        : _directoryPath(std::move(directoryPath)), _ignorePrefix(std::move(ignorePrefix)), _isOptional(isOptional)
     {
     }
 
     INLINE KeyPerFileConfigurationSource::KeyPerFileConfigurationSource(
         std::filesystem::path directoryPath, bool isOptional,
         std::function<bool(const std::filesystem::path &)> ignoreCondition)
-        : _directoryPath(std::move(directoryPath)), _isOptional(isOptional),
-          _ignoreCondition(std::move(ignoreCondition))
+        : _directoryPath(std::move(directoryPath)), _ignoreCondition(std::move(ignoreCondition)),
+          _isOptional(isOptional)
     {
     }
 
@@ -65,31 +65,52 @@ namespace sb::cf
         }
         for (auto const &entry : std::filesystem::directory_iterator{directoryPath})
         {
-            const auto &filePath = entry.path();
-            if (!entry.is_regular_file() || canIgnore(filePath))
+            if (auto source = tryGetMappedFileSource(entry))
             {
-                continue;
-            }
-            auto extension = filePath.extension();
-            if (extension == ".json")
-            {
-                auto fileSource = JsonFileConfigurationSource::create(filePath);
-                auto mapSource = MapConfigurationSource::create(
-                    std::move(fileSource), [name = filePath.stem().generic_string()](JsonObject config) -> JsonObject {
-                        auto res = JsonObject{};
-                        details::JsonExt::deepGetOrOverride(res, details::utils::split(name, "__")) = std::move(config);
-                        return res;
-                    });
-                sources.add(mapSource);
+                sources.add(source);
             }
         }
         return sources.build(builder);
     }
 
+    INLINE IConfigurationSource::SPtr KeyPerFileConfigurationSource::tryGetMappedFileSource(
+        const std::filesystem::directory_entry &entry) const
+    {
+        if (const auto &filePath = entry.path(); entry.is_regular_file())
+        {
+            if (auto fileSource = tryGetFileSource(filePath))
+            {
+                auto mapFcn = [name = filePath.stem().generic_string()](JsonObject &&config) -> JsonObject {
+                    auto res = JsonObject{};
+                    const auto keys = details::StringUtils::split(name, "__");
+                    details::JsonExt::updateWith(res, keys, std::move(config));
+                    return res;
+                };
+                return MapConfigurationSource::create(std::move(fileSource), std::move(mapFcn));
+            }
+        }
+        return nullptr;
+    }
+
+    INLINE IConfigurationSource::SPtr KeyPerFileConfigurationSource::tryGetFileSource(
+        const std::filesystem::path &filePath) const
+    {
+        if (!canIgnore(filePath))
+        {
+            const auto &extension = filePath.extension();
+            if (extension == ".json")
+            {
+                return JsonFileConfigurationSource::create(filePath);
+            }
+        }
+        return nullptr;
+    }
+
     INLINE bool KeyPerFileConfigurationSource::canIgnore(const std::filesystem::path &filePath) const
     {
         auto &ignorePrefix = getIgnorePrefix();
-        if (!ignorePrefix.empty() && details::utils::startsWith(filePath.filename().generic_string(), ignorePrefix))
+        if (!ignorePrefix.empty() &&
+            details::StringUtils::startsWith(filePath.filename().generic_string(), ignorePrefix))
         {
             return true;
         }
@@ -100,5 +121,4 @@ namespace sb::cf
         }
         return false;
     }
-
 } // namespace sb::cf

@@ -5,7 +5,7 @@
 
 #include "SevenBit/Conf/Details/Configuration.hpp"
 #include "SevenBit/Conf/Details/JsonExt.hpp"
-#include "SevenBit/Conf/Details/Utils.hpp"
+#include "SevenBit/Conf/Details/StringUtils.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"
 
 namespace sb::cf
@@ -108,7 +108,7 @@ namespace sb::cf
         configRoot.clear();
         for (auto &provider : _providers)
         {
-            details::utils::assertPtr(provider);
+            details::Require::notNull(provider);
             provider->load();
             details::JsonExt::deepMerge(configRoot, std::move(provider->getConfiguration()));
         }
@@ -120,7 +120,7 @@ namespace sb::cf
 
     INLINE JsonValue &Configuration::throwNotFoundException(const std::vector<std::string_view> &key) const
     {
-        throw ValueNotFoundException{"Value was not found for key: " + details::utils::joinViews(key, ":")};
+        throw ValueNotFoundException{"Value was not found for key: " + details::StringUtils::join(key, ":")};
     }
 
     INLINE JsonValue &Configuration::throwNotFoundException(std::string_view key) const

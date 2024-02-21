@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SevenBit/Conf/Details/Utils.hpp"
+#include "SevenBit/Conf/Details/Require.hpp"
 #include "SevenBit/Conf/Sources/CommandLineConfiguration.hpp"
 
 namespace sb::cf
@@ -9,7 +9,7 @@ namespace sb::cf
                                                                           ISettingsParser::Ptr parser)
         : _args(std::move(args)), _parser(std::move(parser))
     {
-        details::utils::assertPtr(_parser);
+        details::Require::notNull(_parser);
     }
 
     INLINE CommandLineConfigurationSource::SPtr CommandLineConfigurationSource::create(int argc,
@@ -48,7 +48,7 @@ namespace sb::cf
         CommandLineConfigurationSource::SPtr source)
         : _source(std::move(source))
     {
-        details::utils::assertPtr(_source);
+        details::Require::notNull(_source);
     }
 
     INLINE void CommandLineConfigurationProvider::load()

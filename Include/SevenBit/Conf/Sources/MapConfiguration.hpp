@@ -16,18 +16,18 @@ namespace sb::cf
     {
       private:
         IConfigurationSource::SPtr _source;
-        std::function<JsonObject(JsonObject)> _mapFcn;
+        std::function<JsonObject(JsonObject &&)> _mapFcn;
 
-        MapConfigurationSource(IConfigurationSource::SPtr source, std::function<JsonObject(JsonObject)> mapFcn);
+        MapConfigurationSource(IConfigurationSource::SPtr source, std::function<JsonObject(JsonObject &&)> mapFcn);
 
       public:
         using Ptr = std::unique_ptr<MapConfigurationSource>;
         using SPtr = std::shared_ptr<MapConfigurationSource>;
 
         [[nodiscard]] static SPtr create(IConfigurationSource::SPtr source,
-                                         std::function<JsonObject(JsonObject)> mapFcn);
+                                         std::function<JsonObject(JsonObject &&)> mapFcn);
 
-        [[nodiscard]] const std::function<JsonObject(JsonObject)> &getMapFcn() const;
+        [[nodiscard]] const std::function<JsonObject(JsonObject &&)> &getMapFcn() const;
 
         IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
     };

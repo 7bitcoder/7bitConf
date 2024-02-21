@@ -47,6 +47,11 @@ namespace sb::cf
         IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
 
       private:
+        [[nodiscard]] IConfigurationSource::SPtr tryGetMappedFileSource(
+            std::filesystem::directory_entry const &entry) const;
+
+        [[nodiscard]] IConfigurationSource::SPtr tryGetFileSource(const std::filesystem::path &filePath) const;
+
         [[nodiscard]] bool canIgnore(const std::filesystem::path &filePath) const;
     };
 } // namespace sb::cf

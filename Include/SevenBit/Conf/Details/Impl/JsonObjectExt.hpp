@@ -3,7 +3,7 @@
 #include <string>
 
 #include "SevenBit/Conf/Details/JsonExt.hpp"
-#include "SevenBit/Conf/Details/Utils.hpp"
+#include "SevenBit/Conf/Details/StringUtils.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"
 #include "SevenBit/Conf/Json.hpp"
 
@@ -59,13 +59,13 @@ namespace sb::cf::details
 
     INLINE JsonValue *JsonExt::find(JsonArray &json, std::string_view key)
     {
-        auto [success, index] = details::utils::tryStringTo<size_t>(key);
+        auto [success, index] = StringUtils::tryConvertTo<size_t>(key);
         return success ? find(json, index) : nullptr;
     }
 
     INLINE const JsonValue *JsonExt::find(const JsonArray &json, std::string_view key)
     {
-        auto [success, index] = details::utils::tryStringTo<size_t>(key);
+        auto [success, index] = StringUtils::tryConvertTo<size_t>(key);
         return success ? find(json, index) : nullptr;
     }
 
@@ -82,12 +82,12 @@ namespace sb::cf::details
 
     INLINE JsonValue *JsonExt::deepFind(JsonValue &json, std::string_view key)
     {
-        return deepFind(json, details::utils::split(key, ":"));
+        return deepFind(json, StringUtils::split(key, ":"));
     }
 
     INLINE const JsonValue *JsonExt::deepFind(const JsonValue &json, std::string_view key)
     {
-        return deepFind(json, details::utils::split(key, ":"));
+        return deepFind(json, StringUtils::split(key, ":"));
     }
 
     INLINE JsonValue *JsonExt::deepFind(JsonValue &json, const std::vector<std::string_view> &key)
@@ -102,12 +102,12 @@ namespace sb::cf::details
 
     INLINE JsonValue *JsonExt::deepFind(JsonObject &json, std::string_view key)
     {
-        return deepFind(json, details::utils::split(key, ":"));
+        return deepFind(json, StringUtils::split(key, ":"));
     }
 
     INLINE const JsonValue *JsonExt::deepFind(const JsonObject &json, std::string_view key)
     {
-        return deepFind(json, details::utils::split(key, ":"));
+        return deepFind(json, StringUtils::split(key, ":"));
     }
 
     INLINE JsonValue *JsonExt::deepFind(JsonObject &json, const std::vector<std::string_view> &key)
@@ -122,12 +122,12 @@ namespace sb::cf::details
 
     INLINE JsonValue *JsonExt::deepFind(JsonArray &json, std::string_view key)
     {
-        return deepFind(json, details::utils::split(key, ":"));
+        return deepFind(json, StringUtils::split(key, ":"));
     }
 
     INLINE const JsonValue *JsonExt::deepFind(const JsonArray &json, std::string_view key)
     {
-        return deepFind(json, details::utils::split(key, ":"));
+        return deepFind(json, StringUtils::split(key, ":"));
     }
 
     INLINE JsonValue *JsonExt::deepFind(JsonArray &json, const std::vector<std::string_view> &key)
@@ -142,7 +142,7 @@ namespace sb::cf::details
 
     INLINE JsonValue &JsonExt::getOrOverride(JsonValue &json, std::string_view key)
     {
-        auto isNumber = utils::isNumberString(key);
+        auto isNumber = StringUtils::isNumber(key);
         if (!json.is_object() && !json.is_array())
         {
             json = isNumber ? JsonValue(JsonArray{}) : JsonValue(JsonObject{});
@@ -151,7 +151,7 @@ namespace sb::cf::details
         {
             if (isNumber)
             {
-                return getOrOverride(json.get_array(), utils::stringTo<size_t>(key));
+                return getOrOverride(json.get_array(), StringUtils::convertTo<size_t>(key));
             }
             json.set_object({});
         }
@@ -180,7 +180,7 @@ namespace sb::cf::details
 
     INLINE JsonValue &JsonExt::deepGetOrOverride(JsonObject &json, std::string_view key)
     {
-        return deepGetOrOverride(json, details::utils::split(key, ":"));
+        return deepGetOrOverride(json, StringUtils::split(key, ":"));
     }
 
     INLINE JsonValue &JsonExt::deepGetOrOverride(JsonObject &json, const std::vector<std::string_view> &keys)
@@ -244,7 +244,12 @@ namespace sb::cf::details
         }
     }
 
-    INLINE void JsonExt::updateWith(JsonObject &json, const std::vector<std::string_view> &keys, JsonValue value)
+    INLINE void JsonExt::updateWith(JsonObject &json, const std::vector<std::string_view> &keys, JsonValue &&value)
+    {
+        deepGetOrOverride(json, keys) = std::move(value);
+    }
+
+    INLINE void JsonExt::updateWith(JsonObject &json, const std::vector<std::string_view> &keys, JsonObject &&value)
     {
         deepGetOrOverride(json, keys) = std::move(value);
     }

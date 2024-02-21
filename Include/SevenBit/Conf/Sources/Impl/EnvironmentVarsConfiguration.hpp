@@ -2,8 +2,8 @@
 
 #include <cstdlib>
 
-#include "SevenBit/Conf/Details/Utils.hpp"
-#include "SevenBit/Conf/Exceptions.hpp"
+#include "SevenBit/Conf/Details/Require.hpp"
+#include "SevenBit/Conf/Details/StringUtils.hpp"
 #include "SevenBit/Conf/Sources/EnvironmentVarsConfiguration.hpp"
 
 #ifdef _WIN32
@@ -20,7 +20,7 @@ namespace sb::cf
                                                                                   ISettingsParser::Ptr parser)
         : _prefix(std::move(prefix)), _parser(std::move(parser))
     {
-        details::utils::assertPtr(_parser);
+        details::Require::notNull(_parser);
     }
 
     INLINE EnvironmentVarsConfigurationSource::SPtr EnvironmentVarsConfigurationSource::create(
@@ -43,7 +43,7 @@ namespace sb::cf
         EnvironmentVarsConfigurationSource::SPtr source)
         : _source(std::move(source))
     {
-        details::utils::assertPtr(_source);
+        details::Require::notNull(_source);
     }
 
     INLINE void EnvironmentVarsConfigurationProvider::load()
@@ -63,7 +63,7 @@ namespace sb::cf
             {
                 result.push_back(envStr);
             }
-            else if (details::utils::startsWith(envStr, prefix))
+            else if (details::StringUtils::startsWith(envStr, prefix))
             {
                 result.push_back(envStr.substr(prefix.size()));
             }

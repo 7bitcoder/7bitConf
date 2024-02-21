@@ -7,7 +7,7 @@
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
-#include "SevenBit/Conf/Details/Utils.hpp"
+#include "SevenBit/Conf/Details/StringUtils.hpp"
 #include "SevenBit/Conf/IValueDeserializersMap.hpp"
 
 namespace sb::cf::details
@@ -21,7 +21,7 @@ namespace sb::cf::details
 
             template <class T1, class T2> bool operator()(const T1 &s1, const T2 &s2) const
             {
-                return utils::ignoreCaseLess(s1, s2);
+                return StringUtils::ignoreCaseLess(s1, s2);
             }
         };
 
