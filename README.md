@@ -38,9 +38,11 @@
     - [Json Object](#json-object)
     - [In Memory](#in-memory)
     - [Custom Configuration Source](#custom-configuration-source)
-- [Setting Parser Config](#setting-parser-config)
-    - [Usage Scenario](#usage-scenario)
-- [Custom Settings Parser](#custom-setting-parser)
+- [Command Line Parser Config](#command-line-parser-config)
+    - [Cmd Config Usage Scenario](#cmd-config-usage-scenario)
+- [Environment Variables Parser Config](#environment-variables-parser-config)
+    - [Config Usage Scenario](#env-config-usage-scenario)
+- [Custom Parsers](#custom-parsers)
     - [Advanced Usage Scenario](#advanced-usage-scenario)
 - [Build Library](#build-library)
     - [Build Library With Conan](#build-library-with-conan)
@@ -79,15 +81,28 @@ The library is officially supported on the following platforms:
 
 ## Installation
 
-All options, except Conan, require [taocpp json](https://github.com/taocpp/json) version 1.0.0-beta.14 to be already
-installed.
+### Using Cmake Fetch Content Api - Recommended
 
-#### Using Conan Package Manager - Recommended
+Update CMakeLists.txt file with the following code
+
+```cmake
+include(FetchContent)
+FetchContent_Declare(
+        7bitDI
+        GIT_REPOSITORY https://github.com/7bitcoder/7bitConf.git
+        GIT_TAG v1.2.0
+)
+FetchContent_MakeAvailable(7bitConf)
+
+target_link_libraries(Target 7bitConf::7bitConf)
+```
+
+### Using Conan Package Manager
 
 Download and install [Conan.io](https://conan.io/downloads.html) then
 install [package](https://conan.io/center/recipes/7bitconf), see Conan documentation for the package installation guide.
 
-#### Header Only
+### Header Only
 
 Download source code from the most recent release and copy the include folder into your project location, for example,
 copy into the '/SevenBitConf' folder. Include this folder into the project, example with [CMake](https://cmake.org/):
@@ -96,12 +111,12 @@ copy into the '/SevenBitConf' folder. Include this folder into the project, exam
 include_directories(SevenBitConf/Include)
 ```
 
-#### Header Only Single File
+### Header Only Single File
 
 Download SevenBitConf.hpp header file from the most recent release, copy this file into desired project location and
 include it.
 
-#### Building Library Locally
+### Building Library Locally
 
 Download source code from the most recent release, build or install the project using [CMake](https://cmake.org/),
 for more details, see the [Building Library](#build-library) guide.
@@ -202,7 +217,7 @@ auto configuration = ConfigurationBuilder{}.addCommandLine(configArgs).build();
 ```
 
 The command line configuration source can be more customized with the additional addCommandLine method
-arguments: [EnvironmentVarsParserConfig](#setting-parser-config) or [SettingsParser](#custom-setting-parser).
+arguments: [CommandLineParserConfig](#command-line-parser-config) or [SettingParser](#custom-parsers).
 
 #### Supported Types
 
@@ -253,8 +268,8 @@ is '\_\_' (double underscore) and for '!' is '\_\_\_' (triple underscore).
 Setting Array:2!uint=123 would be rewritten as Array\_\_2\_\_\_uint=123
 
 Same as command line source, environment variables configuration source can be more customized with
-additional addEnvironmentVariables method arguments: [EnvironmentVarsParserConfig](#setting-parser-config)
-or [SettingsParser](#custom-setting-parser).
+additional addEnvironmentVariables method arguments: [EnvironmentVarsParserConfig](#environment-variables-parser-config)
+or [SettingParser](#custom-parsers).
 
 ### Json File
 
@@ -412,17 +427,73 @@ int main(int argc, char **argv)
 }
 ```
 
-## Setting Parser Config
+## Command Line Parser Config
 
-EnvironmentVarsParserConfig is a simple struct that contains the data used to configure the setting parser, by default
-it is
-initialized with these values:
+CommandLineParserConfig is a simple struct that contains the data used to configure the command line
+parser, by default it is initialized with these values:
+
+```cpp
+struct CommandLineParserConfig
+{
+    std::vector<std::string_view> optionPrefixes = {"--", "/"};
+    std::vector<std::string_view> optionSplitters = {"=", " "};
+    std::vector<std::string_view> keySplitters = {":"};
+    std::vector<std::string_view> typeMarkers = {"!"};
+    std::string_view defaultType = "string";
+    bool throwOnUnknownType = true;
+    bool allowEmptyKeys = false;
+};
+```
+
+This configuration allows specifying different behaviors of the command line parser.
+
+Example option option:values:1!int=123 each part is marked as affected with ()
+
+- optionPrefixes - list of possible option splitters option:values:1!int(=)123
+- optionSplitters - list of possible option splitters option:values:1!int(=)123
+- keySplitters - list of possible key splitters option(:)values(:)1!int=123
+- typeMarkers - list of possible type markers option:values:1(!)int=123
+- defaultType - is the type that is used if the type was not specified explicitly in variable option:values:1=123
+- throwOnUnknownType - if the type was not recognized in the parsing phase then an exception will be thrown if in this
+  case this setting is set to false default type will be used option:values:1!nonExistingType=123
+- allowEmptyKeys - if set to true and empty keys are detected, an exception will be thrown option::1!int=123
+
+### Cmd Config Usage Scenario
+
+All options should be loaded without considering the type and with custom option prefix '//', solution:
+
+```cpp
+#include <SevenBit/Conf.hpp>
+#include <iostream>
+
+using namespace sb::cf;
+
+int main(const int argc, char **argv)
+{
+    CommandLineParserConfig parserConfig;
+    parserConfig.optionPrefixes = {"//"};
+    parserConfig.typeMarkers.clear();
+
+    const IConfiguration::Ptr configuration = ConfigurationBuilder{} //
+                                                  .addAppSettings()
+                                                  .addCommandLine(argc, argv, std::move(parserConfig))
+                                                  .build();
+
+    std::cout << "Configuration json:" << std::endl << std::setw(2) << *configuration;
+
+    return 0;
+}
+```
+
+## Environment Variables Parser Config
+
+EnvironmentVarsParserConfig is a similar struct to command line parser config with one difference
+there is no way to set variable prefixes:
 
 ```cpp
 struct EnvironmentVarsParserConfig
 {
-    std::vector<std::string_view> settingPrefixes = {"--"};
-    std::vector<std::string_view> settingSplitters = {"="};
+    std::vector<std::string_view> variableSplitters = {"="};
     std::vector<std::string_view> keySplitters = {":", "__"};
     std::vector<std::string_view> typeMarkers = {"!", "___"};
     std::string_view defaultType = "string";
@@ -431,20 +502,19 @@ struct EnvironmentVarsParserConfig
 };
 ```
 
-This configuration allows specifying different behaviors of the parser.
+This configuration allows specifying different behaviors of the environment variable parser.
 
-Example setting --option:values:1!int=123 each part is marked as affected with ()
+Example environment variable option__values__1___int=123 each part is marked as affected with ()
 
-- settingPrefixes - list of possible setting prefixes (--)option:values:1!int=123
-- settingSplitters - list of possible setting splitters --option:values:1!int(=)123
-- keySplitters - list of possible key splitters --option(:)values(:)1!int=123
-- typeMarkers - list of possible type markers --option:values:1(!)int=123
-- defaultType - is the type that is used if the type was not specified in setting --option:values:1=123
+- variableSplitters - list of possible variable splitters option__values__1___int(=)123
+- keySplitters - list of possible key splitters option(__)values(__)1___int=123
+- typeMarkers - list of possible type markers option__values__1(___)int=123
+- defaultType - is the type that is used if the type was not specified explicitly in variable option__values__1=123
 - throwOnUnknownType - if the type was not recognized in the parsing phase then an exception will be thrown if in this
-  case this setting is set to false default type will be used --option:values:1!nonExistingType=123
-- allowEmptyKeys - if set to true and empty keys are detected, an exception will be thrown --option::1!int=123
+  case this setting is set to false default type will be used option__values__1___nonExistingType=123
+- allowEmptyKeys - if set to true and empty keys are detected, an exception will be thrown option____1___int=123
 
-### Usage Scenario
+### Env Config Usage Scenario
 
 All environment variables should be loaded as not nested objects (no key splitting) and without considering the type,
 solution:
@@ -457,15 +527,15 @@ using namespace sb::cf;
 
 int main(int argc, char **argv)
 {
-    EnvironmentVarsParserConfig envParserConfig;
-    envParserConfig.keySplitters.clear();
-    envParserConfig.typeMarkers.clear();
+    EnvironmentVarsParserConfig parserConfig;
+    parserConfig.keySplitters.clear();
+    parserConfig.typeMarkers.clear();
 
-    IConfiguration::Ptr configuration = ConfigurationBuilder{} //
-                                            .addAppSettings()
-                                            .addEnvironmentVariables("", std::move(envParserConfig))
-                                            .addCommandLine(argc, argv)
-                                            .build();
+    const IConfiguration::Ptr configuration = ConfigurationBuilder{} //
+                                                  .addAppSettings()
+                                                  .addEnvironmentVariables("", std::move(parserConfig))
+                                                  .addCommandLine(argc, argv)
+                                                  .build();
 
     std::cout << "Configuration json:" << std::endl << std::setw(2) << *configuration;
 
@@ -473,14 +543,11 @@ int main(int argc, char **argv)
 }
 ```
 
-In this case, custom EnvironmentVarsParserConfig is used in addEnvironmentVariables method, keySplitters is cleared to
-prevent
-extracting nested keys and typeMarkers is cleared to prevent type extraction.
+## Custom Parsers
 
-## Custom Setting Parser
-
-The library provides a SettingParserBuilder to create customized SettingParser, builder allows using custom value
-deserializer, config, settingSplitter, and valueDeserializersMap.
+The library provides a CommandLineParserBuilder and EnvironmentVarsParserBuilder to create customized parsers for
+command line and environment variables, builder allows using custom value deserializer, config, settingSplitter, and
+valueDeserializersMap.
 
 ### Advanced Usage Scenario
 
@@ -497,28 +564,31 @@ using namespace sb::cf;
 
 struct MyTypeDeserializer final : IDeserializer
 {
-    JsonValue deserialize(std::optional<std::string_view> value) const final { return value ? value : "emptyValue"; }
+    [[nodiscard]] JsonValue deserialize(std::optional<std::string_view> value) const override
+    {
+        return value ? value : "emptyValue";
+    }
 };
 
-int main(int argc, char **argv)
+int main(const int argc, char **argv)
 {
-    EnvironmentVarsParserConfig envParserConfig;
-    envParserConfig.keySplitters.clear();
-    envParserConfig.settingPrefixes.emplace_back("//");
-    envParserConfig.defaultType = "myType";
-    envParserConfig.throwOnUnknownType = false;
+    auto builderFunc = [](CommandLineParserBuilder &builder) {
+        CommandLineParserConfig parserConfig;
+        parserConfig.keySplitters.clear();
+        parserConfig.optionPrefixes.emplace_back("//");
+        parserConfig.defaultType = "myType";
+        parserConfig.throwOnUnknownType = false;
 
-    ISettingParser::Ptr settingParser = SettingParserBuilder{} //
-                                            .useConfig(std::move(envParserConfig))
-                                            .useDefaultValueDeserializers()
-                                            .useValueDeserializer("myType", std::make_unique<MyTypeDeserializer>())
-                                            .build();
+        builder.useConfig(std::move(parserConfig))
+            .useDefaultValueDeserializers()
+            .useValueDeserializer("myType", std::make_unique<MyTypeDeserializer>());
+    };
 
-    IConfiguration::Ptr configuration = ConfigurationBuilder{} //
-                                            .addAppSettings()
-                                            .addEnvironmentVariables()
-                                            .addCommandLine(argc, argv, std::move(settingParser))
-                                            .build();
+    const IConfiguration::Ptr configuration = ConfigurationBuilder{} //
+                                                  .addAppSettings()
+                                                  .addEnvironmentVariables()
+                                                  .addCommandLine(argc, argv, builderFunc)
+                                                  .build();
 
     std::cout << "Configuration json:" << std::endl << std::setw(2) << *configuration;
 
@@ -528,15 +598,14 @@ int main(int argc, char **argv)
 
 In this case, keySplitters is cleared to prevent extracting nested keys, the additional setting prefix is added '//',
 and default type is changed to custom type "myType", and with throwOnUnknownType set to false instead of throwing an
-exception when type is not recognized, default will be used. SettingParserBuilder is being used to create custom
-settingParser with new config and custom valueDeserializer for type "myType", useDefaultValueDeserializers is used to
-add predefined value deserializers (string, int, json ...).
+exception when type is not recognized, default will be used. CommandLineParserBuilder is being used to create custom
+comand line parser with new config and custom valueDeserializer for type "myType", useDefaultValueDeserializers is used
+to add predefined value deserializers (string, int, json ...).
 
 ## Build Library
 
 The library can be built locally using [Cmake](https://cmake.org/), library
-requires [Taocpp JSON](https://github.com/taocpp/json) to be already installed, the easiest way is
-to [build a library with Conan](#build-library-with-conan).
+uses [Taocpp JSON](https://github.com/taocpp/json) if library is not found it will be downloaded using cmake fetch api
 
 Create a build directory and navigate to it:
 
@@ -554,9 +623,10 @@ Using this command, several cache variables can be set:
 
 - \<cache variable name\>: [possible values] (default value) - Description
 - \_7BIT_CONF_LIBRARY_TYPE: ["Shared", "Static", "HeaderOnly"] ("Static") - Library build type
-- \_7BIT_CONF_BUILD_TESTS: ["ON", "OFF"] ("OFF") - Turn on to build tests (
-  requires [Gtest](https://google.github.io/googletest/) to be installed,
-  see [Build Library With Conan](#build-library-with-conan))
+- \_7BIT_CONF_BUILD_UNIT_TESTS: ["ON", "OFF"] ("OFF") - Turn on to build unit tests
+- \_7BIT_CONF_BUILD_INTEGRATION_TESTS: ["ON", "OFF"] ("OFF") - Turn on to build integration tests
+- \_7BIT_CONF_BUILD_E2E_TESTS: ["ON", "OFF"] ("OFF") - Turn on to build e2e tests
+- \_7BIT_CONF_BUILD_ALL_TESTS: ["ON", "OFF"] ("OFF") - Turn on to build all tests
 - \_7BIT_CONF_BUILD_EXAMPLES: ["ON", "OFF"] ("OFF") - Turn on to build examples
 - \_7BIT_CONF_BUILD_SINGLE_HEADER: ["ON", "OFF"] ("OFF") - Turn on to build single header SevenBitConf.hpp (requires
   Quom to be installed)
@@ -567,40 +637,6 @@ for example, this command will set the library type to Static and will force exa
 
 ```sh
 cmake .. -DCMAKE_BUILD_TYPE=Release -D_7BIT_CONF_LIBRARY_TYPE=Static -D_7BIT_CONF_BUILD_EXAMPLES=true
-```
-
-Build the library using the command:
-
-```sh
-cmake --build .
-```
-
-### Build Library With Conan
-
-Gtest library is added to the project using the Conan package
-manager ([Conan Installation](https://conan.io/downloads.html)),
-If Conan was freshly installed, run the detect command:
-
-```sh
-conan profile detect
-```
-
-To install Conan packages, run this command in the library root folder:
-
-```sh
-conan install . --output-folder=build --build=missing
-```
-
-Navigate to the build directory:
-
-```sh
-cd build
-```
-
-Configure the CMake project and add the toolchain file as a CMAKE_TOOLCHAIN_FILE cache variable:
-
-```sh
-cmake .. -DCMAKE_TOOLCHAIN_FILE:PATH="./conan_toolchain.cmake" -DCMAKE_BUILD_TYPE=Release -D_7BIT_CONF_BUILD_TESTS=ON
 ```
 
 Build the library using the command:
