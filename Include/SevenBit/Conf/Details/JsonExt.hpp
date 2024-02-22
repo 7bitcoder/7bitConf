@@ -75,5 +75,5 @@ namespace sb::cf::details
 } // namespace sb::cf::details
 
 #ifdef _7BIT_CONF_ADD_IMPL
-#include "SevenBit/Conf/Details/Impl/JsonObjectExt.hpp"
+#include "SevenBit/Conf/Details/Impl/JsonExt.hpp"
 #endif

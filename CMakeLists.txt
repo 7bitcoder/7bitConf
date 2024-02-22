@@ -4,7 +4,7 @@ set(_7BIT_CONF_LIBRARY 7bitConf)
 
 set(_7BIT_CONF_VERSION_MAJOR 1)
 set(_7BIT_CONF_VERSION_MINOR 2)
-set(_7BIT_CONF_VERSION_PATCH 1)
+set(_7BIT_CONF_VERSION_PATCH 0)
 
 set(_7BIT_CONF_VERSION ${_7BIT_CONF_VERSION_MAJOR}.${_7BIT_CONF_VERSION_MINOR}.${_7BIT_CONF_VERSION_PATCH})
 
@@ -12,9 +12,9 @@ project(${_7BIT_CONF_LIBRARY} LANGUAGES CXX VERSION ${_7BIT_CONF_VERSION})
 
 list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Cmake")
 
-if(NOT CMAKE_CXX_STANDARD)
+if (NOT CMAKE_CXX_STANDARD)
     set(CMAKE_CXX_STANDARD 17)
-endif()
+endif ()
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -26,21 +26,21 @@ include_directories(${_7BIT_CONF_INCLUDE_DIR})
 
 add_subdirectory(Source)
 
-if(_7BIT_CONF_BUILD_UNIT_TESTS OR _7BIT_CONF_BUILD_INTEGRATION_TESTS OR _7BIT_CONF_BUILD_E2E_TESTS)
+if (_7BIT_CONF_BUILD_UNIT_TESTS OR _7BIT_CONF_BUILD_INTEGRATION_TESTS OR _7BIT_CONF_BUILD_E2E_TESTS)
     enable_testing()
 
     add_subdirectory(Tests)
-endif()
+endif ()
 
-if(_7BIT_CONF_BUILD_EXAMPLES)
+if (_7BIT_CONF_BUILD_EXAMPLES)
     add_subdirectory(Examples)
-endif()
+endif ()
 
-if(_7BIT_CONF_BUILD_SINGLE_HEADER)
+if (_7BIT_CONF_BUILD_SINGLE_HEADER)
     add_subdirectory(SingleHeader)
-endif()
+endif ()
 
-if(_7BIT_CONF_INSTALL)
+if (_7BIT_CONF_INSTALL)
     set(PROJECT_CONFIG_IN ${CMAKE_CURRENT_SOURCE_DIR}/Cmake/7bitConfConfig.cmake.in)
     set(PROJECT_CONFIG_OUT ${CMAKE_CURRENT_BINARY_DIR}/7bitConfConfig.cmake)
     set(CONFIG_TARGETS_FILE 7bitConfConfigTargets.cmake)
@@ -50,29 +50,29 @@ if(_7BIT_CONF_INSTALL)
     install(DIRECTORY ${_7BIT_CONF_INCLUDE_DIR}/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
     install(
-        TARGETS 7bitConf
-        EXPORT 7bitConf
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+            TARGETS 7bitConf
+            EXPORT 7bitConf
+            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
     export(
-        TARGETS 7bitConf
-        NAMESPACE 7bitConf::
-        FILE ${CMAKE_CURRENT_BINARY_DIR}/${CONFIG_TARGETS_FILE})
+            TARGETS 7bitConf
+            NAMESPACE 7bitConf::
+            FILE ${CMAKE_CURRENT_BINARY_DIR}/${CONFIG_TARGETS_FILE})
 
     install(
-        EXPORT 7bitConf
-        EXPORT 7bitConf
-        DESTINATION ${EXPORT_DEST_DIR}
-        NAMESPACE 7bitConf::
-        NAMESPACE 7bitConf::
-        FILE ${CONFIG_TARGETS_FILE})
+            EXPORT 7bitConf
+            EXPORT 7bitConf
+            DESTINATION ${EXPORT_DEST_DIR}
+            NAMESPACE 7bitConf::
+            NAMESPACE 7bitConf::
+            FILE ${CONFIG_TARGETS_FILE})
 
     include(CMakePackageConfigHelpers)
 
     configure_package_config_file(${PROJECT_CONFIG_IN} ${PROJECT_CONFIG_OUT}
-        INSTALL_DESTINATION ${EXPORT_DEST_DIR})
+            INSTALL_DESTINATION ${EXPORT_DEST_DIR})
 
     write_basic_package_version_file(${VERSIONS_CONFIG_FILE} COMPATIBILITY SameMajorVersion)
 
@@ -81,4 +81,4 @@ if(_7BIT_CONF_INSTALL)
     export(PACKAGE 7bitConf)
 
     include(CPack)
-endif()
+endif ()

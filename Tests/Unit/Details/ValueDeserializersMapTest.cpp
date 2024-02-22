@@ -9,12 +9,14 @@
 #include "../../../Include/SevenBit/Conf/Details/ValueDeserializersMap.hpp"
 #include "../../Helpers/Utilities/ParamsTest.hpp"
 
-class DeserializersTest : public testing::Test
+#include <SevenBit/Conf/Details/DefaultDeserializers.hpp>
+
+class ValueDeserializersMapTest : public testing::Test
 {
   protected:
     static void TearUpTestSuite() {}
 
-    DeserializersTest() {}
+    ValueDeserializersMapTest() {}
 
     void SetUp() override {}
 
@@ -27,13 +29,7 @@ sb::cf::details::ValueDeserializersMap makeDefaultDeserializersMap(std::string_v
                                                                    bool throwOnUnknownType = true)
 {
     sb::cf::details::ValueDeserializersMap deserializers{defaultType, throwOnUnknownType};
-    deserializers.set("string", std::make_unique<sb::cf::details::StringDeserializer>());
-    deserializers.set("bool", std::make_unique<sb::cf::details::BoolDeserializer>());
-    deserializers.set("int", std::make_unique<sb::cf::details::IntDeserializer>());
-    deserializers.set("double", std::make_unique<sb::cf::details::DoubleDeserializer>());
-    deserializers.set("uint", std::make_unique<sb::cf::details::UIntDeserializer>());
-    deserializers.set("json", std::make_unique<sb::cf::details::JsonDeserializer>());
-    deserializers.set("null", std::make_unique<sb::cf::details::NullDeserializer>());
+    sb::cf::details::DefaultDeserializers::add(deserializers);
     return std::move(deserializers);
 }
 
@@ -154,7 +150,7 @@ static Params<std::string_view, std::optional<std::string_view>, sb::cf::JsonVal
     {"qwdv", "", std::string{""}},
     {"das", std::nullopt, std::string{""}},
 };
-PARAMS_TEST(DeserializersTest, ShouldDeserializeValue, DeserializeData)
+PARAMS_TEST(ValueDeserializersMapTest, ShouldDeserializeValue, DeserializeData)
 {
     const auto &[type, value, expected] = GetParam();
     auto deserializers = makeDefaultDeserializersMap("string", false);
@@ -163,7 +159,7 @@ PARAMS_TEST(DeserializersTest, ShouldDeserializeValue, DeserializeData)
     EXPECT_EQ(deserializer.deserialize(value), expected);
 }
 
-TEST_F(DeserializersTest, ShouldDeserializeEmptyJsonOption)
+TEST_F(ValueDeserializersMapTest, ShouldDeserializeEmptyJsonOption)
 {
     auto deserializers = makeDefaultDeserializersMap();
 
@@ -171,7 +167,7 @@ TEST_F(DeserializersTest, ShouldDeserializeEmptyJsonOption)
     EXPECT_EQ((deserializer.deserialize(std::nullopt)), (sb::cf::JsonValue{}));
 }
 
-TEST_F(DeserializersTest, ShouldNotFoundDeserializer)
+TEST_F(ValueDeserializersMapTest, ShouldNotFoundDeserializer)
 {
     auto deserializers = makeDefaultDeserializersMap();
 
@@ -235,7 +231,7 @@ static Params<std::string_view, std::optional<std::string_view>> FailDeserialize
     {"json", ""},
     {"json", "\n"},
 };
-PARAMS_TEST(DeserializersTest, ShouldFailDeserialize, FailDeserializeValues)
+PARAMS_TEST(ValueDeserializersMapTest, ShouldFailDeserialize, FailDeserializeValues)
 {
     const auto &[type, value] = GetParam();
     auto deserializers = makeDefaultDeserializersMap();

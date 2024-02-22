@@ -6,7 +6,7 @@
 #include "SevenBit/Conf/Details/Impl/DefaultDeserializers.hpp"
 #include "SevenBit/Conf/Details/Impl/Deserializers.hpp"
 #include "SevenBit/Conf/Details/Impl/EnvironmentVarsParser.hpp"
-#include "SevenBit/Conf/Details/Impl/JsonObjectExt.hpp"
+#include "SevenBit/Conf/Details/Impl/JsonExt.hpp"
 #include "SevenBit/Conf/Details/Impl/SettingSplitter.hpp"
 #include "SevenBit/Conf/Details/Impl/StringUtils.hpp"
 #include "SevenBit/Conf/Details/Impl/ValueDeserializersMap.hpp"

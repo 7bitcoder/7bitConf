@@ -89,7 +89,10 @@ namespace sb::cf::details
         return it - str.begin();
     }
 
-    INLINE bool StringUtils::isWhiteSpace(std::string_view str) { return startsWithWhiteSpace(str) == str.size(); }
+    INLINE bool StringUtils::isWhiteSpace(std::string_view str)
+    {
+        return !str.empty() && startsWithWhiteSpace(str) == str.size();
+    }
 
     INLINE std::vector<std::string_view> StringUtils::split(std::string_view str, std::string_view separator)
     {

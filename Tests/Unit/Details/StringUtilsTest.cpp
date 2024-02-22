@@ -4,12 +4,12 @@
 #include "../../../Include/SevenBit/Conf/Details/StringUtils.hpp"
 #include "../../Helpers/Utilities/ParamsTest.hpp"
 
-class UtilsTest : public testing::Test
+class StringUtilsTest : public testing::Test
 {
   protected:
     static void TearUpTestSuite() {}
 
-    UtilsTest() {}
+    StringUtilsTest() {}
 
     void SetUp() override {}
 
@@ -23,7 +23,7 @@ Params<std::string_view, bool> CheckNumberStringsData{
     {"", false},       {"alk1", false},     {"1223-", false},           {"1223#", false},
     {"1223+=", false}, {"1223.123", false}, {"1223.123", false},
 };
-PARAMS_TEST(UtilsTest, ShouldCheckNumberStrings, CheckNumberStringsData)
+PARAMS_TEST(StringUtilsTest, ShouldCheckNumberStrings, CheckNumberStringsData)
 {
     auto &[string, expected] = GetParam();
     EXPECT_EQ(sb::cf::details::StringUtils::isNumber(string), expected);
@@ -43,7 +43,7 @@ Params<std::string_view, std::string_view, bool> IgnoreCaseLessData{
     {"ab", "ab\n", true},
     {"1222", "12", false},
 };
-PARAMS_TEST(UtilsTest, ShouldIgnoreCaseLessCompareStrings, IgnoreCaseLessData)
+PARAMS_TEST(StringUtilsTest, ShouldIgnoreCaseLessCompareStrings, IgnoreCaseLessData)
 {
     auto &[string, search, expected] = GetParam();
     EXPECT_EQ(sb::cf::details::StringUtils::ignoreCaseLess(string, search), expected);
@@ -63,7 +63,7 @@ Params<std::string_view, std::string_view, bool> IgnoreCaseEqualsData{
     {"ab", "ab\n", false},
     {"1222", "12", false},
 };
-PARAMS_TEST(UtilsTest, ShouldIgnoreCaseCompareStrings, IgnoreCaseEqualsData)
+PARAMS_TEST(StringUtilsTest, ShouldIgnoreCaseCompareStrings, IgnoreCaseEqualsData)
 {
     auto &[string, search, expected] = GetParam();
     EXPECT_EQ(sb::cf::details::StringUtils::ignoreCaseEqual(string, search), expected);
@@ -78,7 +78,7 @@ Params<std::string_view, size_t, std::string_view, bool> ContainsAtData{
     {"", 0, "abcded", false},    {"BA", 0, "ab", false},     {"ab", 0, "ab\n", false},
     {"1222", 0, "12", true},
 };
-PARAMS_TEST(UtilsTest, ShouldContainsAt, ContainsAtData)
+PARAMS_TEST(StringUtilsTest, ShouldContainsAt, ContainsAtData)
 {
     auto &[string, index, search, expected] = GetParam();
     EXPECT_EQ(sb::cf::details::StringUtils::containsAt(string, index, search), expected);
@@ -104,7 +104,7 @@ Params<std::string_view, size_t, std::vector<std::string_view>, std::optional<st
     {"ab", 0, {"ab\n"}, std::nullopt},
     {"1222", 0, {"12"}, "12"},
 };
-PARAMS_TEST(UtilsTest, ShouldContainsAtMulti, ContainsAtMultitData)
+PARAMS_TEST(StringUtilsTest, ShouldContainsAtMulti, ContainsAtMultitData)
 {
     auto &[string, index, searches, expected] = GetParam();
     EXPECT_EQ(sb::cf::details::StringUtils::containsAt(string, index, searches), expected);
@@ -118,7 +118,7 @@ Params<std::string_view, size_t, std::string_view, bool> ContainsAtFromEndData{
     {"123@#", 2, "@", false},   {"abcdef", 5, "abcdef", true}, {"", 0, "abcded", false},
     {"BA", 2, "ab", false},     {"ab", 2, "ab\n", false},      {"1222", 1, "12", true},
 };
-PARAMS_TEST(UtilsTest, ShouldContainsAtFromEnd, ContainsAtFromEndData)
+PARAMS_TEST(StringUtilsTest, ShouldContainsAtFromEnd, ContainsAtFromEndData)
 {
     auto &[string, index, search, expected] = GetParam();
     EXPECT_EQ(sb::cf::details::StringUtils::containsAtFromEnd(string, index, search), expected);
@@ -147,7 +147,7 @@ Params<std::string_view, size_t, std::vector<std::string_view>, std::optional<st
         {"ab", 0, {"ab\n"}, std::nullopt},
         {"1222", 1, {"12"}, "12"},
     };
-PARAMS_TEST(UtilsTest, ShouldContainsAtFromEndMulti, ContainsAtFromEndMultitData)
+PARAMS_TEST(StringUtilsTest, ShouldContainsAtFromEndMulti, ContainsAtFromEndMultitData)
 {
     auto &[string, index, searches, expected] = GetParam();
     EXPECT_EQ(sb::cf::details::StringUtils::containsAtFromEnd(string, index, searches), expected);
@@ -159,10 +159,38 @@ Params<std::string_view, std::string_view, bool> StartsWithData{
     {"123", "890", false},  {"123", "1245", false},   {"1234567", "234", false},
     {"", "234", false},     {"123", "234", false},
 };
-PARAMS_TEST(UtilsTest, ShouldStartsWith, StartsWithData)
+PARAMS_TEST(StringUtilsTest, ShouldStartsWith, StartsWithData)
 {
     auto &[string, search, expected] = GetParam();
     EXPECT_EQ(sb::cf::details::StringUtils::startsWith(string, search), expected);
+}
+
+Params<std::string_view, size_t> StartsWithWhiteSpaceData{
+    {"", 0},
+    {"asddwq", 0},
+    {" 1234567", 1},
+    {"  1234567", 2},
+    {"\n\t\nasdwd", 3},
+    {"\n  \nasdwd", 4},
+    {"  \n   1234567", 6},
+    {"     \n1234567", 6},
+    {" \t    1234567", 6},
+    {"      asd", 6},
+};
+PARAMS_TEST(StringUtilsTest, ShouldStartsWithWhiteSpace, StartsWithWhiteSpaceData)
+{
+    auto &[string, expectedCnt] = GetParam();
+    EXPECT_EQ(sb::cf::details::StringUtils::startsWithWhiteSpace(string), expectedCnt);
+}
+
+Params<std::string_view, bool> CheckWhiteSpaceData{
+    {"", false},       {"asddwq", false},        {"  ", true},      {"\n\t\n", true},  {"\n  \nasdw", false},
+    {"  \n   ", true}, {"  \n   asdadd", false}, {"     \n", true}, {" \t    ", true}, {"      asd", false},
+};
+PARAMS_TEST(StringUtilsTest, ShouldCheckWhiteSpace, CheckWhiteSpaceData)
+{
+    auto &[string, expected] = GetParam();
+    EXPECT_EQ(sb::cf::details::StringUtils::isWhiteSpace(string), expected);
 }
 
 Params<std::string, std::string, std::vector<std::string_view>> SplitStrData{
@@ -178,7 +206,7 @@ Params<std::string, std::string, std::vector<std::string_view>> SplitStrData{
     {"first__sec__for__5__6__", "__", {"first", "sec", "for", "5", "6", ""}},
     {":::", ":", {"", "", "", ""}},
 };
-PARAMS_TEST(UtilsTest, ShouldSplitString, SplitStrData)
+PARAMS_TEST(StringUtilsTest, ShouldSplitString, SplitStrData)
 {
     auto &[string, delim, expected] = GetParam();
     EXPECT_EQ(sb::cf::details::StringUtils::split(string, delim), expected);
@@ -201,7 +229,7 @@ Params<std::string, std::vector<std::string_view>, std::vector<std::string_view>
     {"first:sec:for:5:6:", {":"}, {"first", "sec", "for", "5", "6", ""}},
     {":::", {":"}, {"", "", "", ""}},
 };
-PARAMS_TEST(UtilsTest, ShouldSplitStringMulti, SplitStrMultiData)
+PARAMS_TEST(StringUtilsTest, ShouldSplitStringMulti, SplitStrMultiData)
 {
     auto &[string, delims, expected] = GetParam();
     EXPECT_EQ(sb::cf::details::StringUtils::split(string, delims), expected);
@@ -222,7 +250,7 @@ Params<std::string, std::vector<std::string_view>, std::optional<std::pair<std::
         {"first:sec:for:5:6", {":"}, std::pair<std::string_view, std::string_view>{"first", "sec:for:5:6"}},
         {"first__sec__for__5__6__", {"__"}, std::pair<std::string_view, std::string_view>{"first", "sec__for__5__6__"}},
     };
-PARAMS_TEST(UtilsTest, ShouldBreakString, BreakStrData)
+PARAMS_TEST(StringUtilsTest, ShouldBreakString, BreakStrData)
 {
     auto &[string, delim, expected] = GetParam();
     EXPECT_EQ(sb::cf::details::StringUtils::tryBreak(string, delim), expected);
@@ -243,7 +271,7 @@ Params<std::string, std::vector<std::string_view>, std::optional<std::pair<std::
         {"first:sec:for:5:6", {":"}, std::pair<std::string_view, std::string_view>{"first:sec:for:5", "6"}},
         {"first__sec__for__5__6", {"__"}, std::pair<std::string_view, std::string_view>{"first__sec__for__5", "6"}},
     };
-PARAMS_TEST(UtilsTest, ShouldBreakFromEndString, BreakFromEndStrData)
+PARAMS_TEST(StringUtilsTest, ShouldBreakFromEndString, BreakFromEndStrData)
 {
     auto &[string, delim, expected] = GetParam();
     auto res = sb::cf::details::StringUtils::tryBreakFromEnd(string, delim);
@@ -262,7 +290,7 @@ Params<std::vector<std::string_view>, std::string, std::string> JoinStrData{
     {{"first", "sec", "for:5:6:"}, ":", "first:sec:for:5:6:"},
     {{"first", "sec", "for", "5", "6"}, ":", "first:sec:for:5:6"},
 };
-PARAMS_TEST(UtilsTest, ShouldJoinStrings, JoinStrData)
+PARAMS_TEST(StringUtilsTest, ShouldJoinStrings, JoinStrData)
 {
     auto &[strings, delim, expected] = GetParam();
     EXPECT_EQ(sb::cf::details::StringUtils::join(strings, delim), expected);
@@ -272,7 +300,7 @@ Params<std::string_view, bool, std::pair<bool, int>> ConvertToNumberIntData{
     {"123", true, {true, 123}},     {"-123", true, {true, -123}},   {"00123", true, {true, 123}},
     {"123 23", false, {true, 123}}, {"123.23", false, {true, 123}}, {"123adawadwa", false, {true, 123}},
 };
-PARAMS_TEST(UtilsTest, ShouldConvertToIntNumber, ConvertToNumberIntData)
+PARAMS_TEST(StringUtilsTest, ShouldConvertToIntNumber, ConvertToNumberIntData)
 {
     auto &[string, full, expected] = GetParam();
     auto [success, result] = sb::cf::details::StringUtils::tryConvertTo<int>(string, full);
@@ -289,7 +317,7 @@ Params<std::string_view, bool, std::pair<bool, double>> ConvertToNumberDoubleDat
     {"00123.2", true, {true, 123.2}},        {" 123.23asdw", false, {true, 123.23}}, {"123.23", false, {true, 123.23}},
     {"123.1adawadwa", false, {true, 123.1}},
 };
-PARAMS_TEST(UtilsTest, ShouldConvertToDoubleNumber, ConvertToNumberDoubleData)
+PARAMS_TEST(StringUtilsTest, ShouldConvertToDoubleNumber, ConvertToNumberDoubleData)
 {
     auto &[string, full, expected] = GetParam();
     auto [success, result] = sb::cf::details::StringUtils::tryConvertTo<double>(string, full);
@@ -307,7 +335,7 @@ Params<std::string_view, bool, std::pair<bool, bool>> ConvertToBoolData{
     {"0 asdad", false, {true, false}}, {"12 asdad", false, {true, true}}, {" 12", true, {true, true}},
     {"ttrue", true, {false, true}},
 };
-PARAMS_TEST(UtilsTest, ShouldConvertToBool, ConvertToBoolData)
+PARAMS_TEST(StringUtilsTest, ShouldConvertToBool, ConvertToBoolData)
 {
     auto &[string, full, expected] = GetParam();
     auto [success, result] = sb::cf::details::StringUtils::tryConvertTo<bool>(string, full);

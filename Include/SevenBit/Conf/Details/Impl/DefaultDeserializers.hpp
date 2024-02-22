@@ -15,4 +15,14 @@ namespace sb::cf::details
         deserializers.emplace_back("null", std::make_unique<details::NullDeserializer>());
     }
 
+    INLINE void DefaultDeserializers::add(ValueDeserializersMap &deserializersMap)
+    {
+        std::vector<std::pair<std::string_view, IDeserializer::Ptr>> deserializers;
+        add(deserializers);
+        for (auto &[type, deserializer] : deserializers)
+        {
+            deserializersMap.set(type, std::move(deserializer));
+        }
+    }
+
 } // namespace sb::cf::details
