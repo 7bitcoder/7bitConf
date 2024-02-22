@@ -22,7 +22,7 @@ TEST_F(ConfigurationTest, ShouldLoadConfig)
     auto conf = sb::cf::ConfigurationBuilder{}
                     .addAppSettings("dev")
                     .addJson({{"string", 1}})
-                    .addCommandLine({"--string=2", "Array:0!int=33"})
+                    .addCommandLine({"--string", "2", "Array:0!int=33"})
                     .AddInMemory("set:set", 44444)
                     .addKeyPerFile("Directory")
                     .build();
@@ -51,7 +51,7 @@ TEST_F(ConfigurationTest, ShouldFindConfgValues)
     auto conf = sb::cf::ConfigurationBuilder{}
                     .addAppSettings("dev")
                     .addJson({{"string", 1}})
-                    .addCommandLine({"--string=2", "Array:0!int=33"})
+                    .addCommandLine({"--string", "2", "Array:0!int=33"})
                     .AddInMemory("set:set", 44444)
                     .addKeyPerFile("Directory")
                     .build();
@@ -72,7 +72,7 @@ TEST_F(ConfigurationTest, ShouldSerializeValues)
 {
     auto conf = sb::cf::ConfigurationBuilder{}
                     .addJson({{"string", 1}})
-                    .addCommandLine({"--string=2", "Array:0!int=33"})
+                    .addCommandLine({"--string", "2", "Array:0!int=33"})
                     .AddInMemory("set:set", 44444)
                     .build();
 

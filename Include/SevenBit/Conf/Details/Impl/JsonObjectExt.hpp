@@ -194,6 +194,56 @@ namespace sb::cf::details
         return *current;
     }
 
+    INLINE void JsonExt::deepMerge(JsonValue &json, const JsonValue &override)
+    {
+        if (override.is_uninitialized()) // undefined is mark for skip
+        {
+            return;
+        }
+        if (json.is_object() && override.is_object())
+        {
+            deepMerge(json.get_object(), override.get_object());
+        }
+        else if (json.is_array() && override.is_array())
+        {
+            deepMerge(json.get_array(), override.get_array());
+        }
+        else
+        {
+            json = override;
+        }
+    }
+
+    INLINE void JsonExt::deepMerge(JsonArray &json, const JsonArray &override)
+    {
+        if (json.empty())
+        {
+            json = override;
+            return;
+        }
+        for (size_t i = 0; i < override.size(); ++i)
+        {
+            if (i >= json.size())
+            {
+                json.emplace_back();
+            }
+            deepMerge(json[i], override[i]);
+        }
+    }
+
+    INLINE void JsonExt::deepMerge(JsonObject &json, const JsonObject &override)
+    {
+        if (json.empty())
+        {
+            json = override;
+            return;
+        }
+        for (auto &[key, value] : override)
+        {
+            deepMerge(json[key], value);
+        }
+    }
+
     INLINE void JsonExt::deepMerge(JsonValue &json, JsonValue &&override)
     {
         if (override.is_uninitialized()) // undefined is mark for skip
@@ -244,14 +294,25 @@ namespace sb::cf::details
         }
     }
 
-    INLINE void JsonExt::updateWith(JsonObject &json, const std::vector<std::string_view> &keys, JsonValue &&value)
+    INLINE void JsonExt::updateWith(JsonObject &json, const std::vector<std::string_view> &keys, const JsonValue &value)
     {
-        deepGetOrOverride(json, keys) = std::move(value);
+        deepGetOrOverride(json, keys) = value;
     }
 
-    INLINE void JsonExt::updateWith(JsonObject &json, const std::vector<std::string_view> &keys, JsonObject &&value)
+    INLINE void JsonExt::updateWith(JsonObject &json, const std::vector<std::string_view> &keys,
+                                    const JsonObject &value)
     {
-        deepGetOrOverride(json, keys) = std::move(value);
+        deepGetOrOverride(json, keys) = value;
+    }
+
+    INLINE void JsonExt::updateWith(JsonObject &json, std::string_view key, const JsonValue &value)
+    {
+        deepGetOrOverride(json, key) = value;
+    }
+
+    INLINE void JsonExt::updateWith(JsonObject &json, std::string_view key, const JsonObject &value)
+    {
+        deepGetOrOverride(json, key) = value;
     }
 
     INLINE void JsonExt::updateWith(JsonObject &json, std::string_view key, JsonValue &&value)
@@ -262,6 +323,16 @@ namespace sb::cf::details
     INLINE void JsonExt::updateWith(JsonObject &json, std::string_view key, JsonObject &&value)
     {
         deepGetOrOverride(json, key) = std::move(value);
+    }
+
+    INLINE void JsonExt::updateWith(JsonObject &json, const std::vector<std::string_view> &keys, JsonValue &&value)
+    {
+        deepGetOrOverride(json, keys) = std::move(value);
+    }
+
+    INLINE void JsonExt::updateWith(JsonObject &json, const std::vector<std::string_view> &keys, JsonObject &&value)
+    {
+        deepGetOrOverride(json, keys) = std::move(value);
     }
 
     INLINE void JsonExt::checkSegmentSize(const std::vector<std::string_view> &key)

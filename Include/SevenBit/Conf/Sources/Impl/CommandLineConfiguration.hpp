@@ -53,7 +53,6 @@ namespace sb::cf
 
     INLINE void CommandLineConfigurationProvider::load()
     {
-        clear();
         set(_source->getSettingsParser().parse(_source->getArgs()));
     }
 } // namespace sb::cf

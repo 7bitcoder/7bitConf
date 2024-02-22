@@ -15,11 +15,6 @@ namespace sb::cf::details
         }
     }
 
-    INLINE ValueDeserializersMap::DeserializersMap &ValueDeserializersMap::getDeserializersMap()
-    {
-        return _deserializersMap;
-    }
-
     INLINE void ValueDeserializersMap::set(const std::string_view type, IDeserializer::Ptr deserializer)
     {
         _deserializersMap[std::string{type}] = std::move(deserializer);
@@ -32,20 +27,29 @@ namespace sb::cf::details
         {
             return *deserializer;
         }
-        if (_throwOnUnknownType)
+        if (getThrowOnUnknownType())
         {
             throw ConfigException("Unknown type: '" + std::string{*type} + "' deserializer for type was not found");
         }
         return getDefaultDeserializer();
     }
 
+    INLINE const ValueDeserializersMap::DeserializersMap &ValueDeserializersMap::getDeserializersMap() const
+    {
+        return _deserializersMap;
+    }
+
+    INLINE std::string_view ValueDeserializersMap::getDefaultType() const { return _defaultType; }
+
+    INLINE bool ValueDeserializersMap::getThrowOnUnknownType() const { return _throwOnUnknownType; }
+
     INLINE const IDeserializer &ValueDeserializersMap::getDefaultDeserializer() const
     {
-        if (const auto deserializer = findDeserializerFor(_defaultType))
+        if (const auto deserializer = findDeserializerFor(getDefaultType()))
         {
             return *deserializer;
         }
-        throw ConfigException("Unknown default type: '" + std::string{_defaultType} +
+        throw ConfigException("Unknown default type: '" + std::string{getDefaultType()} +
                               "' deserializer for type was not found");
     }
 

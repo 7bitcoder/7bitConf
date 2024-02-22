@@ -41,6 +41,17 @@ namespace sb::cf::details
         return result;
     }
 
+    INLINE const ISettingSplitter &CommandLineParser::getOptionsSplitter() const { return *_optionSplitter; }
+
+    INLINE const IValueDeserializersMap &CommandLineParser::getValueDeserializersMap() const
+    {
+        return *_valueDeserializersMap;
+    }
+
+    INLINE const std::vector<std::string_view> &CommandLineParser::getOptionPrefixes() const { return _optionPrefixes; }
+
+    INLINE bool CommandLineParser::getConsiderSeparated() const { return _considerSeparated; }
+
     INLINE CommandLineParser::ArgumentParseResult CommandLineParser::parseArgument(
         const std::vector<std::string_view> &arguments, size_t &index) const
     {

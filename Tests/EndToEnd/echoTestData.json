@@ -1,0 +1,87 @@
+[
+  {
+    "args": [
+      "testarg=123"
+    ],
+    "env": {},
+    "expected": {
+      "testarg": "123"
+    }
+  },
+  {
+    "args": [
+      "--testarg",
+      "123"
+    ],
+    "env": {},
+    "expected": {
+      "testarg": "123"
+    }
+  },
+  {
+    "args": [
+      "--testarg",
+      "123",
+      "/testarg2",
+      "12",
+      "testarg3=321",
+      "testarg4=2",
+      "testarg5",
+      "--testarg6"
+    ],
+    "env": {},
+    "expected": {
+      "testarg": "123",
+      "testarg2": "12",
+      "testarg3": "321",
+      "testarg4": "2",
+      "testarg5": "",
+      "testarg6": ""
+    }
+  },
+  {
+    "args": [
+      "--str",
+      "123",
+      "/number:nested!int",
+      "12",
+      "unumber!uint=321",
+      "flag!bool=true",
+      "--json!json",
+      "[1,2,3,4,5,6]",
+      "double=12.345",
+      "--null!null"
+    ],
+    "env": {
+      "number2___int": "321",
+      "json__1___int": "321",
+      "flag": "false",
+      "newOption:0:master!string": "mystring",
+      "number__nested___int": "3333"
+    },
+    "expected": {
+      "double": "12.345",
+      "flag": "false",
+      "json": [
+        1,
+        321,
+        3,
+        4,
+        5,
+        6
+      ],
+      "newOption": [
+        {
+          "master": "mystring"
+        }
+      ],
+      "null": null,
+      "number": {
+        "nested": 3333
+      },
+      "number2": 321,
+      "str": "123",
+      "unumber": 321
+    }
+  }
+]

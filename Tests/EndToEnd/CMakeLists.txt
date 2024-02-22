@@ -1,10 +1,9 @@
-add_executable(CliEcho Cli/echo.cpp)
+add_executable(Echo echo.cpp)
 
-target_link_libraries(CliEcho 7bitConf)
+target_link_libraries(Echo 7bitConf)
 
 find_package(Python REQUIRED)
 
-add_test(NAME EndToEnd.CommandLine
-        COMMAND ${Python_EXECUTABLE} test.py ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-        CONFIGURATIONS --exe $<TARGET_FILE:CliEcho>
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Cli)
+add_test(NAME EndToEnd.Echo
+        COMMAND ${Python_EXECUTABLE} echo_test.py $<TARGET_FILE:Echo>
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

@@ -6,19 +6,22 @@
 namespace sb::cf
 {
     INLINE MapConfigurationSource::MapConfigurationSource(IConfigurationSource::SPtr source,
-                                                          std::function<JsonObject(JsonObject &&)> mapFcn)
+                                                          std::function<JsonObject(const JsonObject &)> mapFcn)
         : _source(std::move(source)), _mapFcn(std::move(mapFcn))
     {
         details::Require::notNull(_source);
     }
 
-    INLINE MapConfigurationSource::SPtr MapConfigurationSource::create(IConfigurationSource::SPtr source,
-                                                                       std::function<JsonObject(JsonObject &&)> mapFcn)
+    INLINE MapConfigurationSource::SPtr MapConfigurationSource::create(
+        IConfigurationSource::SPtr source, std::function<JsonObject(const JsonObject &)> mapFcn)
     {
         return MapConfigurationSource::SPtr(new MapConfigurationSource{std::move(source), std::move(mapFcn)});
     }
 
-    INLINE const std::function<JsonObject(JsonObject &&)> &MapConfigurationSource::getMapFcn() const { return _mapFcn; }
+    INLINE const std::function<JsonObject(const JsonObject &)> &MapConfigurationSource::getMapFcn() const
+    {
+        return _mapFcn;
+    }
 
     INLINE IConfigurationProvider::Ptr MapConfigurationSource::build(IConfigurationBuilder &builder)
     {
@@ -38,6 +41,6 @@ namespace sb::cf
         details::Require::notNull(_source);
         details::Require::notNull(_innerProvider);
         _innerProvider->load();
-        set(_source->getMapFcn()(std::move(_innerProvider->getConfiguration())));
+        set(_source->getMapFcn()(_innerProvider->getConfiguration()));
     }
 } // namespace sb::cf

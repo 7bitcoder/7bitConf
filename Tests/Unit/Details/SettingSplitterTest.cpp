@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
 #include <string_view>
 
-#include "SevenBit/Conf/Details/SettingSplitter.hpp"
-#include "SevenBit/Conf/Details/StringUtils.hpp"
-#include "Utilities/ParamsTest.hpp"
+#include "../../../Include/SevenBit/Conf/Details/SettingSplitter.hpp"
+#include "../../../Include/SevenBit/Conf/Details/StringUtils.hpp"
+#include "../../Helpers/Utilities/ParamsTest.hpp"
 
 class SettingSplitterTest : public testing::Test
 {

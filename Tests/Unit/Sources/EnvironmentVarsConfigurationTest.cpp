@@ -1,10 +1,9 @@
 #include <cstdlib>
 #include <gtest/gtest.h>
 
-#include "Mocks/ConfigurationBuilderMock.hpp"
-#include "SevenBit/Conf/Exceptions.hpp"
-#include "SevenBit/Conf/Sources/EnvironmentVarsConfiguration.hpp"
-
+#include "../../../Include/SevenBit/Conf/Exceptions.hpp"
+#include "../../../Include/SevenBit/Conf/Sources/EnvironmentVarsConfiguration.hpp"
+#include "../../Helpers/Mocks/ConfigurationBuilderMock.hpp"
 
 #ifdef _WIN32
 #define _7BIT_CONF_PUT_ENV _putenv
@@ -55,7 +54,9 @@ TEST_F(EnvironmentVarsConfigurationTest, ShouldFailProviderCreationDueToNullSour
 
 TEST_F(EnvironmentVarsConfigurationTest, ShouldLoadConfFromEnvVars)
 {
-    auto provider = sb::cf::EnvironmentVarsConfigurationSource::create("7BIT_CONFIG_")->build(mock);
+    auto provider = sb::cf::EnvironmentVarsConfigurationSource::create("7BIT_CONFIG_",
+                                                                       sb::cf::EnvironmentVarsParserBuilder{}.build())
+                        ->build(mock);
 
     provider->load();
 
@@ -72,7 +73,9 @@ TEST_F(EnvironmentVarsConfigurationTest, ShouldLoadConfFromEnvVars)
 
 TEST_F(EnvironmentVarsConfigurationTest, ShouldLoadConfFromEnvVarsWithPrefix)
 {
-    auto provider = sb::cf::EnvironmentVarsConfigurationSource::create("7BIT_")->build(mock);
+    auto provider =
+        sb::cf::EnvironmentVarsConfigurationSource::create("7BIT_", sb::cf::EnvironmentVarsParserBuilder{}.build())
+            ->build(mock);
 
     provider->load();
 
@@ -90,7 +93,9 @@ TEST_F(EnvironmentVarsConfigurationTest, ShouldLoadConfFromEnvVarsWithPrefix)
 
 TEST_F(EnvironmentVarsConfigurationTest, ShouldNotLoadConfFromEnvVars)
 {
-    auto provider = sb::cf::EnvironmentVarsConfigurationSource::create("7BITCONFIGURATION_")->build(mock);
+    auto provider = sb::cf::EnvironmentVarsConfigurationSource::create("7BITCONFIGURATION_",
+                                                                       sb::cf::EnvironmentVarsParserBuilder{}.build())
+                        ->build(mock);
 
     provider->load();
 

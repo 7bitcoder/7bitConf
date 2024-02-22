@@ -4,28 +4,26 @@ import subprocess
 import sys
 
 
-def getBinDir():
-    return '/Users/sylwesterdawida/7bitConf/cmake-build-debug/bin'
+def getEchoExecPath():
     if len(sys.argv) != 2:
-        raise Exception("binary directory not provided")
-    binDir = sys.argv[1]
-    if not os.path.exists(binDir):
-        raise Exception("Binary directory does not exist")
-    return binDir
+        raise Exception("Echo executable not provided")
+    echoExec = sys.argv[1]
+    if not os.path.exists(echoExec):
+        raise Exception("Echo executable does not exist")
+    return echoExec
 
 
-class CliEchoTest:
-    def __init__(self, binDir):
-        self.binDir = binDir
-        self.echoExecPath = os.path.join(self.binDir, "CliEcho" + ('.exe' if sys.platform == 'win32' else ''))
+class EchoTest:
+    def __init__(self, echoExecPath):
+        self.echoExecPath = echoExecPath
         self.testsData = self.__getTestsData()
 
     def __getTestsData(self):
-        with open('testData.json') as data:
+        with open('echoTestData.json') as data:
             return json.load(data)
 
-    def __runTest(self, args, expectedJson):
-        result = subprocess.run([self.echoExecPath, *args], capture_output=True, text=True)
+    def __runTest(self, args, env, expectedJson):
+        result = subprocess.run([self.echoExecPath, *args], env=env, capture_output=True, text=True)
         if result.returncode:
             raise Exception(f"test returned non zero code {result.returncode}")
         formatedOutput = json.dumps(json.loads(result.stdout))
@@ -34,13 +32,15 @@ class CliEchoTest:
             raise Exception(f"result of running test: '{formatedOutput}' does not match expected: '{formatedExpected}'")
 
     def __runTestAndSummarize(self, testData):
-        args, expectedJson = testData
+        args = testData["args"]
+        env = testData["env"]
+        expectedJson = testData["expected"]
         try:
-            self.__runTest(args, expectedJson)
-            print(f"Test for args: {args} succeeded")
+            self.__runTest(args, env, expectedJson)
+            print(f"Test for args: {args}, env: {env} succeeded")
             return True
         except Exception as e:
-            print(f"Test for args: {args} failed: {e}")
+            print(f"Test for args: {args}, env: {env} failed: {e}")
         return False
 
     def run(self):
@@ -56,4 +56,4 @@ class CliEchoTest:
 
 
 if __name__ == "__main__":
-    CliEchoTest(getBinDir()).run()
+    EchoTest(getEchoExecPath()).run()

@@ -33,6 +33,14 @@ namespace sb::cf::details
 
         [[nodiscard]] JsonObject parse(const std::vector<std::string_view> &arguments) const override;
 
+        [[nodiscard]] const ISettingSplitter &getOptionsSplitter() const;
+
+        [[nodiscard]] const IValueDeserializersMap &getValueDeserializersMap() const;
+
+        [[nodiscard]] const std::vector<std::string_view> &getOptionPrefixes() const;
+
+        [[nodiscard]] bool getConsiderSeparated() const;
+
       private:
         [[nodiscard]] ArgumentParseResult parseArgument(const std::vector<std::string_view> &arguments,
                                                         size_t &index) const;

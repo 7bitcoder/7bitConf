@@ -1,8 +1,8 @@
 #include <cstddef>
 #include <gtest/gtest.h>
 
-#include "SevenBit/Conf/Details/StringUtils.hpp"
-#include "Utilities/ParamsTest.hpp"
+#include "../../../Include/SevenBit/Conf/Details/StringUtils.hpp"
+#include "../../Helpers/Utilities/ParamsTest.hpp"
 
 class UtilsTest : public testing::Test
 {

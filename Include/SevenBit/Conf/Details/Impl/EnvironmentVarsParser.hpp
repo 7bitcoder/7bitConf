@@ -24,8 +24,9 @@ namespace sb::cf::details
         {
             try
             {
-                auto [keys, type, value] = _settingSplitter->split(variable);
-                JsonExt::updateWith(result, keys, _valueDeserializersMap->getDeserializerFor(type).deserialize(value));
+                auto [keys, type, value] = getSettingSplitter().split(variable);
+                JsonExt::updateWith(result, keys,
+                                    getValueDeserializersMap().getDeserializerFor(type).deserialize(value));
             }
             catch (const std::exception &e)
             {
@@ -34,5 +35,12 @@ namespace sb::cf::details
             }
         }
         return result;
+    }
+
+    INLINE const ISettingSplitter &EnvironmentVarsParser::getSettingSplitter() const { return *_settingSplitter; }
+
+    INLINE const IValueDeserializersMap &EnvironmentVarsParser::getValueDeserializersMap() const
+    {
+        return *_valueDeserializersMap;
     }
 } // namespace sb::cf::details

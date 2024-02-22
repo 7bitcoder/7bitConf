@@ -45,11 +45,15 @@ namespace sb::cf::details
         ValueDeserializersMap &operator=(const ValueDeserializersMap &) = delete;
         ValueDeserializersMap &operator=(ValueDeserializersMap &&) = delete;
 
-        [[nodiscard]] DeserializersMap &getDeserializersMap();
-
         void set(std::string_view type, IDeserializer::Ptr deserializer);
 
         [[nodiscard]] const IDeserializer &getDeserializerFor(std::optional<std::string_view> type) const override;
+
+        [[nodiscard]] const DeserializersMap &getDeserializersMap() const;
+
+        [[nodiscard]] std::string_view getDefaultType() const;
+
+        [[nodiscard]] bool getThrowOnUnknownType() const;
 
       private:
         [[nodiscard]] const IDeserializer &getDefaultDeserializer() const;

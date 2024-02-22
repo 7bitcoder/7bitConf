@@ -31,13 +31,15 @@ namespace sb::cf::details
         Configuration &operator=(Configuration &&) = delete;
         Configuration &operator=(const Configuration &) = delete;
 
-        void reload();
+        void load();
+
+        void buildConfig(bool withLoad = false);
 
         [[nodiscard]] const std::vector<IConfigurationProvider::Ptr> &getProviders() const;
 
         [[nodiscard]] std::vector<IConfigurationProvider::Ptr> &getProviders();
 
-        [[nodiscard]] std::string toString(std::size_t indent = 1, std::string newLineMark = "\n") const override;
+        [[nodiscard]] std::string toString(std::size_t indent, std::string newLineMark) const override;
 
         [[nodiscard]] JsonValue &root();
 
@@ -104,9 +106,9 @@ namespace sb::cf::details
         [[nodiscard]] auto crend() const { return rootAsObject().crend(); }
 
       private:
-        [[nodiscard]] JsonValue &throwNotFoundException(const std::vector<std::string_view> &key) const;
+        [[nodiscard]] static JsonValue &throwNotFoundException(const std::vector<std::string_view> &key);
 
-        [[nodiscard]] JsonValue &throwNotFoundException(std::string_view key) const;
+        [[nodiscard]] static JsonValue &throwNotFoundException(std::string_view key);
     };
 } // namespace sb::cf::details
 

@@ -46,13 +46,9 @@ namespace sb::cf
         details::Require::notNull(_source);
     }
 
-    INLINE void EnvironmentVarsConfigurationProvider::load()
-    {
-        clear();
-        set(_source->getSettingParser().parse(getEnvVars()));
-    }
+    INLINE void EnvironmentVarsConfigurationProvider::load() { set(_source->getSettingParser().parse(getEnvVars())); }
 
-    INLINE std::vector<std::string_view> EnvironmentVarsConfigurationProvider::getEnvVars()
+    INLINE std::vector<std::string_view> EnvironmentVarsConfigurationProvider::getEnvVars() const
     {
         std::vector<std::string_view> result;
         auto &prefix = _source->getPrefix();

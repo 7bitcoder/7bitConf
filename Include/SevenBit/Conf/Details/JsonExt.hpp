@@ -49,14 +49,24 @@ namespace sb::cf::details
         static JsonValue &deepGetOrOverride(JsonObject &json, std::string_view key);
         static JsonValue &deepGetOrOverride(JsonObject &json, const std::vector<std::string_view> &keys);
 
+        static void deepMerge(JsonValue &json, const JsonValue &override);
+        static void deepMerge(JsonArray &json, const JsonArray &override);
+        static void deepMerge(JsonObject &json, const JsonObject &override);
+
         static void deepMerge(JsonValue &json, JsonValue &&override);
         static void deepMerge(JsonArray &json, JsonArray &&override);
         static void deepMerge(JsonObject &json, JsonObject &&override);
 
-        static void updateWith(JsonObject &json, std::string_view key, JsonValue &&value);
-        static void updateWith(JsonObject &json, const std::vector<std::string_view> &keys, JsonValue &&value);
+        static void updateWith(JsonObject &json, std::string_view key, const JsonValue &value);
+        static void updateWith(JsonObject &json, std::string_view key, const JsonObject &value);
 
+        static void updateWith(JsonObject &json, const std::vector<std::string_view> &keys, const JsonValue &value);
+        static void updateWith(JsonObject &json, const std::vector<std::string_view> &keys, const JsonObject &value);
+
+        static void updateWith(JsonObject &json, std::string_view key, JsonValue &&value);
         static void updateWith(JsonObject &json, std::string_view key, JsonObject &&value);
+
+        static void updateWith(JsonObject &json, const std::vector<std::string_view> &keys, JsonValue &&value);
         static void updateWith(JsonObject &json, const std::vector<std::string_view> &keys, JsonObject &&value);
 
         static void checkSegmentSize(const std::vector<std::string_view> &key);

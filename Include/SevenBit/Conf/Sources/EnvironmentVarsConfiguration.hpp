@@ -25,8 +25,7 @@ namespace sb::cf
         using Ptr = std::unique_ptr<EnvironmentVarsConfigurationSource>;
         using SPtr = std::shared_ptr<EnvironmentVarsConfigurationSource>;
 
-        [[nodiscard]] static SPtr create(std::string prefix,
-                                         ISettingsParser::Ptr parser = EnvironmentVarsParserBuilder{}.build());
+        [[nodiscard]] static SPtr create(std::string prefix, ISettingsParser::Ptr parser);
 
         [[nodiscard]] const std::string &getPrefix();
 
@@ -46,7 +45,7 @@ namespace sb::cf
         void load() override;
 
       private:
-        [[nodiscard]] std::vector<std::string_view> getEnvVars();
+        [[nodiscard]] std::vector<std::string_view> getEnvVars() const;
     };
 
 } // namespace sb::cf

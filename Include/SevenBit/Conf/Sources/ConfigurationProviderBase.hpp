@@ -18,16 +18,22 @@ namespace sb::cf
       public:
         [[nodiscard]] const JsonObject &getConfiguration() const override;
 
-        [[nodiscard]] JsonObject &getConfiguration() override;
+        [[nodiscard]] JsonObject &getConfiguration();
 
       protected:
         void clear();
 
+        void set(const JsonObject &configuration);
         void set(JsonObject &&configuration);
 
+        void update(const JsonObject &configuration);
         void update(JsonObject &&configuration);
 
-        void update(const std::vector<std::string_view> &keys, JsonValue &&value);
+        void updateWith(std::string_view key, const JsonValue &value);
+        void updateWith(std::string_view key, JsonValue &&value);
+
+        void updateWith(const std::vector<std::string_view> &keys, const JsonValue &value);
+        void updateWith(const std::vector<std::string_view> &keys, JsonValue &&value);
     };
 } // namespace sb::cf
 

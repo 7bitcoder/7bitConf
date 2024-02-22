@@ -5,9 +5,9 @@
 #include <string_view>
 #include <tuple>
 
-#include "SevenBit/Conf/Details/Deserializers.hpp"
-#include "SevenBit/Conf/Details/ValueDeserializersMap.hpp"
-#include "Utilities/ParamsTest.hpp"
+#include "../../../Include/SevenBit/Conf/Details/Deserializers.hpp"
+#include "../../../Include/SevenBit/Conf/Details/ValueDeserializersMap.hpp"
+#include "../../Helpers/Utilities/ParamsTest.hpp"
 
 class DeserializersTest : public testing::Test
 {

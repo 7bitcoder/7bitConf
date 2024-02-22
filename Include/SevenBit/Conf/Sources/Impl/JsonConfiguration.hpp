@@ -28,9 +28,5 @@ namespace sb::cf
         details::Require::notNull(_source);
     }
 
-    INLINE void JsonConfigurationProvider::load()
-    {
-        auto copy = _source->getJson();
-        set(std::move(copy));
-    }
+    INLINE void JsonConfigurationProvider::load() { set(_source->getJson()); }
 } // namespace sb::cf

@@ -21,10 +21,21 @@ namespace sb::cf::details
         return {splitKey(rawKey), type, value};
     }
 
+    INLINE const std::vector<std::string_view> &SettingSplitter::getSettingSplitters() const
+    {
+        return _settingSplitters;
+    }
+
+    INLINE const std::vector<std::string_view> &SettingSplitter::getTypeMarkers() const { return _typeMarkers; }
+
+    INLINE const std::vector<std::string_view> &SettingSplitter::getKeySplitters() const { return _keySplitters; }
+
+    INLINE bool SettingSplitter::getAllowEmptyKeys() const { return _allowEmptyKeys; }
+
     INLINE std::pair<std::string_view, std::optional<std::string_view>> SettingSplitter::splitSetting(
         const std::string_view setting) const
     {
-        if (auto breakResult = StringUtils::tryBreak(setting, _settingSplitters))
+        if (auto breakResult = StringUtils::tryBreak(setting, getSettingSplitters()))
         {
             return {breakResult->first, breakResult->second};
         }
@@ -33,7 +44,7 @@ namespace sb::cf::details
 
     INLINE std::optional<std::string_view> SettingSplitter::tryExtractType(std::string_view &key) const
     {
-        if (auto breakResult = StringUtils::tryBreakFromEnd(key, _typeMarkers))
+        if (auto breakResult = StringUtils::tryBreakFromEnd(key, getTypeMarkers()))
         {
             key = breakResult->first;
             return breakResult->second;
@@ -43,14 +54,14 @@ namespace sb::cf::details
 
     INLINE std::vector<std::string_view> SettingSplitter::splitKey(const std::string_view key) const
     {
-        auto keys = StringUtils::split(key, _keySplitters);
+        auto keys = StringUtils::split(key, getKeySplitters());
         checkKeys(keys);
         return keys;
     }
 
     INLINE void SettingSplitter::checkKeys(const std::vector<std::string_view> &keys) const
     {
-        if (_allowEmptyKeys)
+        if (getAllowEmptyKeys())
         {
             return;
         }

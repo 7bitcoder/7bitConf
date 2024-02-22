@@ -23,6 +23,10 @@ namespace sb::cf::details
         EnvironmentVarsParser(ISettingSplitter::Ptr settingSplitter, IValueDeserializersMap::Ptr valueDeserializersMap);
 
         [[nodiscard]] JsonObject parse(const std::vector<std::string_view> &envVariables) const override;
+
+        [[nodiscard]] const ISettingSplitter &getSettingSplitter() const;
+
+        [[nodiscard]] const IValueDeserializersMap &getValueDeserializersMap() const;
     };
 } // namespace sb::cf::details
 

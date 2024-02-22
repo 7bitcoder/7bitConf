@@ -80,10 +80,10 @@ namespace sb::cf
         {
             if (auto fileSource = tryGetFileSource(filePath))
             {
-                auto mapFcn = [name = filePath.stem().generic_string()](JsonObject &&config) -> JsonObject {
+                auto mapFcn = [name = filePath.stem().generic_string()](const JsonObject &config) -> JsonObject {
                     auto res = JsonObject{};
                     const auto keys = details::StringUtils::split(name, "__");
-                    details::JsonExt::updateWith(res, keys, std::move(config));
+                    details::JsonExt::updateWith(res, keys, config);
                     return res;
                 };
                 return MapConfigurationSource::create(std::move(fileSource), std::move(mapFcn));

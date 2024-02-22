@@ -32,11 +32,9 @@ namespace sb::cf
     INLINE void InMemoryConfigurationProvider::load()
     {
         clear();
-        for (auto [key, value] : *_source)
+        for (auto &[key, value] : *_source)
         {
-            JsonObject result{};
-            details::JsonExt::updateWith(result, key, std::move(value));
-            update(std::move(result));
+            updateWith(key, value);
         }
     }
 } // namespace sb::cf

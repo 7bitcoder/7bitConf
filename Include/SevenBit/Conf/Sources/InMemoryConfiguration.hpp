@@ -28,9 +28,9 @@ namespace sb::cf
 
         IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
 
-        [[nodiscard]] auto begin() { return _settings.begin(); }
+        [[nodiscard]] auto begin() const { return _settings.begin(); }
 
-        [[nodiscard]] auto end() { return _settings.end(); }
+        [[nodiscard]] auto end() const { return _settings.end(); }
     };
 
     class EXPORT InMemoryConfigurationProvider : public ConfigurationProviderBase

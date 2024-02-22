@@ -18,13 +18,21 @@ namespace sb::cf::details
         const std::vector<std::string_view> _settingSplitters;
         const std::vector<std::string_view> _typeMarkers;
         const std::vector<std::string_view> _keySplitters;
-        bool _allowEmptyKeys;
+        const bool _allowEmptyKeys;
 
       public:
         SettingSplitter(std::vector<std::string_view> settingSplitters, std::vector<std::string_view> typeMarkers,
                         std::vector<std::string_view> keySplitters, bool allowEmptyKeys = false);
 
         [[nodiscard]] Result split(std::string_view setting) const override;
+
+        [[nodiscard]] const std::vector<std::string_view> &getSettingSplitters() const;
+
+        [[nodiscard]] const std::vector<std::string_view> &getTypeMarkers() const;
+
+        [[nodiscard]] const std::vector<std::string_view> &getKeySplitters() const;
+
+        [[nodiscard]] bool getAllowEmptyKeys() const;
 
       private:
         [[nodiscard]] std::pair<std::string_view, std::optional<std::string_view>> splitSetting(

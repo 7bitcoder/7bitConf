@@ -57,7 +57,7 @@ namespace sb::cf
         {
             details::Require::notNull(provider);
             provider->load();
-            update(std::move(provider->getConfiguration()));
+            update(provider->getConfiguration());
         }
     }
 
