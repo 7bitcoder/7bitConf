@@ -16,7 +16,7 @@ def get_echo_exec_path():
 class EchoTest:
     def __init__(self, echo_exec_path):
         self.echoExecPath = echo_exec_path
-        self.testsData = self.__get_tests_data()
+        self.tests_data = self.__get_tests_data()
 
     @staticmethod
     def __get_tests_data():
@@ -45,9 +45,9 @@ class EchoTest:
         return False
 
     def run(self):
-        all_tests = len(self.testsData)
+        all_tests = len(self.tests_data)
         succeeded_tests = 0
-        for count, testData in enumerate(self.testsData, start=1):
+        for count, testData in enumerate(self.tests_data, start=1):
             print(f"Test {count}/{all_tests}")
             succeeded_tests += self.__run_test_and_summarize(testData)
         if succeeded_tests == all_tests:
