@@ -49,8 +49,8 @@ TEST_F(KeyPerFileConfigurationTest, ShouldLoadDirectoryConfig)
                                            {"object", {{"num", 134}, {"string", "string"}}}}},
                                          {"settingTwo",
                                           {{"array", sb::cf::JsonArray{1}},
-                                           {"string", "stringdev"},
-                                           {"object", {{"inner", {{"num", 12345}}}, {"string", "stringdev"}}}}}};
+                                           {"string", "dev"},
+                                           {"object", {{"inner", {{"num", 12345}}}, {"string", "dev"}}}}}};
 
     EXPECT_EQ(provider->getConfiguration(), expected);
 }
@@ -63,8 +63,8 @@ TEST_F(KeyPerFileConfigurationTest, ShloudLoadFilteredConfigFiles)
 
     const sb::cf::JsonObject expected = {{"settingTwo",
                                           {{"array", sb::cf::JsonArray{1}},
-                                           {"string", "stringdev"},
-                                           {"object", {{"inner", {{"num", 12345}}}, {"string", "stringdev"}}}}}};
+                                           {"string", "dev"},
+                                           {"object", {{"inner", {{"num", 12345}}}, {"string", "dev"}}}}}};
 
     EXPECT_EQ(provider->getConfiguration(), expected);
 }
@@ -80,8 +80,8 @@ TEST_F(KeyPerFileConfigurationTest, ShloudLoadFilteredConditionConfigFiles)
 
     const sb::cf::JsonObject expected = {{"settingTwo",
                                           {{"array", sb::cf::JsonArray{1}},
-                                           {"string", "stringdev"},
-                                           {"object", {{"inner", {{"num", 12345}}}, {"string", "stringdev"}}}}}};
+                                           {"string", "dev"},
+                                           {"object", {{"inner", {{"num", 12345}}}, {"string", "dev"}}}}}};
 
     EXPECT_EQ(provider->getConfiguration(), expected);
 }
