@@ -1,8 +1,10 @@
 {
-  "array": [1],
-  "string": "stringdev",
+  "array": [
+    1
+  ],
+  "string": "dev",
   "object": {
-    "string": "stringdev",
+    "string": "dev",
     "inner": {
       "num": 12345
     }

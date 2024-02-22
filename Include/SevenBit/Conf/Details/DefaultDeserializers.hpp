@@ -7,7 +7,7 @@
 
 namespace sb::cf::details
 {
-    struct DefaultDeserializers
+    struct EXPORT DefaultDeserializers
     {
         static void add(std::vector<std::pair<std::string_view, IDeserializer::Ptr>> &deserializers);
 

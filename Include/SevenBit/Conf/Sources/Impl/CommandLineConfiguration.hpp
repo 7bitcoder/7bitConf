@@ -12,7 +12,7 @@ namespace sb::cf
         details::Require::notNull(_parser);
     }
 
-    INLINE CommandLineConfigurationSource::SPtr CommandLineConfigurationSource::create(int argc,
+    INLINE CommandLineConfigurationSource::SPtr CommandLineConfigurationSource::create(const int argc,
                                                                                        const char *const *argv,
                                                                                        ISettingsParser::Ptr parser)
     {

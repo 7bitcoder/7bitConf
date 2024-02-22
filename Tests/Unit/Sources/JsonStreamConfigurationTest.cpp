@@ -30,13 +30,13 @@ TEST_F(JsonStreamConfigurationTest, ShouldLoadConfigFromStream)
 {
     std::stringstream stream;
 
-    stream << "{\"hello\": 12345, \"string\": \"asdf\"}";
+    stream << R"({"hello": 12345, "string": "asdf"})";
 
-    auto provider = sb::cf::JsonStreamConfigurationSource::create(stream)->build(mock);
+    const auto provider = sb::cf::JsonStreamConfigurationSource::create(stream)->build(mock);
 
     provider->load();
 
-    sb::cf::JsonObject expected = {{"hello", 12345}, {"string", "asdf"}};
+    const sb::cf::JsonObject expected = {{"hello", 12345}, {"string", "asdf"}};
 
     EXPECT_EQ(provider->getConfiguration(), expected);
 }
@@ -47,7 +47,7 @@ TEST_F(JsonStreamConfigurationTest, ShouldFailLoadingConfigFromBadStream)
 
     stream << "\"hello\"";
 
-    auto provider = sb::cf::JsonStreamConfigurationSource::create(stream)->build(mock);
+    const auto provider = sb::cf::JsonStreamConfigurationSource::create(stream)->build(mock);
 
     EXPECT_THROW(provider->load(), sb::cf::BadStreamException);
 }
@@ -56,9 +56,9 @@ TEST_F(JsonStreamConfigurationTest, ShouldFailLoadingDueToDoubleStreamRead)
 {
     std::stringstream stream;
 
-    stream << "{\"hello\": 12345, \"string\": \"asdf\"}";
+    stream << R"({"hello": 12345, "string": "asdf"})";
 
-    auto provider = sb::cf::JsonStreamConfigurationSource::create(stream)->build(mock);
+    const auto provider = sb::cf::JsonStreamConfigurationSource::create(stream)->build(mock);
 
     provider->load();
 

@@ -1,5 +1,4 @@
 #include <gtest/gtest.h>
-#include <iostream>
 
 #include "SevenBit/Conf/Details/Require.hpp"
 
@@ -14,7 +13,7 @@ class RequireTest : public testing::Test
 
     void TearDown() override {}
 
-    ~RequireTest() {}
+    ~RequireTest() override = default;
 
     static void TearDownTestSuite() {}
 };

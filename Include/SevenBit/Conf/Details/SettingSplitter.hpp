@@ -14,7 +14,6 @@ namespace sb::cf::details
 
     class EXPORT SettingSplitter : public ISettingSplitter
     {
-      private:
         const std::vector<std::string_view> _settingSplitters;
         const std::vector<std::string_view> _typeMarkers;
         const std::vector<std::string_view> _keySplitters;

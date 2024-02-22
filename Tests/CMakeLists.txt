@@ -19,7 +19,7 @@ if (_7BIT_CONF_BUILD_INTEGRATION_TESTS)
 endif ()
 
 if (_7BIT_CONF_BUILD_E2E_TESTS)
-    add_subdirectory(EndToEnd)
+    add_subdirectory(E2E)
 endif ()
 
 file(GLOB_RECURSE FILES CONFIGURE_DEPENDS ./Helpers/Files/*)

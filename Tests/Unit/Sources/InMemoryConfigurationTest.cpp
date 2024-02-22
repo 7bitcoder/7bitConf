@@ -1,5 +1,4 @@
 #include <gtest/gtest.h>
-#include <iostream>
 
 #include "Mocks/ConfigurationBuilderMock.hpp"
 #include "SevenBit/Conf/Exceptions.hpp"
@@ -28,12 +27,12 @@ TEST_F(InMemoryConfigurationTest, ShouldFailProviderCreationDueToNullSource)
 
 TEST_F(InMemoryConfigurationTest, ShouldLoadSimpleSettingConfiguration)
 {
-    auto provider =
+    const auto provider =
         sb::cf::InMemoryConfigurationSource::create({{"yes:yes:inner", sb::cf::JsonArray{1, 2, 3, 4, 5}}})->build(mock);
 
     provider->load();
 
-    sb::cf::JsonObject expected = {{"yes", {{"yes", {{"inner", sb::cf::JsonArray{1, 2, 3, 4, 5}}}}}}};
+    const sb::cf::JsonObject expected = {{"yes", {{"yes", {{"inner", sb::cf::JsonArray{1, 2, 3, 4, 5}}}}}}};
 
     EXPECT_EQ(provider->getConfiguration(), expected);
 }

@@ -9,7 +9,7 @@
 
 class CustomConfigSource : public sb::cf::IConfigurationSource
 {
-    sb::cf::IConfigurationProvider::Ptr build(sb::cf::IConfigurationBuilder &builder)
+    sb::cf::IConfigurationProvider::Ptr build(sb::cf::IConfigurationBuilder &builder) override
     {
         sb::cf::ObjectHolder<int>::safeCastFrom(*builder.getProperties()["counter"]).get()++;
 

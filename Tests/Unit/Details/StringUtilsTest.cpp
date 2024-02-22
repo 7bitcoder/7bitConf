@@ -274,7 +274,6 @@ Params<std::string, std::vector<std::string_view>, std::optional<std::pair<std::
 PARAMS_TEST(StringUtilsTest, ShouldBreakFromEndString, BreakFromEndStrData)
 {
     auto &[string, delim, expected] = GetParam();
-    auto res = sb::cf::details::StringUtils::tryBreakFromEnd(string, delim);
     EXPECT_EQ(sb::cf::details::StringUtils::tryBreakFromEnd(string, delim), expected);
 }
 

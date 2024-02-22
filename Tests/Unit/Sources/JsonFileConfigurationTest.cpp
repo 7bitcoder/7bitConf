@@ -27,20 +27,20 @@ TEST_F(JsonFileConfigurationTest, ShouldFailProviderCreationDueToNullSource)
 
 TEST_F(JsonFileConfigurationTest, ShouldLoadSimpleJsonConfigFile)
 {
-    auto provider = sb::cf::JsonFileConfigurationSource::create("appsettings.json")->build(mock);
+    const auto provider = sb::cf::JsonFileConfigurationSource::create("appsettings.json")->build(mock);
 
     provider->load();
 
-    sb::cf::JsonObject expected = {{"Array", sb::cf::JsonArray{1, 2, 3, 4, 5}},
-                                   {"MySetting", "appsettings.json Value"},
-                                   {"Logging", {{"LogLevel", {{"Default", "Information"}}}}}};
+    const sb::cf::JsonObject expected = {{"Array", sb::cf::JsonArray{1, 2, 3, 4, 5}},
+                                         {"MySetting", "appsettings.json Value"},
+                                         {"Logging", {{"LogLevel", {{"Default", "Information"}}}}}};
 
     EXPECT_EQ(provider->getConfiguration(), expected);
 }
 
 TEST_F(JsonFileConfigurationTest, ShouldNotLoadNonExistingJsonConfigFile)
 {
-    auto provider = sb::cf::JsonFileConfigurationSource::create("nonExisting.json", true)->build(mock);
+    const auto provider = sb::cf::JsonFileConfigurationSource::create("nonExisting.json", true)->build(mock);
 
     provider->load();
 
@@ -49,14 +49,14 @@ TEST_F(JsonFileConfigurationTest, ShouldNotLoadNonExistingJsonConfigFile)
 
 TEST_F(JsonFileConfigurationTest, ShouldFailLoadingNonExistingJsonConfigFile)
 {
-    auto provider = sb::cf::JsonFileConfigurationSource ::create("nonExisting.json")->build(mock);
+    const auto provider = sb::cf::JsonFileConfigurationSource ::create("nonExisting.json")->build(mock);
 
     EXPECT_THROW(provider->load(), sb::cf::ConfigFileNotFoundException);
 }
 
 TEST_F(JsonFileConfigurationTest, ShouldFailLoadingBadJsonConfigFile)
 {
-    auto provider = sb::cf::JsonFileConfigurationSource ::create("bad.json")->build(mock);
+    const auto provider = sb::cf::JsonFileConfigurationSource ::create("bad.json")->build(mock);
 
     EXPECT_THROW(provider->load(), sb::cf::BadConfigFileException);
 }

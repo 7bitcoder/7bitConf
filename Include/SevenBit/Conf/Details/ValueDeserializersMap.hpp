@@ -37,7 +37,7 @@ namespace sb::cf::details
         using Ptr = std::unique_ptr<ValueDeserializersMap>;
 
         explicit ValueDeserializersMap(std::string_view defaultType, bool throwOnUnknownType = true,
-                                       Deserializers valueDeserializers = {});
+                                       Deserializers &&valueDeserializers = {});
 
         ValueDeserializersMap(const ValueDeserializersMap &) = delete;
         ValueDeserializersMap(ValueDeserializersMap &&) noexcept = default;

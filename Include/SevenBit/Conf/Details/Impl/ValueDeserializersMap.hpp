@@ -6,7 +6,8 @@
 namespace sb::cf::details
 {
     INLINE ValueDeserializersMap::ValueDeserializersMap(const std::string_view defaultType,
-                                                        const bool throwOnUnknownType, Deserializers valueDeserializers)
+                                                        const bool throwOnUnknownType,
+                                                        Deserializers &&valueDeserializers)
         : _defaultType(defaultType), _throwOnUnknownType(throwOnUnknownType)
     {
         for (auto &[type, deserializer] : valueDeserializers)

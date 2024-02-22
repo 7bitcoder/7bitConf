@@ -1,4 +1,9 @@
-[![CI](https://github.com/7bitcoder/7bitConf/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/7bitcoder/7bitConf/actions/workflows/CI.yml) ![Conan Center](https://img.shields.io/conan/v/7bitconf)
+[![CI](https://github.com/7bitcoder/7bitConf/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/7bitcoder/7bitConf/actions/workflows/CI.yml)
+[![DevCI](https://github.com/7bitcoder/7bitConf/actions/workflows/DevCI.yml/badge.svg?branch=dev)](https://github.com/7bitcoder/7bitConf/actions/workflows/DevCI.yml)
+[![Windows](https://github.com/7bitcoder/7bitConf/actions/workflows/Windows.yml/badge.svg?branch=main)](https://github.com/7bitcoder/7bitConf/actions/workflows/Windows.yml)
+[![Linux](https://github.com/7bitcoder/7bitConf/actions/workflows/Linux.yml/badge.svg?branch=main)](https://github.com/7bitcoder/7bitConf/actions/workflows/Linux.yml)
+[![MacOs](https://github.com/7bitcoder/7bitConf/actions/workflows/MacOs.yml/badge.svg?branch=main)](https://github.com/7bitcoder/7bitConf/actions/workflows/MacOs.yml)
+[![Conan Center](https://img.shields.io/conan/v/7bitconf)](https://conan.io/center/recipes/7bitconf)
 
 <div align="center">
   <span>
@@ -131,17 +136,17 @@ Create the appsettings.json file in the compiled executable directory:
 
 using namespace sb::cf;
 
-int main(int argc, char **argv)
+int main(const int argc, char **argv)
 {
-    IConfiguration::Ptr configuration = ConfigurationBuilder{} //
-                                            .addAppSettings()
-                                            .addEnvironmentVariables()
-                                            .addCommandLine(argc, argv)
-                                            .build();
+    const IConfiguration::Ptr configuration = ConfigurationBuilder{} //
+                                                  .addAppSettings()
+                                                  .addEnvironmentVariables()
+                                                  .addCommandLine(argc, argv)
+                                                  .build();
 
-    std::string value = configuration->at("MySetting").get_string();
-    std::string defaultLogLevel = configuration->deepAt("Logging:LogLevel:Default").get_string();
-    std::uint64_t secondArrayElement = configuration->deepAt("Array:1").get_unsigned();
+    const std::string value = configuration->at("MySetting").get_string();
+    const std::string defaultLogLevel = configuration->deepAt("Logging:LogLevel:Default").get_string();
+    const std::uint64_t secondArrayElement = configuration->deepAt("Array:1").get_unsigned();
 
     std::cout << "MySetting: " << value << std::endl;
     std::cout << "Default LogLevel: " << defaultLogLevel << std::endl;
@@ -169,9 +174,14 @@ The command line configuration source is added using the addCommandLine(argc, ar
 auto configuration = ConfigurationBuilder{}.addCommandLine(argc, argv).build();
 ```
 
-**Argument pattern:** [--]setting[:nestedSetting|arrayIndex...][!type]=[value]
+**Argument patterns:**
 
-Setting the prefix '--' is optional. Nested settings are supported using the ':' separator. If the object is an array,
+* setting[:nestedSetting|arrayIndex...][!type]=[value]
+* --setting[:nestedSetting|arrayIndex...][!type] [value]
+* /setting[:nestedSetting|arrayIndex...][!type] [value]
+
+Setting prefix '--' or '/' is optional when value is followed by '='. Nested settings are supported using
+the ':' separator. If the object is an array,
 numbers can be used to address the proper element. By default, setting values are saved as strings, but other types are
 also supported using the '!' mark. If a value is not provided, the default one will be used for the specified type,
 see [supported types](#supported-types).
@@ -208,13 +218,14 @@ type (default value) - Description
 
 #### Example Command Line Arguments
 
-- --MySetting="hello" - will override or create a MySetting setting with the "hello" string value.
-- --Switch!bool=true - will override or create a Switch setting with a true bool value.
+- MySetting="hello" - will override or create a MySetting setting with the "hello" string value.
+- Switch!bool=true - will override or create a Switch setting with a true bool value.
+- --MySetting hello - will override or create a MySetting setting with the "hello" string value.
 - --Offset!double - will override or create an Offset setting with the default 0.0 double value.
-- --Logging:LogLevel:Default=Warning - will override or create a nested setting with the string "Warning" value.
-- --Strings:2=hello - will override or create a third element in the Strings array setting with the string "hello"
+- --Logging:LogLevel:Default Warning - will override or create a nested setting with the string "Warning" value.
+- /Strings:2 hello - will override or create a third element in the Strings array setting with the string "hello"
   value.
-- --Array:1!uint=123 will override the second element in Array with the unsigned integer 123 value.
+- /Array:1!uint 123 will override the second element in Array with the unsigned integer 123 value.
 
 ### Environment Variables
 
@@ -373,15 +384,12 @@ using namespace sb::cf;
 
 class CustomConfigurationProvider : public IConfigurationProvider
 {
-  private:
     JsonObject _configuration;
 
   public:
     void load() override { _configuration = {{"mysettingOne", "value1"}, {"mysettingTwo", "value2"}}; }
 
-    JsonObject &getConfiguration() override { return _configuration; }
-
-    const JsonObject &getConfiguration() const override { return _configuration; }
+    [[nodiscard]] const JsonObject &getConfiguration() const override { return _configuration; }
 };
 
 class CustomConfigurationSource : public IConfigurationSource
@@ -395,7 +403,7 @@ class CustomConfigurationSource : public IConfigurationSource
 
 int main(int argc, char **argv)
 {
-    IConfiguration::Ptr configuration =
+    const IConfiguration::Ptr configuration =
         ConfigurationBuilder{}.add(std::make_unique<CustomConfigurationSource>()).build();
 
     std::cout << "Configuration json:" << std::endl << std::setw(2) << *configuration;

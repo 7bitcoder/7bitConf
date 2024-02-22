@@ -22,27 +22,27 @@ class AppSettingsConfiguration : public testing::Test
 
 TEST_F(AppSettingsConfiguration, ShouldLoadAppSettings)
 {
-    auto provider = sb::cf::AppSettingsConfigurationSource::create()->build(mock);
+    const auto provider = sb::cf::AppSettingsConfigurationSource::create()->build(mock);
 
     provider->load();
 
-    sb::cf::JsonObject expected = {{"Array", sb::cf::JsonArray{1, 2, 3, 4, 5}},
-                                   {"MySetting", "appsettings.json Value"},
-                                   {"Logging", {{"LogLevel", {{"Default", "Information"}}}}}};
+    const sb::cf::JsonObject expected = {{"Array", sb::cf::JsonArray{1, 2, 3, 4, 5}},
+                                         {"MySetting", "appsettings.json Value"},
+                                         {"Logging", {{"LogLevel", {{"Default", "Information"}}}}}};
 
     EXPECT_EQ(provider->getConfiguration(), expected);
 }
 
 TEST_F(AppSettingsConfiguration, ShouldLoadDevAppSettings)
 {
-    auto provider = sb::cf::AppSettingsConfigurationSource::create("dev")->build(mock);
+    const auto provider = sb::cf::AppSettingsConfigurationSource::create("dev")->build(mock);
 
     provider->load();
 
-    sb::cf::JsonObject expected = {{"Array", sb::cf::JsonArray{11, 2, 3, 4, 5}},
-                                   {"MySetting", "appsettings.dev.json Value"},
-                                   {"ExtraSetting", "extra appsettings.dev.json Value"},
-                                   {"Logging", {{"LogLevel", {{"Default", "Warning"}}}}}};
+    const sb::cf::JsonObject expected = {{"Array", sb::cf::JsonArray{11, 2, 3, 4, 5}},
+                                         {"MySetting", "appsettings.dev.json Value"},
+                                         {"ExtraSetting", "extra appsettings.dev.json Value"},
+                                         {"Logging", {{"LogLevel", {{"Default", "Warning"}}}}}};
 
     EXPECT_EQ(provider->getConfiguration(), expected);
 }

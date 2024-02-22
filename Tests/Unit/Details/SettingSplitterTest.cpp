@@ -49,7 +49,7 @@ static Params<std::string_view, sb::cf::details::SettingSplitter::Result> SplitS
 PARAMS_TEST(SettingSplitterTest, ShouldSplitSetting, SplitSettingData)
 {
     const auto &[setting, expected] = GetParam();
-    sb::cf::details::SettingSplitter splitter{{"=", ";"}, {"!", "___"}, {":", "__"}, true};
+    const sb::cf::details::SettingSplitter splitter{{"=", ";"}, {"!", "___"}, {":", "__"}, true};
 
     EXPECT_EQ(splitter.split(setting), expected);
 }
@@ -74,10 +74,10 @@ PARAMS_TEST_COMBINED_4(SettingSplitterTest, ShouldSplitWithDifferentSplitters, S
     const auto &[settingSplitter, typeMarker, keySplitter, setting] = GetParam();
     const auto &[keys, type, value] = setting;
 
-    sb::cf::details::SettingSplitter splitter{{settingSplitter}, {typeMarker}, {keySplitter}, true};
+    const sb::cf::details::SettingSplitter splitter{{settingSplitter}, {typeMarker}, {keySplitter}, true};
 
-    auto key = sb::cf::details::StringUtils::join(keys, keySplitter);
-    auto fullSetting = key + typeMarker + type + settingSplitter + value;
+    const auto key = sb::cf::details::StringUtils::join(keys, keySplitter);
+    const auto fullSetting = key + typeMarker + type + settingSplitter + value;
     EXPECT_EQ(splitter.split(fullSetting), (sb::cf::ISettingSplitter::Result{keys, type, value}));
 }
 
@@ -118,7 +118,7 @@ PARAMS_TEST(SettingSplitterTest, ShouldSplitWithEmptySplitters, EmptySplittersDa
 {
     const auto &[settingSplitters, typeMarkers, keySplitters, expected] = GetParam();
 
-    sb::cf::details::SettingSplitter splitter{settingSplitters, typeMarkers, keySplitters, true};
+    const sb::cf::details::SettingSplitter splitter{settingSplitters, typeMarkers, keySplitters, true};
 
     EXPECT_EQ(splitter.split("key:deep!int=value"), expected);
 }

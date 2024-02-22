@@ -34,7 +34,7 @@ PARAMS_TEST(JsonExtTest, ShouldFing, FindData)
         {"str", "hello"}, {"number", 123}, {"array", sb::cf::JsonArray{{{"key", "value"}}}}, {"inner", -123}};
 
     auto &[keys, expectedFound, expectedValue] = GetParam();
-    auto valuePtr = sb::cf::details::JsonExt::find(json, keys);
+    const auto valuePtr = sb::cf::details::JsonExt::find(json, keys);
     EXPECT_EQ(!!valuePtr, expectedFound);
     if (valuePtr)
     {
@@ -74,7 +74,7 @@ PARAMS_TEST(JsonExtTest, ShouldDeepFing, DeepFindData)
                                  }}}}};
 
     auto &[keys, expectedFound, expectedValue] = GetParam();
-    auto valuePtr = sb::cf::details::JsonExt::deepFind(json, keys);
+    const auto valuePtr = sb::cf::details::JsonExt::deepFind(json, keys);
     EXPECT_EQ(!!valuePtr, expectedFound);
     if (valuePtr)
     {
@@ -98,18 +98,18 @@ TEST_F(JsonExtTest, ShouldDeepGetOrOverride)
     sb::cf::details::JsonExt::deepGetOrOverride(json, "inner:inner:str") = "hello3";
     sb::cf::details::JsonExt::deepGetOrOverride(json, "inner:inner:inner:str") = "hello5";
 
-    sb::cf::JsonObject expectedJson = {{"str", "hello"},
-                                       {"number", 123},
-                                       {"inner",
-                                        {{"str", "hello1"},
-                                         {"number", 1231},
-                                         {"inner",
-                                          {{"str", "hello3"},
-                                           {"number", 1232},
-                                           {"inner",
-                                            {
-                                                {"str", "hello5"},
-                                            }}}}}}};
+    const sb::cf::JsonObject expectedJson = {{"str", "hello"},
+                                             {"number", 123},
+                                             {"inner",
+                                              {{"str", "hello1"},
+                                               {"number", 1231},
+                                               {"inner",
+                                                {{"str", "hello3"},
+                                                 {"number", 1232},
+                                                 {"inner",
+                                                  {
+                                                      {"str", "hello5"},
+                                                  }}}}}}};
 
     EXPECT_EQ(json, expectedJson);
 }
@@ -120,7 +120,7 @@ TEST_F(JsonExtTest, ShouldDeepGetOrOverrideArrayElement)
 
     sb::cf::details::JsonExt::deepGetOrOverride(json, "array:3:object") = "value";
 
-    sb::cf::JsonObject expected = {
+    const sb::cf::JsonObject expected = {
         {"str", "hello"},
         {"array",
          sb::cf::JsonArray{sb::cf::JsonValue{}, sb::cf::JsonValue{}, sb::cf::JsonValue{}, {{"object", "value"}}}},
@@ -135,7 +135,7 @@ TEST_F(JsonExtTest, ShouldDeepGetOrOverrideExistingArrayElement)
 
     sb::cf::details::JsonExt::deepGetOrOverride(json, "array:3:object") = "value";
 
-    sb::cf::JsonObject expected = {
+    const sb::cf::JsonObject expected = {
         {"str", "hello"},
         {"array", sb::cf::JsonArray{1234, {{"second", "element"}}, sb::cf::JsonValue{}, {{"object", "value"}}}},
     };
@@ -149,7 +149,7 @@ TEST_F(JsonExtTest, ShouldDeepGetOrOverrideWrongArrayElement)
 
     sb::cf::details::JsonExt::deepGetOrOverride(json, "array:-3:object") = "value";
 
-    sb::cf::JsonObject expected = {{"str", "hello"}, {"array", {{"-3", {{"object", "value"}}}}}};
+    const sb::cf::JsonObject expected = {{"str", "hello"}, {"array", {{"-3", {{"object", "value"}}}}}};
 
     EXPECT_EQ(json, expected);
 }
@@ -169,16 +169,16 @@ TEST_F(JsonExtTest, ShouldDeepGetOrOverrideDestroy)
 
     sb::cf::details::JsonExt::deepGetOrOverride(json, "inner:inner:str:fail") = "value";
 
-    sb::cf::JsonObject expected = {{"str", "hello"},
-                                   {"number", 123},
-                                   {"inner",
-                                    {{"str", "hello1"},
-                                     {"number", 1231},
-                                     {"inner",
-                                      {
-                                          {"str", {{"fail", "value"}}},
-                                          {"number", 1232},
-                                      }}}}};
+    const sb::cf::JsonObject expected = {{"str", "hello"},
+                                         {"number", 123},
+                                         {"inner",
+                                          {{"str", "hello1"},
+                                           {"number", 1231},
+                                           {"inner",
+                                            {
+                                                {"str", {{"fail", "value"}}},
+                                                {"number", 1232},
+                                            }}}}};
 
     EXPECT_EQ(json, expected);
 }
@@ -230,18 +230,18 @@ TEST_F(JsonExtTest, SouldDeepMergeJsonValue)
 
     sb::cf::details::JsonExt::deepMerge(json, std::move(jsonOverride));
 
-    sb::cf::JsonObject expectedJson = {{"str", "helloOv"},
-                                       {"number", 123},
-                                       {"array", sb::cf::JsonArray{3, {{"value", "value"}}, 1, 4, 5, 6}},
-                                       {"default", "default"},
-                                       {"inner",
-                                        {{"str", "hello1"},
-                                         {"number", 12313},
-                                         {"inner",
-                                          {
-                                              {"str", "hello2Ov"},
-                                              {"number", 12323},
-                                          }}}}};
+    const sb::cf::JsonObject expectedJson = {{"str", "helloOv"},
+                                             {"number", 123},
+                                             {"array", sb::cf::JsonArray{3, {{"value", "value"}}, 1, 4, 5, 6}},
+                                             {"default", "default"},
+                                             {"inner",
+                                              {{"str", "hello1"},
+                                               {"number", 12313},
+                                               {"inner",
+                                                {
+                                                    {"str", "hello2Ov"},
+                                                    {"number", 12323},
+                                                }}}}};
 
     EXPECT_EQ(json, expectedJson);
 }
@@ -267,15 +267,15 @@ TEST_F(JsonExtTest, SouldDeepMergeJsonArray)
 
     sb::cf::details::JsonExt::deepMerge(json, std::move(jsonOverride));
 
-    sb::cf::JsonArray expectedJson{{{"str", "hello22"}},
-                                   {{"number", 123}},
-                                   {{"number", 123}},
-                                   {{"inner",
-                                     {
-                                         {"str", "hello1"},
-                                         {"number", 1231},
+    const sb::cf::JsonArray expectedJson{{{"str", "hello22"}},
+                                         {{"number", 123}},
+                                         {{"number", 123}},
+                                         {{"inner",
+                                           {
+                                               {"str", "hello1"},
+                                               {"number", 1231},
 
-                                     }}}};
+                                           }}}};
 
     EXPECT_EQ(json, expectedJson);
 }

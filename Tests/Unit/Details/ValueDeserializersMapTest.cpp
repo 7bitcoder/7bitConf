@@ -25,8 +25,8 @@ class ValueDeserializersMapTest : public testing::Test
     static void TearDownTestSuite() {}
 };
 
-sb::cf::details::ValueDeserializersMap makeDefaultDeserializersMap(std::string_view defaultType = "string",
-                                                                   bool throwOnUnknownType = true)
+sb::cf::details::ValueDeserializersMap makeDefaultDeserializersMap(const std::string_view defaultType = "string",
+                                                                   const bool throwOnUnknownType = true)
 {
     sb::cf::details::ValueDeserializersMap deserializers{defaultType, throwOnUnknownType};
     sb::cf::details::DefaultDeserializers::add(deserializers);
@@ -153,7 +153,7 @@ static Params<std::string_view, std::optional<std::string_view>, sb::cf::JsonVal
 PARAMS_TEST(ValueDeserializersMapTest, ShouldDeserializeValue, DeserializeData)
 {
     const auto &[type, value, expected] = GetParam();
-    auto deserializers = makeDefaultDeserializersMap("string", false);
+    const auto deserializers = makeDefaultDeserializersMap("string", false);
 
     auto &deserializer = deserializers.getDeserializerFor(type);
     EXPECT_EQ(deserializer.deserialize(value), expected);
@@ -161,10 +161,10 @@ PARAMS_TEST(ValueDeserializersMapTest, ShouldDeserializeValue, DeserializeData)
 
 TEST_F(ValueDeserializersMapTest, ShouldDeserializeEmptyJsonOption)
 {
-    auto deserializers = makeDefaultDeserializersMap();
+    const auto deserializers = makeDefaultDeserializersMap();
 
     auto &deserializer = deserializers.getDeserializerFor("json");
-    EXPECT_EQ((deserializer.deserialize(std::nullopt)), (sb::cf::JsonValue{}));
+    EXPECT_EQ(deserializer.deserialize(std::nullopt), sb::cf::JsonValue{});
 }
 
 TEST_F(ValueDeserializersMapTest, ShouldNotFoundDeserializer)
@@ -234,7 +234,7 @@ static Params<std::string_view, std::optional<std::string_view>> FailDeserialize
 PARAMS_TEST(ValueDeserializersMapTest, ShouldFailDeserialize, FailDeserializeValues)
 {
     const auto &[type, value] = GetParam();
-    auto deserializers = makeDefaultDeserializersMap();
+    const auto deserializers = makeDefaultDeserializersMap();
 
     auto &deserializer = deserializers.getDeserializerFor(type);
 

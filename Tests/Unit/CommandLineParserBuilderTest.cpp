@@ -25,9 +25,9 @@ class CommandLineParserBuilderTest : public testing::Test
 
 TEST_F(CommandLineParserBuilderTest, ShouldBuildDefault)
 {
-    auto parser = sb::cf::CommandLineParserBuilder{}.build();
+    const auto parser = sb::cf::CommandLineParserBuilder{}.build();
 
-    auto &casted = dynamic_cast<sb::cf::details::CommandLineParser &>(*parser);
+    const auto &casted = dynamic_cast<sb::cf::details::CommandLineParser &>(*parser);
 
     auto &splitter = dynamic_cast<const sb::cf::details::SettingSplitter &>(casted.getOptionsSplitter());
     auto &deserializers =
@@ -35,9 +35,9 @@ TEST_F(CommandLineParserBuilderTest, ShouldBuildDefault)
 
     EXPECT_EQ(casted.getOptionPrefixes(), (std::vector<std::string_view>{"--", "/"}));
     EXPECT_TRUE(casted.getConsiderSeparated());
-    EXPECT_EQ(splitter.getKeySplitters(), (std::vector<std::string_view>{":"}));
-    EXPECT_EQ(splitter.getSettingSplitters(), (std::vector<std::string_view>{"="}));
-    EXPECT_EQ(splitter.getTypeMarkers(), (std::vector<std::string_view>{"!"}));
+    EXPECT_EQ(splitter.getKeySplitters(), std::vector<std::string_view>{":"});
+    EXPECT_EQ(splitter.getSettingSplitters(), std::vector<std::string_view>{"="});
+    EXPECT_EQ(splitter.getTypeMarkers(), std::vector<std::string_view>{"!"});
     EXPECT_FALSE(splitter.getAllowEmptyKeys());
 
     std::vector<std::string_view> types;
@@ -112,9 +112,9 @@ TEST_F(CommandLineParserBuilderTest, ShouldUseCustomValueDeserializerMap)
 {
     sb::cf::CommandLineParserBuilder builder;
 
-    auto parser = builder.useValueDeserializersMap(std::make_unique<ValueDeserializersMapMock>()).build();
+    const auto parser = builder.useValueDeserializersMap(std::make_unique<ValueDeserializersMapMock>()).build();
 
-    auto &casted = dynamic_cast<sb::cf::details::CommandLineParser &>(*parser);
+    const auto &casted = dynamic_cast<sb::cf::details::CommandLineParser &>(*parser);
 
     EXPECT_TRUE(dynamic_cast<const sb::cf::details::SettingSplitter *>(&casted.getOptionsSplitter()));
     EXPECT_TRUE(dynamic_cast<const ValueDeserializersMapMock *>(&casted.getValueDeserializersMap()));
@@ -124,9 +124,9 @@ TEST_F(CommandLineParserBuilderTest, ShouldUseCustomSplitter)
 {
     sb::cf::CommandLineParserBuilder builder;
 
-    auto parser = builder.useSplitter(std::make_unique<SettingSplitterMock>()).build();
+    const auto parser = builder.useSplitter(std::make_unique<SettingSplitterMock>()).build();
 
-    auto &casted = dynamic_cast<sb::cf::details::CommandLineParser &>(*parser);
+    const auto &casted = dynamic_cast<sb::cf::details::CommandLineParser &>(*parser);
 
     EXPECT_TRUE(dynamic_cast<const SettingSplitterMock *>(&casted.getOptionsSplitter()));
     EXPECT_TRUE(dynamic_cast<const sb::cf::details::ValueDeserializersMap *>(&casted.getValueDeserializersMap()));

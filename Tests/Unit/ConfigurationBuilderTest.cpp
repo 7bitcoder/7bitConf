@@ -85,7 +85,7 @@ TEST_F(ConfigurationBuilderTest, ShouldBuildConfigWithProperties)
                     .add(std::make_unique<CustomConfigSource>())
                     .build();
 
-    auto cnt = sb::cf::ObjectHolder<int>::safeCastFrom(*builder.getProperties()["counter"]).get();
+    const auto cnt = sb::cf::ObjectHolder<int>::safeCastFrom(*builder.getProperties()["counter"]).get();
 
     EXPECT_EQ(cnt, 4);
 }

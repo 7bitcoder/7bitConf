@@ -25,16 +25,16 @@ class EnvironmentVarsParserBuilderTest : public testing::Test
 
 TEST_F(EnvironmentVarsParserBuilderTest, ShouldBuildDefault)
 {
-    auto parser = sb::cf::EnvironmentVarsParserBuilder{}.build();
+    const auto parser = sb::cf::EnvironmentVarsParserBuilder{}.build();
 
-    auto &casted = dynamic_cast<sb::cf::details::EnvironmentVarsParser &>(*parser);
+    const auto &casted = dynamic_cast<sb::cf::details::EnvironmentVarsParser &>(*parser);
 
     auto &splitter = dynamic_cast<const sb::cf::details::SettingSplitter &>(casted.getSettingSplitter());
     auto &deserializers =
         dynamic_cast<const sb::cf::details::ValueDeserializersMap &>(casted.getValueDeserializersMap());
 
     EXPECT_EQ(splitter.getKeySplitters(), (std::vector<std::string_view>{":", "__"}));
-    EXPECT_EQ(splitter.getSettingSplitters(), (std::vector<std::string_view>{"="}));
+    EXPECT_EQ(splitter.getSettingSplitters(), std::vector<std::string_view>{"="});
     EXPECT_EQ(splitter.getTypeMarkers(), (std::vector<std::string_view>{"!", "___"}));
     EXPECT_FALSE(splitter.getAllowEmptyKeys());
 
@@ -107,9 +107,9 @@ TEST_F(EnvironmentVarsParserBuilderTest, ShouldUseCustomValueDeserializerMap)
 {
     sb::cf::EnvironmentVarsParserBuilder builder;
 
-    auto parser = builder.useValueDeserializersMap(std::make_unique<ValueDeserializersMapMock>()).build();
+    const auto parser = builder.useValueDeserializersMap(std::make_unique<ValueDeserializersMapMock>()).build();
 
-    auto &casted = dynamic_cast<sb::cf::details::EnvironmentVarsParser &>(*parser);
+    const auto &casted = dynamic_cast<sb::cf::details::EnvironmentVarsParser &>(*parser);
 
     EXPECT_TRUE(dynamic_cast<const sb::cf::details::SettingSplitter *>(&casted.getSettingSplitter()));
     EXPECT_TRUE(dynamic_cast<const ValueDeserializersMapMock *>(&casted.getValueDeserializersMap()));
@@ -119,9 +119,9 @@ TEST_F(EnvironmentVarsParserBuilderTest, ShouldUseCustomSplitter)
 {
     sb::cf::EnvironmentVarsParserBuilder builder;
 
-    auto parser = builder.useSplitter(std::make_unique<SettingSplitterMock>()).build();
+    const auto parser = builder.useSplitter(std::make_unique<SettingSplitterMock>()).build();
 
-    auto &casted = dynamic_cast<sb::cf::details::EnvironmentVarsParser &>(*parser);
+    const auto &casted = dynamic_cast<sb::cf::details::EnvironmentVarsParser &>(*parser);
 
     EXPECT_TRUE(dynamic_cast<const SettingSplitterMock *>(&casted.getSettingSplitter()));
     EXPECT_TRUE(dynamic_cast<const sb::cf::details::ValueDeserializersMap *>(&casted.getValueDeserializersMap()));

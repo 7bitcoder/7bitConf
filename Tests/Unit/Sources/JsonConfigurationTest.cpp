@@ -27,11 +27,11 @@ TEST_F(JsonConfigurationTest, ShouldFailProviderCreationDueToNullSource)
 
 TEST_F(JsonConfigurationTest, ShouldLoadSimpleJsonConfig)
 {
-    auto provider = sb::cf::JsonConfigurationSource::create({{"hello", 12345}})->build(mock);
+    const auto provider = sb::cf::JsonConfigurationSource::create({{"hello", 12345}})->build(mock);
 
     provider->load();
 
-    sb::cf::JsonObject expected = {{"hello", 12345}};
+    const sb::cf::JsonObject expected = {{"hello", 12345}};
 
     EXPECT_EQ(provider->getConfiguration(), expected);
 }
