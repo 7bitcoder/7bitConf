@@ -12,8 +12,6 @@ class CustomConfigurationProvider : public IConfigurationProvider
   public:
     void load() override { _configuration = {{"mysettingOne", "value1"}, {"mysettingTwo", "value2"}}; }
 
-    JsonObject &getConfiguration() override { return _configuration; }
-
     const JsonObject &getConfiguration() const override { return _configuration; }
 };
 

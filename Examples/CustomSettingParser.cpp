@@ -10,22 +10,22 @@ struct MyTypeDeserializer final : IDeserializer
 
 int main(int argc, char **argv)
 {
-    EnvironmentVarsParserConfig envParserConfig;
-    envParserConfig.keySplitters.clear();
-    envParserConfig.settingPrefixes.emplace_back("//");
-    envParserConfig.defaultType = "myType";
-    envParserConfig.throwOnUnknownType = false;
+    auto builderFunc = [](CommandLineParserBuilder &builder) {
+        CommandLineParserConfig parserConfig;
+        parserConfig.keySplitters.clear();
+        parserConfig.optionPrefixes.emplace_back("//");
+        parserConfig.defaultType = "myType";
+        parserConfig.throwOnUnknownType = false;
 
-    ISettingParser::Ptr settingParser = SettingParserBuilder{} //
-                                            .useConfig(std::move(envParserConfig))
-                                            .useDefaultValueDeserializers()
-                                            .useValueDeserializer("myType", std::make_unique<MyTypeDeserializer>())
-                                            .build();
+        builder.useConfig(std::move(parserConfig))
+            .useDefaultValueDeserializers()
+            .useValueDeserializer("myType", std::make_unique<MyTypeDeserializer>());
+    };
 
     IConfiguration::Ptr configuration = ConfigurationBuilder{} //
                                             .addAppSettings()
                                             .addEnvironmentVariables()
-                                            .addCommandLine(argc, argv, std::move(settingParser))
+                                            .addCommandLine(argc, argv, builderFunc)
                                             .build();
 
     std::cout << "Configuration json:" << std::endl << std::setw(2) << *configuration;
