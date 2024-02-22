@@ -40,8 +40,8 @@ TEST_F(ConfigurationTest, ShouldLoadConfig)
                                            {"object", {{"num", 134}, {"string", "string"}}}}},
                                          {"settingTwo",
                                           {{"array", sb::cf::JsonArray{1}},
-                                           {"string", "stringdev"},
-                                           {"object", {{"inner", {{"num", 12345}}}, {"string", "stringdev"}}}}}};
+                                           {"string", "dev"},
+                                           {"object", {{"inner", {{"num", 12345}}}, {"string", "dev"}}}}}};
 
     EXPECT_EQ(conf->root(), expected);
 }
