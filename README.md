@@ -1,4 +1,3 @@
-[![CI](https://github.com/7bitcoder/7bitConf/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/7bitcoder/7bitConf/actions/workflows/CI.yml)
 [![DevCI](https://github.com/7bitcoder/7bitConf/actions/workflows/DevCI.yml/badge.svg?branch=dev)](https://github.com/7bitcoder/7bitConf/actions/workflows/DevCI.yml)
 [![Windows](https://github.com/7bitcoder/7bitConf/actions/workflows/Windows.yml/badge.svg?branch=main)](https://github.com/7bitcoder/7bitConf/actions/workflows/Windows.yml)
 [![Linux](https://github.com/7bitcoder/7bitConf/actions/workflows/Linux.yml/badge.svg?branch=main)](https://github.com/7bitcoder/7bitConf/actions/workflows/Linux.yml)
@@ -8,7 +7,7 @@
 <div align="center">
   <span>
     <img src="7bitConf-logo.svg" alt="logo" width="500" height="auto" />
-    <p> C++17 configuration provider library! </p>
+    <p> C++17 centralized configuration provider library! </p>
   </span>
 </div>
 
@@ -21,6 +20,7 @@
     - [Built With](#built-with)
     - [Supported Platforms](#supported-platforms)
 - [Installation](#installation)
+    - [Using Cmake Fetch Content Api](#using-cmake-fetch-content-api---recommended)
     - [Using Conan Package Manager](#using-conan-package-manager)
     - [Header Only](#header-only)
     - [Header Only Single File](#header-only-single-file)
@@ -88,7 +88,7 @@ Update CMakeLists.txt file with the following code
 ```cmake
 include(FetchContent)
 FetchContent_Declare(
-        7bitDI
+        7bitConf
         GIT_REPOSITORY https://github.com/7bitcoder/7bitConf.git
         GIT_TAG v1.2.0
 )
@@ -113,12 +113,12 @@ include_directories(SevenBitConf/Include)
 
 ### Header Only Single File
 
-Download SevenBitConf.hpp header file from the most recent release, copy this file into desired project location and
-include it.
+Download SevenBitConf.hpp header file from the most recent release, copy this file into the desired project location
+and include it.
 
 ### Building Library Locally
 
-Download source code from the most recent release, build or install the project using [CMake](https://cmake.org/),
+Download source code from the most recent release, and build or install the project using [CMake](https://cmake.org/),
 for more details, see the [Building Library](#build-library) guide.
 
 ## Usage
@@ -191,15 +191,14 @@ auto configuration = ConfigurationBuilder{}.addCommandLine(argc, argv).build();
 
 **Argument patterns:**
 
-* setting[:nestedSetting|arrayIndex...][!type]=[value]
-* --setting[:nestedSetting|arrayIndex...][!type] [value]
-* /setting[:nestedSetting|arrayIndex...][!type] [value]
+- option[:nestedOption|arrayIndex...][!type]=[value]
+- --option[:nestedOption|arrayIndex...][!type] [value]
+- /option[:nestedOption|arrayIndex...][!type] [value]
 
-Setting prefix '--' or '/' is optional when value is followed by '='. Nested settings are supported using
-the ':' separator. If the object is an array,
-numbers can be used to address the proper element. By default, setting values are saved as strings, but other types are
-also supported using the '!' mark. If a value is not provided, the default one will be used for the specified type,
-see [supported types](#supported-types).
+Prefix ('--' or '/') is optional when the value is separated using '='. Nested settings are supported using the ':'
+separator. If the object is an array, numbers can be used to address the proper element. By default, setting values are
+saved as strings, but other types are also supported using the '!' mark. If a value is not provided, the default one
+will be used for the specified type, see [supported types](#supported-types).
 
 Some arguments might be filtered using an overloaded method that accepts std::vector\<std::string_view\>
 This example shows how to pass only arguments that start with "--SETTING":
@@ -221,7 +220,7 @@ arguments: [CommandLineParserConfig](#command-line-parser-config) or [SettingPar
 
 #### Supported Types
 
-type (default value) - Description
+type (default value) - description
 
 - string ("") - default type, could be specified explicitly.
 - uint (0) - unsigned 64-bit integer.
@@ -233,6 +232,7 @@ type (default value) - Description
 
 #### Example Command Line Arguments
 
+- MySetting - will override or create a MySetting setting with the default "" string value.
 - MySetting="hello" - will override or create a MySetting setting with the "hello" string value.
 - Switch!bool=true - will override or create a Switch setting with a true bool value.
 - --MySetting hello - will override or create a MySetting setting with the "hello" string value.
@@ -267,7 +267,7 @@ is '\_\_' (double underscore) and for '!' is '\_\_\_' (triple underscore).
 
 Setting Array:2!uint=123 would be rewritten as Array\_\_2\_\_\_uint=123
 
-Same as command line source, environment variables configuration source can be more customized with
+Same as the command line source, the environment variables configuration source can be more customized with
 additional addEnvironmentVariables method arguments: [EnvironmentVarsParserConfig](#environment-variables-parser-config)
 or [SettingParser](#custom-parsers).
 
@@ -447,20 +447,20 @@ struct CommandLineParserConfig
 
 This configuration allows specifying different behaviors of the command line parser.
 
-Example option option:values:1!int=123 each part is marked as affected with ()
+Example option option:values:2!int=123 each part is marked as affected with ()
 
-- optionPrefixes - list of possible option splitters option:values:1!int(=)123
-- optionSplitters - list of possible option splitters option:values:1!int(=)123
-- keySplitters - list of possible key splitters option(:)values(:)1!int=123
-- typeMarkers - list of possible type markers option:values:1(!)int=123
-- defaultType - is the type that is used if the type was not specified explicitly in variable option:values:1=123
+- optionPrefixes - list of possible option prefixes: (--)option:values:2!int=123
+- optionSplitters - list of possible option splitters: --option:values:2!int(=)123
+- keySplitters - list of possible key splitters: --option(:)values(:)2!int=123
+- typeMarkers - list of possible type markers: --option:values:2(!)int=123
+- defaultType - is the type that is used if the type was not specified explicitly in a variable: --option:values:2=123
 - throwOnUnknownType - if the type was not recognized in the parsing phase then an exception will be thrown if in this
-  case this setting is set to false default type will be used option:values:1!nonExistingType=123
-- allowEmptyKeys - if set to true and empty keys are detected, an exception will be thrown option::1!int=123
+  case this setting is set to false default type will be used: --option:values:2!nonExistingType=123
+- allowEmptyKeys - if set to true and empty keys are detected, an exception will be thrown: --option::2!int=123
 
 ### Cmd Config Usage Scenario
 
-All options should be loaded without considering the type and with custom option prefix '//', solution:
+All options should be loaded without considering the type and with the custom option prefix '//', solution:
 
 ```cpp
 #include <SevenBit/Conf.hpp>
@@ -487,8 +487,8 @@ int main(const int argc, char **argv)
 
 ## Environment Variables Parser Config
 
-EnvironmentVarsParserConfig is a similar struct to command line parser config with one difference
-there is no way to set variable prefixes:
+EnvironmentVarsParserConfig is a similar struct to the command line parser config with one difference there is no way to
+set variable prefixes:
 
 ```cpp
 struct EnvironmentVarsParserConfig
@@ -504,15 +504,21 @@ struct EnvironmentVarsParserConfig
 
 This configuration allows specifying different behaviors of the environment variable parser.
 
-Example environment variable option__values__1___int=123 each part is marked as affected with ()
+Example environment variable option\_\_values\_\_2\_\_\_int=123 each part is marked as affected with ()
 
-- variableSplitters - list of possible variable splitters option__values__1___int(=)123
-- keySplitters - list of possible key splitters option(__)values(__)1___int=123
-- typeMarkers - list of possible type markers option__values__1(___)int=123
-- defaultType - is the type that is used if the type was not specified explicitly in variable option__values__1=123
+- variableSplitters - list of possible variable splitters: option\_\_values\_\_2\_\_\_int(=)123
+- keySplitters - list of possible key splitters: option(\_\_)values(\_\_)2\_\_\_int=123
+- typeMarkers - list of possible type markers: option\_\_values\_\_2(\_\_\_)int=123
+- defaultType - is the type that is used if the type was not specified explicitly in a variable: optionvalues2=123
 - throwOnUnknownType - if the type was not recognized in the parsing phase then an exception will be thrown if in this
-  case this setting is set to false default type will be used option__values__1___nonExistingType=123
-- allowEmptyKeys - if set to true and empty keys are detected, an exception will be thrown option____1___int=123
+  case this setting is set to false default type will be used: option\_\_values\_\_2\_\_\_nonExistingType=123
+- allowEmptyKeys - if set to true and empty keys are detected, an exception will be thrown: option\_\_\_\_2\_\_\_int=123
+
+Some system environment variables are prefixed with double underscore \_\_, in that case, the environment parser by
+default will throw an exception because this prefix will be treated as a key splitter resulting in the empty first part
+of keys, example \_\_SOME_SYSTEM_ENV=value will be parsed to "" and "SOME_SYSTEM_ENV" keys, in that case, set
+allowEmptyKeys to true or disable keys splitting with clearing keySplitters config value, or filter out unwanted
+variables with prefix passed to addEnvironmentVariables method
 
 ### Env Config Usage Scenario
 
@@ -545,14 +551,14 @@ int main(int argc, char **argv)
 
 ## Custom Parsers
 
-The library provides a CommandLineParserBuilder and EnvironmentVarsParserBuilder to create customized parsers for
-command line and environment variables, builder allows using custom value deserializer, config, settingSplitter, and
-valueDeserializersMap.
+The library provides a CommandLineParserBuilder and EnvironmentVarsParserBuilder builder classes to create customized
+parsers for command line and environment variables, builder allows using custom value deserializer, config,
+settingSplitter, and valueDeserializersMap.
 
 ### Advanced Usage Scenario
 
-All command line options should be loaded as not nested objects (no key splitting) with consideration of new type
-"myType" will set the option value to "emptyValue" string if no value was provided, myType should be used as the default
+All command line options should be loaded as not nested objects (no key splitting) with consideration of the new type "
+myType" will set the option value to "emptyValue" string if no value was provided, myType should be used as the default
 type, additional setting prefix should be considered '//' and default type should be also used if the type was not
 recognized, solution:
 
@@ -597,15 +603,16 @@ int main(const int argc, char **argv)
 ```
 
 In this case, keySplitters is cleared to prevent extracting nested keys, the additional setting prefix is added '//',
-and default type is changed to custom type "myType", and with throwOnUnknownType set to false instead of throwing an
-exception when type is not recognized, default will be used. CommandLineParserBuilder is being used to create custom
-comand line parser with new config and custom valueDeserializer for type "myType", useDefaultValueDeserializers is used
+and the default type is changed to custom type "myType", and with throwOnUnknownType set to false instead of throwing an
+exception when type is not recognized, default will be used. CommandLineParserBuilder is being used to create a custom
+command line parser with new config and custom valueDeserializer for type "myType", useDefaultValueDeserializers is used
 to add predefined value deserializers (string, int, json ...).
 
 ## Build Library
 
 The library can be built locally using [Cmake](https://cmake.org/), library
-uses [Taocpp JSON](https://github.com/taocpp/json) if library is not found it will be downloaded using cmake fetch api
+uses [Taocpp JSON](https://github.com/taocpp/json) if the library is not found it will be downloaded using Cmake fetch
+api
 
 Create a build directory and navigate to it:
 
@@ -626,14 +633,14 @@ Using this command, several cache variables can be set:
 - \_7BIT_CONF_BUILD_UNIT_TESTS: ["ON", "OFF"] ("OFF") - Turn on to build unit tests
 - \_7BIT_CONF_BUILD_INTEGRATION_TESTS: ["ON", "OFF"] ("OFF") - Turn on to build integration tests
 - \_7BIT_CONF_BUILD_E2E_TESTS: ["ON", "OFF"] ("OFF") - Turn on to build e2e tests
-- \_7BIT_CONF_BUILD_ALL_TESTS: ["ON", "OFF"] ("OFF") - Turn on to build all tests
+- \_7BIT_CONF_BUILD_ALL_TESTS: ["ON", "OFF"] ("OFF") - Turn on to build all tests (unit, integration and e2e)
 - \_7BIT_CONF_BUILD_EXAMPLES: ["ON", "OFF"] ("OFF") - Turn on to build examples
 - \_7BIT_CONF_BUILD_SINGLE_HEADER: ["ON", "OFF"] ("OFF") - Turn on to build single header SevenBitConf.hpp (requires
   Quom to be installed)
 - \_7BIT_CONF_INSTALL: ["ON", "OFF"] ("OFF") - Turn on to install the library
 
-To set cache variable, pass additional option: -D\<cache variable name\>=[value],
-for example, this command will set the library type to Static and will force examples built
+To set the cache variable, pass the additional option: -D\<cache variable name\>=[value], for example, this command will
+set the library type to Static and will force examples built
 
 ```sh
 cmake .. -DCMAKE_BUILD_TYPE=Release -D_7BIT_CONF_LIBRARY_TYPE=Static -D_7BIT_CONF_BUILD_EXAMPLES=true

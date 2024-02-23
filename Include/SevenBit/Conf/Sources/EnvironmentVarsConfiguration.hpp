@@ -27,9 +27,9 @@ namespace sb::cf
 
         [[nodiscard]] static SPtr create(std::string prefix, ISettingsParser::Ptr parser);
 
-        [[nodiscard]] const std::string &getPrefix();
+        [[nodiscard]] const std::string &getPrefix() const;
 
-        [[nodiscard]] const ISettingsParser &getSettingParser();
+        [[nodiscard]] const ISettingsParser &getSettingParser() const;
 
         IConfigurationProvider::Ptr build(IConfigurationBuilder &builder) override;
     };

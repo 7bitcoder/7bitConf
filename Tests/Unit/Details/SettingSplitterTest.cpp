@@ -1,5 +1,4 @@
 #include <gtest/gtest.h>
-#include <string_view>
 
 #include "../../../Include/SevenBit/Conf/Details/SettingSplitter.hpp"
 #include "../../../Include/SevenBit/Conf/Details/StringUtils.hpp"
@@ -86,10 +85,10 @@ PARAMS_TEST_COMBINED_3(SettingSplitterTest, ShouldFailOnEmptyKeys, SettingSplitt
 {
     const auto &[settingSplitter, typeMarker, keySplitter] = GetParam();
 
-    sb::cf::details::SettingSplitter splitter{{settingSplitter}, {typeMarker}, {keySplitter}, false};
+    const sb::cf::details::SettingSplitter splitter{{settingSplitter}, {typeMarker}, {keySplitter}, false};
 
-    auto key = sb::cf::details::StringUtils::join({"", "", ""}, keySplitter);
-    auto fullSetting = key + typeMarker + "type" + settingSplitter + "value";
+    const auto key = sb::cf::details::StringUtils::join({"", "", ""}, keySplitter);
+    const auto fullSetting = key + typeMarker + "type" + settingSplitter + "value";
     auto act = [&] { auto _ = splitter.split(fullSetting); };
     EXPECT_THROW(act(), sb::cf::ConfigException);
 }

@@ -83,7 +83,8 @@ namespace sb::cf
                 auto mapFcn = [name = filePath.stem().generic_string()](const JsonObject &config) -> JsonObject {
                     auto res = JsonObject{};
                     const auto keys = details::StringUtils::split(name, "__");
-                    details::JsonExt::updateWith(res, keys, config);
+                    auto &optimized = const_cast<JsonObject &>(config);
+                    details::JsonExt::updateWith(res, keys, std::move(optimized));
                     return res;
                 };
                 return MapConfigurationSource::create(std::move(fileSource), std::move(mapFcn));

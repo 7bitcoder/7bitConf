@@ -30,9 +30,9 @@ namespace sb::cf
             new EnvironmentVarsConfigurationSource{std::move(prefix), std::move(parser)});
     }
 
-    INLINE const std::string &EnvironmentVarsConfigurationSource::getPrefix() { return _prefix; }
+    INLINE const std::string &EnvironmentVarsConfigurationSource::getPrefix() const { return _prefix; }
 
-    INLINE const ISettingsParser &EnvironmentVarsConfigurationSource::getSettingParser() { return *_parser; }
+    INLINE const ISettingsParser &EnvironmentVarsConfigurationSource::getSettingParser() const { return *_parser; }
 
     INLINE IConfigurationProvider::Ptr EnvironmentVarsConfigurationSource::build(IConfigurationBuilder &builder)
     {
@@ -54,7 +54,7 @@ namespace sb::cf
         auto &prefix = _source->getPrefix();
         for (auto env = _7BIT_CONF_ENV_PTR; *env; env++)
         {
-            if (std::string_view envStr = *env; prefix.empty() || details::StringUtils::startsWith(envStr, prefix))
+            if (std::string_view envStr = *env; details::StringUtils::startsWith(envStr, prefix))
             {
                 result.push_back(envStr.substr(prefix.size()));
             }

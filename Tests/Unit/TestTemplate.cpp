@@ -16,4 +16,4 @@ class Template : public testing::Test
     static void TearDownTestSuite() {}
 };
 
-TEST_F(Template, ExampleTest) {}
+TEST_F(Template, ExampleTest) { EXPECT_TRUE(true); }

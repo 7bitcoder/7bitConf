@@ -1,5 +1,4 @@
 #include <gtest/gtest.h>
-#include <string_view>
 
 #include "SevenBit/Conf/ConfigurationBuilder.hpp"
 

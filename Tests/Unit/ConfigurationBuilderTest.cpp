@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 #include <memory>
-#include <string_view>
 
 #include "Classes/CustomConfigSource.hpp"
 #include "SevenBit/Conf/ConfigurationBuilder.hpp"

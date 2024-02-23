@@ -2,7 +2,6 @@
 #include <gtest/gtest.h>
 #include <gtest/internal/gtest-param-util.h>
 #include <random>
-#include <string_view>
 #include <tuple>
 
 #include "../../../Include/SevenBit/Conf/Details/Deserializers.hpp"

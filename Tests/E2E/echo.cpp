@@ -1,5 +1,6 @@
-#include <../../Include/SevenBit/Conf.hpp>
 #include <iostream>
+
+#include <SevenBit/Conf.hpp>
 
 using namespace sb::cf;
 

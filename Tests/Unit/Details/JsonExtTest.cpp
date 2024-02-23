@@ -1,5 +1,4 @@
 #include <gtest/gtest.h>
-#include <string_view>
 
 #include "../../../Include/SevenBit/Conf/Details/JsonExt.hpp"
 #include "../../../Include/SevenBit/Conf/Exceptions.hpp"

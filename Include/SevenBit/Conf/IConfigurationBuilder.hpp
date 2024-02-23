@@ -77,8 +77,9 @@ namespace sb::cf
 
         IConfigurationBuilder &addEnvironmentVariables(std::string prefix, EnvironmentVarsParserConfig config)
         {
-            return addEnvironmentVariables(std::move(prefix),
-                                           [&](auto &builder) { builder.useConfig(std::move(config)); });
+            return addEnvironmentVariables(std::move(prefix), [&](EnvironmentVarsParserBuilder &builder) {
+                builder.useConfig(std::move(config));
+            });
         }
 
         template <class TBuilderFunc>
@@ -106,12 +107,14 @@ namespace sb::cf
 
         IConfigurationBuilder &addCommandLine(int argc, char *const *const argv, CommandLineParserConfig config)
         {
-            return addCommandLine(argc, argv, [&](auto &builder) { builder.useConfig(std::move(config)); });
+            return addCommandLine(argc, argv,
+                                  [&](CommandLineParserBuilder &builder) { builder.useConfig(std::move(config)); });
         }
 
         IConfigurationBuilder &addCommandLine(std::vector<std::string_view> args, CommandLineParserConfig config)
         {
-            return addCommandLine(std::move(args), [&](auto &builder) { builder.useConfig(std::move(config)); });
+            return addCommandLine(std::move(args),
+                                  [&](CommandLineParserBuilder &builder) { builder.useConfig(std::move(config)); });
         }
 
         template <class TBuilderFunc>

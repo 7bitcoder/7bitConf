@@ -57,7 +57,8 @@ namespace sb::cf
         {
             details::Require::notNull(provider);
             provider->load();
-            update(provider->getConfiguration());
+            auto &optimized = const_cast<JsonObject &>(provider->getConfiguration());
+            update(std::move(optimized));
         }
     }
 
