@@ -7,9 +7,6 @@ on:
       - ".readthedocs.yaml"
       - "README.md"
 
-env:
-  CHOCO_LIB_DIR: C:\\ProgramData\\chocolatey\\lib
-
 jobs:
   test:
     strategy:
@@ -23,13 +20,6 @@ jobs:
             { tool: msvc, ver: 143 },
             { tool: msvc, ver: 144 },
             { tool: msvc, ver: 145 },
-            { tool: mingw, ver: 7.5.0 },
-            { tool: mingw, ver: 8.5.0 },
-            { tool: mingw, ver: 9.4.0 },
-            { tool: mingw, ver: 10.3.0 },
-            { tool: mingw, ver: 11.2.0 },
-            { tool: mingw, ver: 12.2.0 },
-            { tool: mingw, ver: 13.2.0 },
             { tool: LLVM, ver: 8.0.1 },
             { tool: LLVM, ver: 9.0.1 },
             { tool: LLVM, ver: 10.0.0 },
@@ -67,11 +57,6 @@ jobs:
         if: matrix.compiler.tool != 'msvc'
         shell: bash
         run: choco install ${{matrix.compiler.tool}} --version ${{matrix.compiler.ver}} --allow-downgrade -y && choco install ninja && cmake -E make_directory ${{runner.workspace}}/build
-
-      - name: Update Sys Path
-        if: matrix.compiler.tool == 'mingw'
-        run: ("${{env.CHOCO_LIB_DIR}}\\mingw\\tools\\install\\mingw64\\bin;" + (Get-Content -Path $env:GITHUB_PATH)) | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8
-        shell: pwsh
 
       - name: Configure
         env:
