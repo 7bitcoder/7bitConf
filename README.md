@@ -76,7 +76,7 @@ The library is officially supported on the following platforms:
 **Compilers:**
 
 - gcc 8.0+
-- clang 7.0+
+- clang 8.0+
 - MSVC 2015+
 
 ## Installation

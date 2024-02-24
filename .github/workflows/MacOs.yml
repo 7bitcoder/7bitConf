@@ -15,11 +15,14 @@ jobs:
         compiler:
           [
             { tool: apple-clang },
+            { tool: gcc, ver: 8 },
             { tool: gcc, ver: 9 },
             { tool: gcc, ver: 10 },
             { tool: gcc, ver: 11 },
             { tool: gcc, ver: 12 },
             { tool: gcc, ver: 13 },
+            { tool: gcc, ver: 14 },
+            { tool: gcc, ver: 15 },
           ]
         build_type: [ Release ]
         os: [ macos-12, macos-13 ]
@@ -49,6 +52,8 @@ jobs:
           echo "CC=${{matrix.cc}}-${{matrix.compiler.ver}}" >> $GITHUB_ENV
 
       - name: Configure
+        env:
+          SYSTEM_VERSION_COMPAT: 1
         run: cmake -B ${{runner.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DCMAKE_CXX_STANDARD=${{matrix.std}} -D_7BIT_CONF_LIBRARY_TYPE=${{matrix.library_type}} -D_7BIT_CONF_BUILD_ALL_TESTS=ON
 
       - name: Build

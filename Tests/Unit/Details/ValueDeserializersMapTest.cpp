@@ -24,12 +24,13 @@ class ValueDeserializersMapTest : public testing::Test
     static void TearDownTestSuite() {}
 };
 
-sb::cf::details::ValueDeserializersMap makeDefaultDeserializersMap(const std::string_view defaultType = "string",
-                                                                   const bool throwOnUnknownType = true)
+// inline fix for msvc build issue
+inline sb::cf::details::ValueDeserializersMap makeDefaultDeserializersMap(const std::string_view defaultType = "string",
+                                                                          const bool throwOnUnknownType = true)
 {
     sb::cf::details::ValueDeserializersMap deserializers{defaultType, throwOnUnknownType};
     sb::cf::details::DefaultDeserializers::add(deserializers);
-    return std::move(deserializers);
+    return deserializers;
 }
 
 static Params<std::string_view, std::optional<std::string_view>, sb::cf::JsonValue> DeserializeData = {
