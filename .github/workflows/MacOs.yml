@@ -21,7 +21,7 @@ jobs:
             { tool: gcc, ver: 13 },
           ]
         build_type: [ Release ]
-        os: [ macos-12 ]
+        os: [ macos-12, macos-13 ]
         std: [ 17 ]
         library_type: [ Static ]
         include:
@@ -31,6 +31,8 @@ jobs:
           - compiler: { tool: apple-clang }
             cxx: ""
             cc: ""
+        exclude:
+          - { os: macos-13, compiler: { tool: gcc } }
 
     runs-on: ${{matrix.os}}
     steps:
