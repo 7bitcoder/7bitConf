@@ -53,7 +53,7 @@ jobs:
 
       - name: Configure
         env:
-          SYSTEM_VERSION_COMPAT: 1
+          MACOSX_DEPLOYMENT_TARGET: 11
         run: cmake -B ${{runner.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DCMAKE_CXX_STANDARD=${{matrix.std}} -D_7BIT_CONF_LIBRARY_TYPE=${{matrix.library_type}} -D_7BIT_CONF_BUILD_ALL_TESTS=ON
 
       - name: Build

@@ -25,11 +25,11 @@ class ValueDeserializersMapTest : public testing::Test
 };
 
 // inline fix for msvc build issue
-inline sb::cf::details::ValueDeserializersMap makeDefaultDeserializersMap(const std::string_view defaultType = "string",
-                                                                          const bool throwOnUnknownType = true)
+inline sb::cf::details::ValueDeserializersMap::Ptr makeDefaultDeserializersMap(
+    const std::string_view defaultType = "string", const bool throwOnUnknownType = true)
 {
-    sb::cf::details::ValueDeserializersMap deserializers{defaultType, throwOnUnknownType};
-    sb::cf::details::DefaultDeserializers::add(deserializers);
+    auto deserializers = std::make_unique<sb::cf::details::ValueDeserializersMap>(defaultType, throwOnUnknownType);
+    sb::cf::details::DefaultDeserializers::add(*deserializers);
     return deserializers;
 }
 
@@ -155,7 +155,7 @@ PARAMS_TEST(ValueDeserializersMapTest, ShouldDeserializeValue, DeserializeData)
     const auto &[type, value, expected] = GetParam();
     const auto deserializers = makeDefaultDeserializersMap("string", false);
 
-    auto &deserializer = deserializers.getDeserializerFor(type);
+    auto &deserializer = deserializers->getDeserializerFor(type);
     EXPECT_EQ(deserializer.deserialize(value), expected);
 }
 
@@ -163,7 +163,7 @@ TEST_F(ValueDeserializersMapTest, ShouldDeserializeEmptyJsonOption)
 {
     const auto deserializers = makeDefaultDeserializersMap();
 
-    auto &deserializer = deserializers.getDeserializerFor("json");
+    auto &deserializer = deserializers->getDeserializerFor("json");
     EXPECT_EQ(deserializer.deserialize(std::nullopt), sb::cf::JsonValue{});
 }
 
@@ -171,10 +171,10 @@ TEST_F(ValueDeserializersMapTest, ShouldNotFoundDeserializer)
 {
     auto deserializers = makeDefaultDeserializersMap();
 
-    deserializers.set("unknown2", nullptr);
+    deserializers->set("unknown2", nullptr);
 
-    auto get = [&](std::string_view type) { auto &_ = deserializers.getDeserializerFor(type); };
-    EXPECT_EQ(deserializers.getDeserializersMap().size(), 8);
+    auto get = [&](std::string_view type) { auto &_ = deserializers->getDeserializerFor(type); };
+    EXPECT_EQ(deserializers->getDeserializersMap().size(), 8);
     EXPECT_THROW(get("unknown"), sb::cf::ConfigException);
     EXPECT_THROW(get("unknown2"), sb::cf::ConfigException);
 }
@@ -236,7 +236,7 @@ PARAMS_TEST(ValueDeserializersMapTest, ShouldFailDeserialize, FailDeserializeVal
     const auto &[type, value] = GetParam();
     const auto deserializers = makeDefaultDeserializersMap();
 
-    auto &deserializer = deserializers.getDeserializerFor(type);
+    auto &deserializer = deserializers->getDeserializerFor(type);
 
     EXPECT_ANY_THROW(auto result = deserializer.deserialize(value));
 }
