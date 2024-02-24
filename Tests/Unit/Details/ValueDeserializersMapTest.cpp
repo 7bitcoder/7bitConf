@@ -24,9 +24,8 @@ class ValueDeserializersMapTest : public testing::Test
     static void TearDownTestSuite() {}
 };
 
-// inline fix for msvc build issue
-inline sb::cf::details::ValueDeserializersMap::Ptr makeDefaultDeserializersMap(
-    const std::string_view defaultType = "string", const bool throwOnUnknownType = true)
+sb::cf::details::ValueDeserializersMap::Ptr makeDefaultDeserializersMap(const std::string_view defaultType = "string",
+                                                                        const bool throwOnUnknownType = true)
 {
     auto deserializers = std::make_unique<sb::cf::details::ValueDeserializersMap>(defaultType, throwOnUnknownType);
     sb::cf::details::DefaultDeserializers::add(*deserializers);
