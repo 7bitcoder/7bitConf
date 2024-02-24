@@ -1,7 +1,7 @@
-[![DevCI](https://github.com/7bitcoder/7bitConf/actions/workflows/DevCI.yml/badge.svg?branch=dev)](https://github.com/7bitcoder/7bitConf/actions/workflows/DevCI.yml)
-[![Windows](https://github.com/7bitcoder/7bitConf/actions/workflows/Windows.yml/badge.svg?branch=main)](https://github.com/7bitcoder/7bitConf/actions/workflows/Windows.yml)
-[![Linux](https://github.com/7bitcoder/7bitConf/actions/workflows/Linux.yml/badge.svg?branch=main)](https://github.com/7bitcoder/7bitConf/actions/workflows/Linux.yml)
-[![MacOs](https://github.com/7bitcoder/7bitConf/actions/workflows/MacOs.yml/badge.svg?branch=main)](https://github.com/7bitcoder/7bitConf/actions/workflows/MacOs.yml)
+[![DevCI](https://github.com/7bitcoder/7bitConf/actions/workflows/DevCI.yml/badge.svg)](https://github.com/7bitcoder/7bitConf/actions/workflows/DevCI.yml)
+[![Windows](https://github.com/7bitcoder/7bitConf/actions/workflows/Windows.yml/badge.svg)](https://github.com/7bitcoder/7bitConf/actions/workflows/Windows.yml)
+[![Linux](https://github.com/7bitcoder/7bitConf/actions/workflows/Linux.yml/badge.svg)](https://github.com/7bitcoder/7bitConf/actions/workflows/Linux.yml)
+[![MacOs](https://github.com/7bitcoder/7bitConf/actions/workflows/MacOs.yml/badge.svg)](https://github.com/7bitcoder/7bitConf/actions/workflows/MacOs.yml)
 [![Conan Center](https://img.shields.io/conan/v/7bitconf)](https://conan.io/center/recipes/7bitconf)
 
 <div align="center">
