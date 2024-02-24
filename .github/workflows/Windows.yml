@@ -14,12 +14,9 @@ jobs:
       matrix:
         compiler:
           [
-            { tool: msvc, ver: 140 },
             { tool: msvc, ver: 141 },
             { tool: msvc, ver: 142 },
             { tool: msvc, ver: 143 },
-            { tool: msvc, ver: 144 },
-            { tool: msvc, ver: 145 },
             { tool: LLVM, ver: 8.0.1 },
             { tool: LLVM, ver: 9.0.1 },
             { tool: LLVM, ver: 10.0.0 },
