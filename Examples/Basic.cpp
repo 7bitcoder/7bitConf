@@ -3,17 +3,17 @@
 
 using namespace sb::cf;
 
-int main(int argc, char **argv)
+int main(const int argc, char **argv)
 {
-    IConfiguration::Ptr configuration = ConfigurationBuilder{} //
-                                            .addAppSettings()
-                                            .addEnvironmentVariables()
-                                            .addCommandLine(argc, argv)
-                                            .build();
+    const IConfiguration::Ptr configuration = ConfigurationBuilder{} //
+                                                  .addAppSettings()
+                                                  .addEnvironmentVariables()
+                                                  .addCommandLine(argc, argv)
+                                                  .build();
 
-    std::string value = configuration->at("MySetting").get_string();
-    std::string defaultLogLevel = configuration->deepAt("Logging:LogLevel:Default").get_string();
-    std::uint64_t secondArrayElement = configuration->deepAt("Array:1").get_unsigned();
+    const std::string value = configuration->at("MySetting").get_string();
+    const std::string defaultLogLevel = configuration->deepAt("Logging:LogLevel:Default").get_string();
+    const std::uint64_t secondArrayElement = configuration->deepAt("Array:1").get_unsigned();
 
     std::cout << "MySetting: " << value << std::endl;
     std::cout << "Default LogLevel: " << defaultLogLevel << std::endl;

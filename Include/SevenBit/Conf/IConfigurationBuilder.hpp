@@ -3,7 +3,6 @@
 #include <filesystem>
 #include <functional>
 #include <memory>
-#include <sstream>
 #include <string>
 #include <string_view>
 #include <unordered_map>
@@ -12,18 +11,18 @@
 
 #include "SevenBit/Conf/LibraryConfig.hpp"
 
-#include "SevenBit/Conf/AppSettingsConfiguration.hpp"
-#include "SevenBit/Conf/CommandLineConfiguration.hpp"
-#include "SevenBit/Conf/EnvironmentVarsConfiguration.hpp"
+#include "SevenBit/Conf/CommandLineParserBuilder.hpp"
+#include "SevenBit/Conf/EnvironmentVarsParserBuilder.hpp"
 #include "SevenBit/Conf/IConfiguration.hpp"
 #include "SevenBit/Conf/IObject.hpp"
-#include "SevenBit/Conf/InMemoryConfiguration.hpp"
-#include "SevenBit/Conf/JsonConfiguration.hpp"
-#include "SevenBit/Conf/JsonFileConfiguration.hpp"
-#include "SevenBit/Conf/JsonStreamConfiguration.hpp"
-#include "SevenBit/Conf/KeyPerFileConfiguration.hpp"
-#include "SevenBit/Conf/SettingParserBuilder.hpp"
-#include "SevenBit/Conf/SettingParserConfig.hpp"
+#include "SevenBit/Conf/Sources/AppSettingsConfiguration.hpp"
+#include "SevenBit/Conf/Sources/CommandLineConfiguration.hpp"
+#include "SevenBit/Conf/Sources/EnvironmentVarsConfiguration.hpp"
+#include "SevenBit/Conf/Sources/InMemoryConfiguration.hpp"
+#include "SevenBit/Conf/Sources/JsonConfiguration.hpp"
+#include "SevenBit/Conf/Sources/JsonFileConfiguration.hpp"
+#include "SevenBit/Conf/Sources/JsonStreamConfiguration.hpp"
+#include "SevenBit/Conf/Sources/KeyPerFileConfiguration.hpp"
 
 namespace sb::cf
 {
@@ -45,7 +44,7 @@ namespace sb::cf
 
         virtual void clear() = 0;
 
-        template <class TFactory> IConfigurationBuilder &addFrom(TFactory factory) { return add(factory(*this)); }
+        template <class TFactory> IConfigurationBuilder &addFrom(TFactory &&factory) { return add(factory(*this)); }
 
         IConfigurationBuilder &addJsonFile(std::filesystem::path filePath)
         {
@@ -69,50 +68,77 @@ namespace sb::cf
             return add(AppSettingsConfigurationSource::create(std::move(environmentName)));
         }
 
-        IConfigurationBuilder &addEnvironmentVariables() { return addEnvironmentVariables("", SettingParserConfig{}); }
+        IConfigurationBuilder &addEnvironmentVariables() { return addEnvironmentVariables(""); }
 
         IConfigurationBuilder &addEnvironmentVariables(std::string prefix)
         {
-            return addEnvironmentVariables(std::move(prefix), SettingParserConfig{});
+            return addEnvironmentVariables(std::move(prefix), EnvironmentVarsParserConfig{});
         }
 
-        IConfigurationBuilder &addEnvironmentVariables(std::string prefix, SettingParserConfig config)
+        IConfigurationBuilder &addEnvironmentVariables(std::string prefix, EnvironmentVarsParserConfig config)
         {
-            return addEnvironmentVariables(std::move(prefix),
-                                           SettingParserBuilder{}.useConfig(std::move(config)).build());
+            return addEnvironmentVariables(std::move(prefix), [&](EnvironmentVarsParserBuilder &builder) {
+                builder.useConfig(std::move(config));
+            });
         }
 
-        IConfigurationBuilder &addEnvironmentVariables(std::string prefix, ISettingParser::Ptr parser)
+        template <class TBuilderFunc>
+        IConfigurationBuilder &addEnvironmentVariables(std::string prefix, TBuilderFunc &&parserBuilderFunctor)
+        {
+            EnvironmentVarsParserBuilder builder;
+            parserBuilderFunctor(builder);
+            return addEnvironmentVariables(std::move(prefix), builder.build());
+        }
+
+        IConfigurationBuilder &addEnvironmentVariables(std::string prefix, ISettingsParser::Ptr parser)
         {
             return add(EnvironmentVarsConfigurationSource::create(std::move(prefix), std::move(parser)));
         }
 
         IConfigurationBuilder &addCommandLine(int argc, char *const *const argv)
         {
-            return addCommandLine(argc, argv, SettingParserConfig{});
+            return addCommandLine(argc, argv, CommandLineParserConfig{});
         }
 
         IConfigurationBuilder &addCommandLine(std::vector<std::string_view> args)
         {
-            return addCommandLine(std::move(args), SettingParserConfig{});
+            return addCommandLine(std::move(args), CommandLineParserConfig{});
         }
 
-        IConfigurationBuilder &addCommandLine(int argc, char *const *const argv, SettingParserConfig config)
+        IConfigurationBuilder &addCommandLine(int argc, char *const *const argv, CommandLineParserConfig config)
         {
-            return addCommandLine(argc, argv, SettingParserBuilder{}.useConfig(std::move(config)).build());
+            return addCommandLine(argc, argv,
+                                  [&](CommandLineParserBuilder &builder) { builder.useConfig(std::move(config)); });
         }
 
-        IConfigurationBuilder &addCommandLine(std::vector<std::string_view> args, SettingParserConfig config)
+        IConfigurationBuilder &addCommandLine(std::vector<std::string_view> args, CommandLineParserConfig config)
         {
-            return addCommandLine(std::move(args), SettingParserBuilder{}.useConfig(std::move(config)).build());
+            return addCommandLine(std::move(args),
+                                  [&](CommandLineParserBuilder &builder) { builder.useConfig(std::move(config)); });
         }
 
-        IConfigurationBuilder &addCommandLine(int argc, char *const *const argv, ISettingParser::Ptr parser)
+        template <class TBuilderFunc>
+        IConfigurationBuilder &addCommandLine(int argc, char *const *const argv, TBuilderFunc &&parserBuilderFunctor)
+        {
+            CommandLineParserBuilder builder;
+            parserBuilderFunctor(builder);
+            return addCommandLine(argc, argv, builder.build());
+        }
+
+        template <class TBuilderFunc>
+        IConfigurationBuilder &addCommandLine(std::vector<std::string_view> args, TBuilderFunc &&parserBuilderFunctor)
+        {
+            CommandLineParserBuilder builder;
+            parserBuilderFunctor(builder);
+            return addCommandLine(std::move(args), builder.build());
+        }
+
+        IConfigurationBuilder &addCommandLine(int argc, char *const *const argv, ISettingsParser::Ptr parser)
         {
             return add(CommandLineConfigurationSource::create(argc, argv, std::move(parser)));
         }
 
-        IConfigurationBuilder &addCommandLine(std::vector<std::string_view> args, ISettingParser::Ptr parser)
+        IConfigurationBuilder &addCommandLine(std::vector<std::string_view> args, ISettingsParser::Ptr parser)
         {
             return add(CommandLineConfigurationSource::create(std::move(args), std::move(parser)));
         }
@@ -124,7 +150,7 @@ namespace sb::cf
 
         IConfigurationBuilder &addKeyPerFile(std::filesystem::path directoryPath)
         {
-            return addKeyPerFile(std::move(directoryPath), false, "");
+            return addKeyPerFile(std::move(directoryPath), false);
         }
 
         IConfigurationBuilder &addKeyPerFile(std::filesystem::path directoryPath, bool isOptional)

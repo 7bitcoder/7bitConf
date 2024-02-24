@@ -14,28 +14,34 @@ namespace sb::cf::details
 
     class EXPORT SettingSplitter : public ISettingSplitter
     {
-      private:
-        const std::vector<std::string_view> _settingPrefixes;
         const std::vector<std::string_view> _settingSplitters;
         const std::vector<std::string_view> _typeMarkers;
         const std::vector<std::string_view> _keySplitters;
+        const bool _allowEmptyKeys;
 
       public:
-        SettingSplitter(std::vector<std::string_view> settingPrefixes, std::vector<std::string_view> settingSplitters,
-                        std::vector<std::string_view> typeMarkers, std::vector<std::string_view> keySplitters);
+        SettingSplitter(std::vector<std::string_view> settingSplitters, std::vector<std::string_view> typeMarkers,
+                        std::vector<std::string_view> keySplitters, bool allowEmptyKeys = false);
 
-        [[nodiscard]] ISettingSplitter::Result split(std::string_view setting) const override;
+        [[nodiscard]] Result split(std::string_view setting) const override;
+
+        [[nodiscard]] const std::vector<std::string_view> &getSettingSplitters() const;
+
+        [[nodiscard]] const std::vector<std::string_view> &getTypeMarkers() const;
+
+        [[nodiscard]] const std::vector<std::string_view> &getKeySplitters() const;
+
+        [[nodiscard]] bool getAllowEmptyKeys() const;
 
       private:
-        [[nodiscard]] std::string_view tryRemovePrefix(std::string_view setting) const;
-
         [[nodiscard]] std::pair<std::string_view, std::optional<std::string_view>> splitSetting(
             std::string_view setting) const;
 
-        [[nodiscard]] std::pair<std::string_view, std::optional<std::string_view>> splitType(
-            std::string_view key) const;
-
         [[nodiscard]] std::vector<std::string_view> splitKey(std::string_view key) const;
+
+        [[nodiscard]] std::optional<std::string_view> tryExtractType(std::string_view &key) const;
+
+        void checkKeys(const std::vector<std::string_view> &keys) const;
     };
 } // namespace sb::cf::details
 

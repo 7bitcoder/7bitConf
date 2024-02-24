@@ -4,7 +4,7 @@
 #include <tao/json/from_string.hpp>
 
 #include "SevenBit/Conf/Details/Deserializers.hpp"
-#include "SevenBit/Conf/Details/Utils.hpp"
+#include "SevenBit/Conf/Details/StringUtils.hpp"
 
 namespace sb::cf::details
 {
@@ -15,25 +15,25 @@ namespace sb::cf::details
 
     INLINE JsonValue BoolDeserializer::deserialize(std::optional<std::string_view> value) const
     {
-        return value && details::utils::stringTo<bool>(*value);
+        return value && StringUtils::convertTo<bool>(*value);
     }
 
     INLINE JsonValue IntDeserializer::deserialize(std::optional<std::string_view> value) const
     {
-        return value ? details::utils::stringTo<std::int64_t>(*value) : 0;
+        return value ? StringUtils::convertTo<std::int64_t>(*value) : 0;
     }
 
     INLINE JsonValue UIntDeserializer::deserialize(std::optional<std::string_view> value) const
     {
-        return value ? details::utils::stringTo<std::uint64_t>(*value) : 0;
+        return value ? StringUtils::convertTo<std::uint64_t>(*value) : 0;
     }
 
     INLINE JsonValue DoubleDeserializer::deserialize(std::optional<std::string_view> value) const
     {
-        return value ? details::utils::stringTo<double>(*value) : 0.0;
+        return value ? StringUtils::convertTo<double>(*value) : 0.0;
     }
 
-    INLINE JsonValue NullDeserializer::deserialize(std::optional<std::string_view> value) const { return json::null; }
+    INLINE JsonValue NullDeserializer::deserialize(std::optional<std::string_view>) const { return json::null; }
 
     INLINE JsonValue JsonDeserializer::deserialize(std::optional<std::string_view> value) const
     {

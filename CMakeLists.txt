@@ -1,27 +1,32 @@
 cmake_minimum_required(VERSION 3.15.0)
 
+set(_7BIT_CONF_LIBRARY 7bitConf)
+
 set(_7BIT_CONF_VERSION_MAJOR 1)
-set(_7BIT_CONF_VERSION_MINOR 1)
+set(_7BIT_CONF_VERSION_MINOR 2)
 set(_7BIT_CONF_VERSION_PATCH 0)
 
 set(_7BIT_CONF_VERSION ${_7BIT_CONF_VERSION_MAJOR}.${_7BIT_CONF_VERSION_MINOR}.${_7BIT_CONF_VERSION_PATCH})
 
-project(7bitConf LANGUAGES CXX VERSION ${_7BIT_CONF_VERSION})
+project(${_7BIT_CONF_LIBRARY} LANGUAGES CXX VERSION ${_7BIT_CONF_VERSION})
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Cmake")
+list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Cmake")
 
-include(Setup)
-include(GNUInstallDirs)
+if (NOT CMAKE_CXX_STANDARD)
+    set(CMAKE_CXX_STANDARD 17)
+endif ()
 
-set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-include_directories(${CMAKE_SOURCE_DIR}/Include)
+include(Setup)
+include(CMakeDependentOption)
+include(GNUInstallDirs)
+
+include_directories(${_7BIT_CONF_INCLUDE_DIR})
 
 add_subdirectory(Source)
 
-if (_7BIT_CONF_BUILD_TESTS)
-    include(GoogleTest)
+if (_7BIT_CONF_BUILD_UNIT_TESTS OR _7BIT_CONF_BUILD_INTEGRATION_TESTS OR _7BIT_CONF_BUILD_E2E_TESTS)
     enable_testing()
 
     add_subdirectory(Tests)
@@ -36,13 +41,13 @@ if (_7BIT_CONF_BUILD_SINGLE_HEADER)
 endif ()
 
 if (_7BIT_CONF_INSTALL)
-    set(PROJECT_CONFIG_IN ${CMAKE_SOURCE_DIR}/Cmake/7bitConfConfig.cmake.in)
-    set(PROJECT_CONFIG_OUT ${CMAKE_BINARY_DIR}/7bitConfConfig.cmake)
+    set(PROJECT_CONFIG_IN ${CMAKE_CURRENT_SOURCE_DIR}/Cmake/7bitConfConfig.cmake.in)
+    set(PROJECT_CONFIG_OUT ${CMAKE_CURRENT_BINARY_DIR}/7bitConfConfig.cmake)
     set(CONFIG_TARGETS_FILE 7bitConfConfigTargets.cmake)
     set(VERSIONS_CONFIG_FILE ${CMAKE_CURRENT_BINARY_DIR}/7bitConfConfigVersion.cmake)
     set(EXPORT_DEST_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/7bitConf)
 
-    install(DIRECTORY ${_7BIT_CONF_HEADERS_DIR}/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+    install(DIRECTORY ${_7BIT_CONF_INCLUDE_DIR}/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
     install(
             TARGETS 7bitConf

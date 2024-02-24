@@ -13,7 +13,7 @@ namespace sb::cf
     {
         using Ptr = std::unique_ptr<IValueDeserializersMap>;
 
-        [[nodiscard]] virtual const IDeserializer *getDeserializerFor(std::string_view type) const = 0;
+        [[nodiscard]] virtual const IDeserializer &getDeserializerFor(std::optional<std::string_view> type) const = 0;
 
         virtual ~IValueDeserializersMap() = default;
     };

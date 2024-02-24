@@ -16,8 +16,6 @@ namespace sb::cf
 
         [[nodiscard]] virtual const JsonObject &getConfiguration() const = 0;
 
-        virtual JsonObject &getConfiguration() = 0;
-
         virtual ~IConfigurationProvider() = default;
     };
 } // namespace sb::cf

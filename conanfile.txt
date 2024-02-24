@@ -1,9 +1,0 @@
-[requires]
-gtest/1.14.0
-taocpp-json/1.0.0-beta.14
-
-[generators]
-CMakeDeps
-CMakeToolchain
-[layout]
-cmake_layout

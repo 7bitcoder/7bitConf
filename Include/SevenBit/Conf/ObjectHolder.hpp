@@ -10,7 +10,6 @@ namespace sb::cf
 {
     template <class T> class ObjectHolder : public IObject
     {
-      private:
         T _object;
 
         explicit ObjectHolder(const T &object) : _object(object) {}
@@ -18,36 +17,27 @@ namespace sb::cf
         explicit ObjectHolder(T &&object) : _object(std::move(object)) {}
 
       public:
-        using Ptr = std::unique_ptr<ObjectHolder<T>>;
+        using Ptr = std::unique_ptr<ObjectHolder>;
 
-        [[nodiscard]] static ObjectHolder<T>::Ptr from(const T &object)
+        [[nodiscard]] static Ptr from(const T &object) { return Ptr{new ObjectHolder{object}}; }
+
+        [[nodiscard]] static Ptr from(T &&object) { return Ptr{new ObjectHolder{object}}; }
+
+        [[nodiscard]] static ObjectHolder &castFrom(IObject &object) { return static_cast<ObjectHolder &>(object); }
+
+        [[nodiscard]] static const ObjectHolder &castFrom(const IObject &object)
         {
-            return ObjectHolder<T>::Ptr{new ObjectHolder<T>{object}};
+            return static_cast<const ObjectHolder &>(object);
         }
 
-        [[nodiscard]] static ObjectHolder<T>::Ptr from(T &&object)
+        [[nodiscard]] static ObjectHolder &safeCastFrom(IObject &object)
         {
-            return ObjectHolder<T>::Ptr{new ObjectHolder<T>{object}};
+            return dynamic_cast<ObjectHolder &>(object);
         }
 
-        [[nodiscard]] static ObjectHolder<T> &castFrom(IObject &object)
+        [[nodiscard]] static const ObjectHolder &safeCastFrom(const IObject &object)
         {
-            return static_cast<ObjectHolder<T> &>(object);
-        }
-
-        [[nodiscard]] static const ObjectHolder<T> &castFrom(const IObject &object)
-        {
-            return static_cast<const ObjectHolder<T> &>(object);
-        }
-
-        [[nodiscard]] static ObjectHolder<T> &safeCastFrom(IObject &object)
-        {
-            return dynamic_cast<ObjectHolder<T> &>(object);
-        }
-
-        [[nodiscard]] static const ObjectHolder<T> &safeCastFrom(const IObject &object)
-        {
-            return dynamic_cast<const ObjectHolder<T> &>(object);
+            return dynamic_cast<const ObjectHolder &>(object);
         }
 
         [[nodiscard]] T &get() { return _object; }
