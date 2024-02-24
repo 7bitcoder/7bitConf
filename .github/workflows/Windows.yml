@@ -36,10 +36,6 @@ jobs:
         std: [ 17 ]
         library_type: [ Static ]
         include:
-          - compiler: { tool: mingw }
-            cxx: g++
-            cc: gcc
-            generator: "MinGW Makefiles"
           - compiler: { tool: LLVM }
             cxx: clang++
             cc: clang
